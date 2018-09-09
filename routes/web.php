@@ -435,10 +435,10 @@ Route::group(['middleware' => 'auth'], function() {
 	//Store Manipulations
 	Route::group(['prefix' => 'store'], function() {
 	    //add store
-		Route::get('add/{cid?}/{pid?}',[
+		Route::get('add/{cid?}/{pid?}/{tid?}',[
 			'uses'=>'StoreController@create',
 			'as'=>'addstores'
-		])->where(['cid'=>'[0-9]+','pid'=>'[0-9]+']);
+		])->where(['cid'=>'[0-9]+','pid'=>'[0-9]+','tid'=>'[0-9]+']);
 
 		Route::post('add',[
 			'uses'=>'StoreController@store',

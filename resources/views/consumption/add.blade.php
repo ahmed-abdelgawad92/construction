@@ -26,7 +26,7 @@
 					<strong>خطأ</strong>
 					<br>
 					<ul>
-						<li>{{ session('amount_error') }} <a href="{{url("store/add/0",$term->project->id)}}" class="btn btn-danger">أضافة خامات</a></li>
+						<li>{{ session('amount_error') }} <a href="{{route('addstores',['cid'=>0,'pid'=>$term->project_id,'tid'=>$term->id])}}" class="btn btn-danger">أضافة خامات</a></li>
 					</ul>
 				</div>
 			@endif

@@ -73,7 +73,7 @@ class TermTypeController extends Controller {
 			$saved=$term_type->save();
 			if(!$saved)
 				return redirect()->back()->with('insert_error','حدث عطل خلال أدخال نوع بند جديد');
-			return redirect()->route('alltermtype')->with('success','تم حفظ نوع بند بنجاح');
+			return redirect()->back()->with('success','تم حفظ نوع بند بنجاح');
 		}else
 			abort('404');
 	}

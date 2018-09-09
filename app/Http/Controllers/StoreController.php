@@ -94,7 +94,7 @@ class StoreController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function create($cid=null,$pid=null)
+	public function create($cid=null,$pid=null,$tid=0)
 	{
 		if(Auth::user()->type=='admin'){
 			if($cid!=null && $cid!=0){
@@ -104,7 +104,7 @@ class StoreController extends Controller {
 				$suppliers=Supplier::all();
 				$array['suppliers']=$suppliers;
 			}
-			if($pid!=null){
+			if($pid!=null && $pid!=0){
 				$project=Project::where('id',$pid)->where('done',0)->firstOrFail();
 				$array['project']=$project;
 			}else{
@@ -114,6 +114,7 @@ class StoreController extends Controller {
 			$store_types=StoreType::all();
 			$array['active']='store';
 			$array['store_types']=$store_types;
+			$array['tid']=$tid;
 			return view('store.add',$array);
 		}
 		else
@@ -164,6 +165,9 @@ class StoreController extends Controller {
 			$saved=$store->save();
 			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه الكمية من الخامو يرجى المحاولة فى وقت لاحق');
+			}
+			if($req->input('tid')!=null){
+				return redirect()->route('addconsumption',['id'=>$req->input('tid')])->with('success','تم شراء الخام بنجاح و تم التخزين');
 			}
 			return redirect()->back()->with('success','تم شراء الخام بنجاح و تم التخزين');
 		}

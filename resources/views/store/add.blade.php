@@ -138,6 +138,7 @@
 				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>
+				<input type="hidden" name="tid" value="@if(isset($tid)){{$tid}}@endif">
 				<input type="hidden" name="_token" value="{{csrf_token()}}">
 			</form>
 			@else

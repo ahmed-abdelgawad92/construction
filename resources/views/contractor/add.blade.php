@@ -56,6 +56,7 @@
 				{{$type->name}}
 				</label>
 				@endforeach
+				<a href="{{route('addtermtype')}}">إضافة نوع مقاول جديد؟</a>
 				@if($errors->has('type'))
 					@foreach($errors->get('type') as $error)
 						<span class="help-block">{{ $error }}</span>
