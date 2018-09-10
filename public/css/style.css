@@ -16,6 +16,7 @@ body{
 }
 .navbar-default .navbar-brand {
   color: #eeeeee;
+	padding: 5px !important;
 }
 .navbar-default .navbar-brand:focus, .navbar-default .navbar-brand:hover{
   color: #dadada;
@@ -41,6 +42,15 @@ body{
 }
 .nav {
   padding-right: 0;
+}
+img#logo{
+	width:40px;
+	transition: 1s all;
+}
+.navbar-brand:hover img#logo{
+	opacity: 0.8;
+	transform: rotate3d(1, 1, 1, 360deg);
+	transition: 1s all;
 }
 @media (max-width: 767px){
   .navbar-default .navbar-nav .open .dropdown-menu>li>a {
@@ -152,7 +162,7 @@ select.search{
   border-right: 6px solid #1b8c97;
   border-bottom: 1px solid #eeeeee;
   border-top: 1px solid #eeeeee;
-  
+
   margin-bottom: 5px;
   border-radius: 5px;
 }
@@ -221,7 +231,7 @@ textarea.text{
 }
 a.list-hover{
   display: block;
-  border-radius:6px; 
+  border-radius:6px;
 }
 a.list-hover:hover{
   background-color: #eeeeee !important;
@@ -257,8 +267,8 @@ h3.print-title{
   h3.print-title{
     display: block;
   }
-  tr{ 
-    page-break-inside: avoid !important; 
+  tr{
+    page-break-inside: avoid !important;
   }
   thead{
     display: table-header-group;
@@ -593,4 +603,11 @@ a.ui-state-hover,a.ui-datepicker-next-hover,a.ui-datepicker-prev-hover{
   background: #89cff0 !important;
   border-color: #337ab7 !important;
   color: #2a3f54 !important;
+}
+
+
+/*------------------------------------Organization------------------------------------*/
+span.delete_phone:hover{
+	cursor: pointer;
+	color: #ea4359;
 }

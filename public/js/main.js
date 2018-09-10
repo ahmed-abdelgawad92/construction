@@ -158,10 +158,67 @@ $(document).ready(function() {
 		});
 	});
 
+
 	$('#info').popover();
 
 	//print extractor
 	$('#print').on('click',function(){
 		print();
 	});
+
+
+/******************************************ORGANIZATION********************************************/
+	//add many phone numbers
+	$("#add_another_phone").click(function(e){
+		e.preventDefault();
+		if ($(".phone_input").length>=10) {
+			alert("عذراً لا يمكنك وضع اكثر من 10 أرقام!");
+			return false;
+		}
+		$('<div class="form-group" id="del_phone'+$(".phone_input").length+'"><label for="phone'+$(".phone_input").length+'" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون <span data-phone="'+$(".phone_input").length+'" class="glyphicon glyphicon-trash delete_phone"></span></label><div class="col-sm-8 col-md-8 col-lg-8"><input type="text" id="phone'+$(".phone_input").length+'" name="phone['+$(".phone_input").length+']" value="" class="form-control phone_input" placeholder="أدخل التليفون"></div></div></div>').insertAfter("#phone_template");
+	});
+	//delete phone numbers input
+	$(document).on('click', 'span.delete_phone', function(e) {
+		$("#del_phone"+$(this).attr('data-phone')).remove();
+	});
+
+	/**
+	**
+	** Insertion Validation of a Customer
+	**
+	*/
+	$('#addOrganization').submit(function(e){
+		var check = true;
+		var name=$("#name").trim();
+		var address=$('#address').trim();
+		var center=$('#center').trim();
+		var city=$('#city').trim();
+		var type=$('#type').trim();
+		if(!name && !name.match(/^[\pL\pN\s]+$/)){
+			check=false;
+		}
+		if(!address && !address.match(/^[\pL\pN\s]+$/)){
+			check=false;
+		}
+		if(!center && !center.match(/^[\pL\pN\s]+$/)){
+			check=false;
+		}
+		if(!city && !city.match(/^[\pL\pN\s]+$/)){
+			check=false;
+		}
+		if(type!=0 && type!=1){
+			check=false;
+		}
+
+	});
+
+
+
+
+
+
+
+
+
+
 });

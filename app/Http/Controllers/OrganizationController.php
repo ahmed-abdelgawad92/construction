@@ -69,7 +69,7 @@ class OrganizationController extends Controller {
 			'address'=>'regex:/^[\pL\pN\s]+$/u',
 			'center'=>'regex:/^[\pL\pN\s]+$/u',
 			'city'=>'regex:/^[\pL\pN\s]+$/u',
-			'phone'=>'numeric',
+			'phone.*'=>'numeric',
 			'type'=>'required|in:0,1'
 		];
 		//validation error messages
@@ -79,7 +79,7 @@ class OrganizationController extends Controller {
 			'address.regex'=>'الشارع لابد أن يتكون من حروف و أرقام فقط',
 			'center.regex'=>'المركز لابد أن يتكون من حروف و أرقام فقط',
 			'city.regex'=>'المدينة لابد أن تتكون من حروف و أرقام فقط',
-			'phone.numeric'=>'رقم الهاتف لابد أن يتكون من أرقام فقط',
+			'phone.*.numeric'=>'رقم الهاتف لابد أن يتكون من أرقام فقط',
 			'type.required'=>'من فضلك حدد نوع العميل اذا كانت هيئة أو مستخلص',
 			'type.in'=>'نرجو عدم تغيير قيمة نوع العميل و أختيار من الختيارات المتاحة فقط'
 		];

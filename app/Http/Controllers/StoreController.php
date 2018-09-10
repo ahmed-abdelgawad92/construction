@@ -166,7 +166,7 @@ class StoreController extends Controller {
 			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه الكمية من الخامو يرجى المحاولة فى وقت لاحق');
 			}
-			if($req->input('tid')!=null){
+			if($req->input('tid')!=null&&$req->input('tid')!=0){
 				return redirect()->route('addconsumption',['id'=>$req->input('tid')])->with('success','تم شراء الخام بنجاح و تم التخزين');
 			}
 			return redirect()->back()->with('success','تم شراء الخام بنجاح و تم التخزين');

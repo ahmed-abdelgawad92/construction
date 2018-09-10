@@ -4,7 +4,7 @@
 	<title>@yield('title')</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<link rel="icon" type="image/png" href="{{ asset('icon2.png') }}">
+	<link rel="icon" type="image/png" href="{{ asset('images/logo_3omad_sm.png') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('js/js.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
@@ -26,7 +26,7 @@
 			        <span class="icon-bar"></span>
 		       		<span class="icon-bar"></span>
 	    		</button>
-				<a href="{{route('dashboard')}}" class="navbar-brand">شركة مقاولات الجعفرى </a>
+				<a href="{{route('dashboard')}}" class="navbar-brand"><img src="{{asset('images/logo_3omad_sm.png')}}" alt="" id="logo"></a>
 			</div>
 			<div class="collapse navbar-collapse" id="collapse">
 				<ul class="nav navbar-nav navbar-right">
