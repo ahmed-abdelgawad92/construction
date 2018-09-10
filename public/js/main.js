@@ -188,28 +188,41 @@ $(document).ready(function() {
 	**
 	*/
 	$('#addOrganization').submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
 		var check = true;
-		var name=$("#name").trim();
-		var address=$('#address').trim();
-		var center=$('#center').trim();
-		var city=$('#city').trim();
-		var type=$('#type').trim();
-		if(!name && !name.match(/^[\pL\pN\s]+$/)){
+		var name=$("#name");
+		var address=$('#address');
+		var center=$('#center');
+		var city=$('#city');
+		if(!name.val().trim() && !name.val().trim().match(/^[\pL\pN\s]+$/)){
 			check=false;
+			assignError(name,'الاسم يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!address && !address.match(/^[\pL\pN\s]+$/)){
+		if(!address.val().trim() && !address.val().trim().match(/^[\pL\pN\s]+$/)){
 			check=false;
+			assignError(address,'العنوان يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!center && !center.match(/^[\pL\pN\s]+$/)){
+		if(!center.val().trim() && !center.val().trim().match(/^[\pL\pN\s]+$/)){
 			check=false;
+			assignError(center,'المركز يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!city && !city.match(/^[\pL\pN\s]+$/)){
+		if(!city.val().trim() && !city.val().trim().match(/^[\pL\pN\s]+$/)){
 			check=false;
+			assignError(city,'المدينة يجب ان تتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(type!=0 && type!=1){
-			check=false;
+		$(".phone_input").each(function(){
+			if(!$(this).val().trim().match(/^\+?[0-9]{8,}$/)){
+				check=false;
+				assignError($(this),'الهاتف يجب ان يتكون من ارقام و + فقط');
+			}
+		});
+		if(check){
+			$(this).submit();
 		}
-
+		$("#save_btn").removeClass('disabled');
+		return false;
 	});
 
 

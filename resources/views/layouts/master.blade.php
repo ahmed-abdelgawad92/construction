@@ -12,6 +12,7 @@
 	<script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}">
 	</script>
 	<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('js/functions.js') }}"></script>
 	<script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
 </head>
 <body>
