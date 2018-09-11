@@ -68,8 +68,8 @@ class TermController extends Controller {
 	public function create($id=null)
 	{
 		if(Auth::user()->type=='admin'){
-			if(isset($id))
-				$projects=Project::findOrFail($id);
+			if(isset($id)&& !empty($id))
+				$projects[]=Project::findOrFail($id);
 			else
 				$projects=Project::all();
 			$term_types=TermType::all();

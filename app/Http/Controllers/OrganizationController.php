@@ -95,7 +95,7 @@ class OrganizationController extends Controller {
 		$org->address=$req->input('address');
 		$org->center=$req->input('center');
 		$org->city=$req->input('city');
-		$org->phone=$req->input('phone');
+		$org->phone=implode(';',$req->input('phone'));
 		$org->type=$req->input('type');
 
 		$saved=$org->save();
@@ -117,7 +117,8 @@ class OrganizationController extends Controller {
 		//
 		$org= Organization::findOrFail($id);
 		$projects=$org->projects;
-		$array=['org'=>$org,'projects'=>$projects,'active'=>'org'];
+		$current_projects=$org->projects()->where('done',0)->get();
+		$array=['org'=>$org,'projects'=>$projects,'current_projects'=>$current_projects,'active'=>'org'];
 		return view('organization.show',$array);
 	}
 

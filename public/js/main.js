@@ -219,7 +219,7 @@ $(document).ready(function() {
 			}
 		});
 		if(check){
-			$(this).submit();
+			this.submit();
 		}
 		$("#save_btn").removeClass('disabled');
 		return false;
@@ -227,6 +227,16 @@ $(document).ready(function() {
 
 
 
+/******************************************Projects********************************************/
+// switch nav in project profile
+$(".navigate_to_div").click(function(e){
+	e.preventDefault();
+	$("section#navigation>div").addClass('hide').removeClass('show');
+	$(".nav-tabs li.active").removeClass('active');
+	var path=$(this).attr('data-nav-path');
+	$(path+'_nav_item').addClass('active');
+	$(path).removeClass('hide').addClass('show');
+});
 
 
 

@@ -18,8 +18,14 @@
 			<p>الشارع : {{$org->address}}</p>
 			<p>المركز : {{$org->center}}</p>
 			<p>المدينة : {{$org->city}}</p>
-			<p>التليفون : {{$org->phone}}</p>
+			@php
+				$phones = explode(";",$org->phone);
+			@endphp
+			@foreach ($phones as $phone)
+			<p>التليفون : {{$phone}}</p>
+			@endforeach
 			<p>نوع العميل : @if($org->type==0)عميل @else مقاول @endif</p>
+			<a href="{{ url('project/add',$org->id) }}" class="btn float btn-navy">أضافة مشروع</a>
 			<a href="{{ route('updateorganization',$org->id) }}" class="btn width-100 float btn-default">تعديل</a>
 			<form class="float" method="post" action="{{ route('deleteorganization',$org->id) }}">
 				<button type="button" data-toggle="modal" data-target="#delete" class="btn width-100 btn-danger">حذف</button>
@@ -49,26 +55,30 @@
 			<h4>المشروعات الحالية</h4>
 		</div>
 		<div class="panel-body">
-			<div class="row item">
-				<div class="col-md-4 col-lg-4 col-sm-4 col-xs-4">
-					<img src="{{ asset('images/project2.png') }}" alt="" class="img-responsive">
-				</div>
-				<div class="col-md-8  col-lg-8  col-sm-8 col-xs-8">
-					<h4>مشروعات هذه الهيئة مشروعات هذه الهيئة مشروعات هذه الهيئة</h4>
-					<p>مشروعات هذه الهيئة مشروعات هذه الهيئة مشروعات هذه الهيئة</p>
-					<a href="" class="btn btn-default btn-project">أفتح</a>
-				</div>
-			</div>
-			<div class="row item">
-				<div class="col-md-4 col-lg-4 col-sm-4 col-xs-4">
-					<img src="{{ asset('images/project2.png') }}" alt="" class="img-responsive">
-				</div>
-				<div class="col-md-8  col-lg-8  col-sm-8 col-xs-8">
-					<h4>مشروعات هذه الهيئة مشروعات هذه الهيئة مشروعات هذه الهيئة</h4>
-					<p>مشروعات هذه الهيئة مشروعات هذه الهيئة مشروعات هذه الهيئة</p>
-					<a href="" class="btn btn-default btn-project">أفتح</a>
-				</div>
-			</div>
+			@if (count($current_projects)>0)
+				@foreach ($current_projects as $proj)
+					<div class="row item">
+						<div class="col-md-4 col-lg-4 col-sm-4 col-xs-4">
+							<a href="{{route('showproject',['id'=>$proj->id])}}"><img src="{{ asset('images/project_img.PNG') }}" alt="" class="img-responsive img-rounded"></a>
+						</div>
+						<div class="col-md-8  col-lg-8  col-sm-8 col-xs-8">
+							<h3>{{$proj->name}}</h3>
+							<p>الرقم التعريفي : {{$proj->def_num}}</p>
+							<p>المدينة : {{$proj->city}}</p>
+						</div>
+						<div class="col-xs-12 mt-4">
+							<a href="{{route('showproject',['id'=>$proj->id])}}" class="btn btn-default btn-project">أفتح</a>
+							@if ($proj->started_at==null)
+							<a href="" class="btn btn-default btn-project">ابدأ التنفيذ</a>
+							@else
+							<a href="" class="btn btn-default btn-success">إنهاء التنفيذ</a>
+							@endif
+						</div>
+					</div>
+				@endforeach
+			@else
+				<div class="alert alert-warning">لا يوجد مشروعات حالية لهذا العميل<br> <a href="{{ url('project/add',$org->id) }}" class="btn btn-warning">أضافة مشروع</a></div>
+			@endif
 		</div>
 	</div>
 	</div>
@@ -82,7 +92,7 @@
 		<?php $count++; ?>
 		<div class="col-sm-6 col-md-4 col-lg-3">
 			<div class="thumbnail">
-				<img src="{{ asset('images/construction.jpg') }}" alt="">
+				<a href="{{ route('showproject',$project->id) }}"><img src="{{ asset('images/construction.jpg') }}" class="w-100" alt=""></a>
 				<div class="caption center">
 					<h4 class="center">{{$project->name}}</h4>
 					<p class="center"><strong>المدينة :</strong> {{$project->city}}</p>
@@ -99,9 +109,8 @@
 		@endif
 		@endforeach
 	</div>
-	<a href="{{ url('project/add',$org->id) }}" class="btn btn-primary">أضافة مشروع</a>
 	@else
 	<h3 class="center">جميع مشروعات العميل {{$org->name}}</h3>
-	<div class="alert alert-warning">لا يوجد مشروعات لهذا العميل<br> <a href="{{ url('project/add',$org->id) }}" class="btn btn-primary">أضافة مشروع</a></div>
+	<div class="alert alert-warning">لا يوجد مشروعات لهذا العميل<br> <a href="{{ url('project/add',$org->id) }}" class="btn btn-warning">أضافة مشروع</a></div>
 	@endif
 @endsection

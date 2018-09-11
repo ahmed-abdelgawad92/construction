@@ -17,13 +17,19 @@
 				</div>
 			@endif
 			<ul class="nav nav-tabs">
-				<li class="active" role="presentation"><a href="">الرئيسية</a></li>
-				<li class="dropdown" role="presentation">
+				<li class="active" id="main_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#main" href="#">الرئيسية</a></li>
+				<li id="production_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#production" href="#">تقرير الانتاج</a></li>
+				<li id="supplier_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#supplier" href="#">الموردين</a></li>
+				<li class="dropdown raw_nav_item" role="presentation">
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">مخازن <span class="caret"></span></a>
 					<ul class="dropdown-menu">
+						<li><a href="#" class="navigate_to_div" data-nav-path="#raw">تقرير بالخامات</a></li>
 						<li><a href="{{ route('addstores',['cid'=>0,'pid'=>$project->id]) }}">أضافة خامات</a></li>
 						<li><a href="{{ route('allstores',$project->id) }}">عرض جميع الخامات بالمشروع</a></li>
 					</ul>
+				</li>
+				<li id="consumption_nav_item" role="presentation">
+					<a class="navigate_to_div" data-nav-path="#consumption" role="button" href="#">الاستهلاك</a>
 				</li>
 				<li class="dropdown" role="presentation">
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">رسومات <span class="caret"></span></a>
@@ -32,11 +38,19 @@
 						<li><a href="{{ route('allgraph',$project->id) }}">عرض جميع الرسومات</a></li>
 					</ul>
 				</li>
-				<li class="dropdown" role="presentation">
+				<li  id="employee_nav_item" class="dropdown" role="presentation">
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">موظفيين <span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="">تعيين موظف منتدب</a></li>
-						<li><a href="">عرض جميع الموظفين بالمشروع</a></li>
+						<li><a href="" class="navigate_to_div" data-nav-path="#employee">الموظفين الحاليين</a></li>
+						<li><a href="">جميع الموظفين الذين عملوا بالمشروع</a></li>
+					</ul>
+				</li>
+				<li class="dropdown" role="presentation">
+					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">ورقيات <span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="#">إضافة ورقية</a></li>
+						<li><a href="#">جميع ورقيات المشروع</a></li>
 					</ul>
 				</li>
 
@@ -61,6 +75,26 @@
 					</ul>
 				</li>
 			</ul>
+			<section id="navigation">
+				<div id="main" class="show">
+
+				</div>
+				<div id="raw" class="hide">
+					<div class="div" style="height:500px; width: 100%;background:red"></div>
+				</div>
+				<div id="consumption" class="hide">
+					<div class="div" style="height:500px; width: 100%;background:blue"></div>
+				</div>
+				<div id="employee" class="hide">
+					<div class="div" style="height:500px; width: 100%;background:grey"></div>
+				</div>
+				<div id="production" class="hide">
+					<div class="div" style="height:500px; width: 100%;background:aqua"></div>
+				</div>
+				<div id="supplier" class="hide">
+					<div class="div" style="height:500px; width: 100%;background:pink"></div>
+				</div>
+			</section>
 			<a href="{{ url('term/add',$project->id) }}" class="float btn btn-primary width-100">
 				أضافة بند
 			</a>
@@ -69,6 +103,9 @@
 			</a>
 			<a href="{{ route('showprojectproduction',$project->id) }}" class="float btn btn-primary">
 				أجمالى أنتاج المشروع
+			</a>
+			<a href="" class="float btn btn-success">
+				إنهاء المشروع
 			</a>
 			<a href="{{ route('updateproject',$project->id) }}" class="float btn btn-default width-100">
 				تعديل

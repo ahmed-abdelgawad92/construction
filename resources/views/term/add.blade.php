@@ -6,7 +6,7 @@
 		<div class="panel-heading">
 			@if(count($projects)==1)
 			<h3>
-			أضافة بند الى مشروع <a href="{{ route('showproject',$projects->id) }}">{{$projects->name}}</a>
+			أضافة بند الى مشروع <a href="{{ route('showproject',$projects[0]->id) }}">{{$projects[0]->name}}</a>
 			</h3>
 			@else
 			<h3>أضافة بند</h3>
@@ -36,14 +36,14 @@
 					</ul>
 				</div>
 			@endif
+			@if(count($projects)>0)
 			<form method="post" action="{{ route('addterm') }}" class="form-horizontal">
 				<div class="form-group @if($errors->has('project_id')) has-error @endif">
 					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للمشروع</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						@if(count($projects)>0)
 						<select name="project_id" id="project_id" class="form-control">
 							@if(count($projects)==1)
-								<option value="{{$projects->id}}">{{$projects->name}}</option>
+								<option value="{{$projects[0]->id}}">{{$projects[0]->name}}</option>
 							@else
 								<option value="0">أختار مشروع</option>
 								@foreach($projects as $project)
@@ -55,11 +55,6 @@
 							@foreach($errors->get('project_id') as $error)
 								<span class="help-block">{{ $error }}</span>
 							@endforeach
-						@endif
-						@else
-						<div class="alert alert-warning">
-							لا يوجد مشروعات
-						</div>
 						@endif
 					</div>
 				</div>
@@ -142,6 +137,12 @@
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">
 			</form>
+		@else
+		<div class="alert alert-warning">
+			لا يوجد مشروعات
+
+		</div>
+		@endif
 		</div>
 	</div>
 </div>

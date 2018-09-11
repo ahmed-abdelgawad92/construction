@@ -1,9 +1,10 @@
 ﻿<!DOCTYPE html>
 <html lang="ar">
 <head>
-	<title>@yield('title')</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Markazi+Text:500&amp;subset=arabic,latin-ext,vietnamese" rel="stylesheet">
+	<title>@yield('title')</title>
 	<link rel="icon" type="image/png" href="{{ asset('images/logo_3omad_sm.png') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('js/js.css') }}">
