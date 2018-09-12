@@ -82,7 +82,7 @@ class ProjectController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			if(isset($id)){
-				$orgs=Organization::findOrFail($id);
+				$orgs[]=Organization::findOrFail($id);
 				$array=['orgs'=>$orgs,'active'=>'project'];
 				return view('project.add',$array);
 			}

@@ -21,7 +21,13 @@
 			</ul>
 		</div>
 	@endif
-	<form class="form-horizontal" method="post" action="{{ route('updateorganization',$org->id) }}">
+	@if(session('warning'))
+		<div class="alert alert-warning">
+			<h2>خطأ</h2>
+			<h3>{{ session('warning') }}</h3>
+		</div>
+	@endif
+	<form class="form-horizontal" method="post" id="addOrganization" action="{{ route('updateorganization',$org->id) }}">
 		<div class="form-group @if($errors->has('name')) has-error @endif">
 			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم العميل</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
@@ -66,22 +72,27 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('phone')) has-error @endif">
-			<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون</label>
+		@php
+		$phones=explode(';',$org->phone);
+		@endphp
+		@for($i=0;$i<count($phones);$i++)
+		<div class="form-group @if($errors->has('phone.'.$i)) has-error @endif" @if($i==0) id="phone_template" @else id="del_phone{{$i}}" @endif>
+			<label for="phone{{$i}}" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون @if($i==0)<a href="#" id="add_another_phone"> أضافة رقم جديد؟</a>@else <span data-phone="{{$i}}" class="glyphicon glyphicon-trash delete_phone"></span> @endif</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="phone" id="phone" value="{{$org->phone}}" class="form-control" placeholder="أدخل التليفون">
-				@if($errors->has('phone'))
-					@foreach($errors->get('phone') as $error)
+				<input type="text" name="phone[{{$i}}]" id="phone{{$i}}" value="{{$phones[$i]}}" class="form-control phone_input" placeholder="أدخل التليفون">
+				@if($errors->has('phone.'.$i))
+					@foreach($errors->get('phone.'.$i) as $error)
 						<span class="help-block">{{ $error }}</span>
 					@endforeach
 				@endif
 			</div>
 		</div>
+		@endfor
 		<div class="form-group @if($errors->has('type')) has-error @endif">
 			<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع العميل</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="radio" name="type" value="0" id="" @if($org->type==0) checked @endif> عميل
-				<input type="radio" name="type" value="1" id="" @if($org->type==1) checked @endif> مقاول
+				<label><input type="radio" name="type" value="0" id="" @if($org->type==0) checked @endif> عميل</label>
+				<label><input type="radio" name="type" value="1" id="" @if($org->type==1) checked @endif> مقاول</label>
 				@if($errors->has('type'))
 					@foreach($errors->get('type') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -90,7 +101,7 @@
 			</div>
 		</div>
 		<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
-			<button class="btn btn-primary form-control" id="save_btn">تعديل</button>
+			<button class="btn btn-primary w-100" id="save_btn">تعديل</button>
 		</div>
 		<input type="hidden" name="_method" value="PUT">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">

@@ -23,7 +23,13 @@ h4{
 h5{
 	font-size: 1.7rem;
 }
-
+.form-control{
+	font-size: 2rem;
+	height: 40px !important;
+}
+button.form-control{
+	height: 50px !important;
+}
 .width-100{
   width: 100px;
 }

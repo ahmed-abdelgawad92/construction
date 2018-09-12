@@ -37,7 +37,7 @@
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<select class="form-control" name="organization_id" id="organization_id">
 					@if(count($orgs)==1)
-						<option value="{{$orgs->id}}">{{$orgs->name}}</option>
+						<option value="{{$orgs[0]->id}}">{{$orgs[0]->name}}</option>
 					@else
 						@foreach($orgs as $org)
 						<option value="{{$org->id}}">{{$org->name}}</option>

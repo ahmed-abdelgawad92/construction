@@ -9,5 +9,4 @@ class Organization extends Model {
 	{
 		return $this->hasMany('App\Project')->orderBy('created_at','desc');
 	}
-
 }

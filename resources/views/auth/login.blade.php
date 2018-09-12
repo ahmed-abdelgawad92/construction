@@ -40,7 +40,7 @@
 					</div>
 					<div class="form-group">
 						<div class="col-md-6 col-md-offset-4">
-							<button type="submit" class="btn save_btn btn-primary width-100">
+							<button type="submit" id="save_btn" class="btn btn-primary form-control">
 								دخول
 							</button>
 						</div>
