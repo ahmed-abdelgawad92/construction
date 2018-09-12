@@ -25,10 +25,6 @@ Route::post('/',[
   'uses'=>'Auth\LoginController@authenticate',
   'as'=>'postLogin'
 ]);
-Route::get("/logout",[
-  'uses'=>'Auth\LoginController@logout',
-  'as'=>'logout'
-]);
 
 
 //Authenticated Routes
@@ -40,10 +36,10 @@ Route::group(['middleware' => 'auth'], function() {
 			return view('home',['active'=>'home']);
 		}
 	]);
-	Route::get('logout',[
-		'uses'=>'Auth\AuthController@getLogout',
-		'as'=>'logout'
-	]);
+  Route::get("/logout",[
+    'uses'=>'Auth\LoginController@logout',
+    'as'=>'logout'
+  ]);
 
 	//organization manipulations
 	Route::group(['prefix' => 'organization'], function() {

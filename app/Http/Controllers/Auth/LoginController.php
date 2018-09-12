@@ -62,15 +62,14 @@ class LoginController extends Controller
     public function authenticate(Request $request)
     {
       $credentials = $request->only('username', 'password');
-      if (Auth::attempt($credentials,false)) {
+      if (Auth::attempt($credentials,$request->remember)) {
          return redirect()->intended('dashboard');
       }else{
-        return redirect()->back()->withInput()->with("invalid","Username or password is incorrect!");
+        return redirect()->back()->withInput()->with("invalid","أسم المستخدم او كلمة المرور غير صحيحة");
       }
     }
     public function logout()
     {
-      // code...
       Auth::logout();
       return redirect()->route('login');
     }

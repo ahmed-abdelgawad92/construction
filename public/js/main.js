@@ -167,6 +167,26 @@ $(document).ready(function() {
 	});
 
 
+/******************************************LOGIN********************************************/
+	$('#login_form').submit(function(e){
+		e.preventDefault();
+		check=true;
+		if(!$("#username").val().trim()){
+			check=false;
+			assignError($('#username'),'يجب إدخال أسم المستخدم');
+		}
+		if(!$("#password").val().trim()){
+			check=false;
+			assignError($('#password'),'يجب إدخال كلمة المرور');
+		}
+		if (check) {
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+
+
 /******************************************ORGANIZATION********************************************/
 	//add many phone numbers
 	$("#add_another_phone").click(function(e){
