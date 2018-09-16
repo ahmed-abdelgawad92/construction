@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model {
-	protected $dates = ['created_at','updated_at','started_at'];
+	// protected $dates = ['created_at','updated_at','started_at'];
 	//Define the one to many relationship with Organizations
 	public function organization()
 	{

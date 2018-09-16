@@ -184,6 +184,50 @@
 				@endif
 			</div>
 		</div>
+		<div class="form-group @if($errors->has('cash_box')) has-error @endif">
+			<label for="cash_box" class="control-label col-sm-2 col-md-2 col-lg-2">صندوق المال</label>
+			<div class="col-sm-8 col-md-8 col-lg-8">
+				<input type="text" name="cash_box" id="cash_box" value="{{old('cash_box')}}" class="form-control" placeholder="أدخل رأس مال الصندوق">
+				@if($errors->has('cash_box'))
+					@foreach($errors->get('cash_box') as $error)
+						<span class="help-block">{{ $error }}</span>
+					@endforeach
+				@endif
+			</div>
+		</div>
+		<div class="form-group @if($errors->has('loan')) has-error @endif">
+			<label for="loan" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة القرض</label>
+			<div class="col-sm-8 col-md-8 col-lg-8">
+				<input type="text" name="loan" id="loan" value="{{old('loan')}}" class="form-control" placeholder="أدخل قيمة القرض">
+				@if($errors->has('loan'))
+					@foreach($errors->get('loan') as $error)
+						<span class="help-block">{{ $error }}</span>
+					@endforeach
+				@endif
+			</div>
+		</div>
+		<div class="form-group @if($errors->has('loan_interest_rate')) has-error @endif">
+			<label for="loan_interest_rate" class="control-label col-sm-2 col-md-2 col-lg-2">نسبة الفائدة</label>
+			<div class="col-sm-8 col-md-8 col-lg-8">
+				<input type="text" name="loan_interest_rate" id="loan_interest_rate" value="{{old('loan_interest_rate')}}" class="form-control" placeholder="أدخل نسبة فائدة القرض">
+				@if($errors->has('loan_interest_rate'))
+					@foreach($errors->get('loan_interest_rate') as $error)
+						<span class="help-block">{{ $error }}</span>
+					@endforeach
+				@endif
+			</div>
+		</div>
+		<div class="form-group @if($errors->has('bank')) has-error @endif">
+			<label for="bank" class="control-label col-sm-2 col-md-2 col-lg-2">أسم البنك</label>
+			<div class="col-sm-8 col-md-8 col-lg-8">
+				<input type="text" name="bank" id="bank" value="{{old('bank')}}" class="form-control" placeholder="أدخل أسم البنك">
+				@if($errors->has('bank'))
+					@foreach($errors->get('bank') as $error)
+						<span class="help-block">{{ $error }}</span>
+					@endforeach
+				@endif
+			</div>
+		</div>
 		<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
 			<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 		</div>

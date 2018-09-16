@@ -77,7 +77,70 @@
 			</ul>
 			<section id="navigation">
 				<div id="main" class="show">
-
+					<table class="table table-striped">
+						<tr>
+							<th>أسم المشروع </th>
+							<td>{{$project->name}}</td>
+						</tr>
+						<tr>
+							<th>الرقم التعريفى</th>
+							<td>{{$project->def_num}}</td>
+						</tr>
+						<tr>
+							<th>شارع</th>
+							<td>{{$project->address}}</td>
+						</tr>
+						@if (!empty($project->village))
+						<tr>
+							<th>قرية</th>
+							<td>{{$project->village}}</td>
+						</tr>
+						@endif
+						@if (!empty($project->center))
+						<tr>
+							<th>مركز</th>
+							<td>{{$project->center}}</td>
+						</tr>
+						@endif
+						<tr>
+							<th>مدينة</th>
+							<td>{{$project->city}}</td>
+						</tr>
+						@if (!empty($project->extra_data))
+						<tr>
+							<th>بيانات أضافية</th>
+							<td>{{$project->extra_data}}</td>
+						</tr>
+						@endif
+						@if (!empty($project->model_used))
+						<tr>
+							<th>النموذج المستخدم</th>
+							<td>{{$project->model_used}}</td>
+						</tr>
+						@endif
+						<tr>
+							<th>مدة التنفيذ (بالشهر)</th>
+							<td>{{$project->implementing_period}}</td>
+						</tr>
+						<tr>
+							<th>عدد الأدوار</th>
+							<td>{{$project->floor_num}}</td>
+						</tr>
+						<tr>
+							<th>السعر الكلى التقريبى للمشروع</th>
+							<td>{{$project->approximate_price}}</td>
+						</tr>
+						@if ($org->type==1)
+						<tr>
+							<th>نسبة المقاول</th>
+							<td>% {{$project->non_organization_payment}}</td>
+						</tr>
+						@endif
+						<tr>
+							<th>تاريخ استلام الموقع</th>
+							<td>{{date("d-m-Y",strtotime($project->started_at))}}</td>
+						</tr>
+					</table>
 				</div>
 				<div id="raw" class="hide">
 					<div class="div" style="height:500px; width: 100%;background:red"></div>
@@ -95,23 +158,23 @@
 					<div class="div" style="height:500px; width: 100%;background:pink"></div>
 				</div>
 			</section>
-			<a href="{{ url('term/add',$project->id) }}" class="float btn btn-primary width-100">
+			<a href="{{ url('term/add',$project->id) }}" class="float btn btn-primary mb-3 width-100">
 				أضافة بند
 			</a>
-			<a href="{{ url('term/all',$project->id) }}" class="float btn btn-primary width-100">
+			<a href="{{ url('term/all',$project->id) }}" class="float btn btn-primary mb-3 width-100">
 				جميع البنود
 			</a>
-			<a href="{{ route('showprojectproduction',$project->id) }}" class="float btn btn-primary">
+			{{-- <a href="{{ route('showprojectproduction',$project->id) }}" class="float btn btn-primary mb-3">
 				أجمالى أنتاج المشروع
-			</a>
-			<a href="" class="float btn btn-success">
+			</a> --}}
+			<a href="" class="float btn btn-success mb-3">
 				إنهاء المشروع
 			</a>
-			<a href="{{ route('updateproject',$project->id) }}" class="float btn btn-default width-100">
+			<a href="{{ route('updateproject',$project->id) }}" class="float btn btn-default width-100 mb-3">
 				تعديل
 			</a>
 			<form method="post" action="{{ route('deleteproject',$project->id) }}" class="float">
-				<button type="button" data-toggle="modal" data-target="#delete" class="btn width-100 btn-danger">حذف</button>
+				<button type="button" data-toggle="modal" data-target="#delete" class="btn width-100 btn-danger mb-3">حذف</button>
 				<div class="modal fade" id="delete" tabindex="-1" role="dialog">
 					<div class="modal-dialog modal-sm">
 						<div class="modal-content">

@@ -107,15 +107,19 @@ class ProjectController extends Controller {
 				'name'=>'required|regex:/^[\pL\pN\s]+$/u',
 				'def_num'=>'numeric',
 				'address'=>'regex:/^[\pL\pN\s]+$/u',
-				'village'=>'regex:/^[\pL\pN\s]+$/u',
-				'center'=>'regex:/^[\pL\pN\s]+$/u',
+				'village'=>'nullable|regex:/^[\pL\pN\s]+$/u',
+				'center'=>'nullable|regex:/^[\pL\pN\s]+$/u',
 				'city'=>'regex:/^[\pL\pN\s]+$/u',
-				'extra_data'=>'regex:/^[\pL\pN\s\(\)]+$/u',
-				'model_used'=>'alpha_num',
+				'extra_data'=>'nullable|regex:/^[\pL\pN\s\(\)]+$/u',
+				'model_used'=>'nullable|regex:/^[\pL\pN\s]+$/u',
 				'implementing_period'=>'numeric',
 				'floor_num'=>'regex:/^[\pL\pN\s\+]+$/u',
 				'approximate_price'=>'regex:/^[0-9]*\.?[0-9]+$/',
-				'started_at'=>'date'
+				'started_at'=>'date',
+				'loan'=>'nullable|numeric',
+				'cash_box'=>'nullable|numeric',
+				'loan_interest_rate'=>'nullable|required_with:loan|numeric',
+				'bank'=>'nullable|required_with:loan|regex:/^[\pL\pN\s]+$/u'
 			];
 			//validation messages
 			$error_messages=[
@@ -133,7 +137,13 @@ class ProjectController extends Controller {
 				'implementing_period.numeric'=>'مدة التنفيذ يجب أن تتكون من أرقام فقط',
 				'floor_num.regex'=>'عدد الأدوار لابد أن يتكون من حروف و أرقام و + فقط',
 				'approximate_price.regex'=>'السعر التقريبى يجب أن يكون أرقام فقط سواء كسور أو أرقام صحيحة',
-				'started_at.date'=>'تاريخ استلام الموقع يجب أن يكون تاريخ صحيح'
+				'started_at.date'=>'تاريخ استلام الموقع يجب أن يكون تاريخ صحيح',
+				'loan.numeric'=>'قيمة القرض يجب ان تتكون من أرقام فقط',
+				'cash_box.numeric'=>'قيمة الصندوق يجب ان تتكون من أرقام فقط',
+				'loan_interest_rate.numeric'=>'قيمة نسبة الفائدة يجب ان تتكون من أرقام فقط',
+				'loan_interest_rate.required_with'=>'لابد من إدخال نسبة الفائدة في حالة وجود قرض',
+				'bank.regex'=>'أسم البنك يجب أن يتكون من حروف و أرقام فقط',
+				'bank.required_with'=>'لابد من إدخال أسم البنك في حالة وجود قرض'
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
@@ -157,6 +167,10 @@ class ProjectController extends Controller {
 			if(!empty($req->input('started_at')))
 				$project->started_at=$req->input('started_at');
 			$project->model_used=$req->input('model_used');
+			$project->cash_box=$req->input('cash_box');
+			$project->loan=$req->input('loan');
+			$project->loan_interest_rate=$req->input('loan_interest_rate');
+			$project->bank=$req->input('bank');
 
 			$saved=$project->save();
 			//check if stored
