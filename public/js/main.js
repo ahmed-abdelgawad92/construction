@@ -158,6 +158,10 @@ $(document).ready(function() {
 		});
 	});
 
+	//select file
+	$('.file').change(function(e){
+		$("#file_name").val($(this).val().split("\\").pop());
+	});
 
 	$('#info').popover();
 
@@ -216,19 +220,19 @@ $(document).ready(function() {
 		var address=$('#address');
 		var center=$('#center');
 		var city=$('#city');
-		if(!name.val().trim() && !name.val().trim().match(/^[\pL\pN\s]+$/u)){
+		if(!name.val().trim() || !name.val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)){
 			check=false;
 			assignError(name,'الاسم يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!address.val().trim() && !address.val().trim().match(/^[\pL\pN\s]+$/u)){
+		if(!address.val().trim() || !address.val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)){
 			check=false;
 			assignError(address,'العنوان يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!center.val().trim() && !center.val().trim().match(/^[\pL\pN\s]+$/u)){
+		if(!center.val().trim() || !center.val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)){
 			check=false;
 			assignError(center,'المركز يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!city.val().trim() && !city.val().trim().match(/^[\pL\pN\s]+$/u)){
+		if(!city.val().trim() || !city.val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)){
 			check=false;
 			assignError(city,'المدينة يجب ان تتكون من حروف و ارقام و مسافات فقط');
 		}
@@ -263,65 +267,69 @@ $(document).ready(function() {
 		$(".is-invalid").removeClass('is-invalid');
 		$('.invalid-feedback').remove();
 		var check = true;
-		if (!$('#name').val().trim() && !$('#name').val().trim().match(/^[\pL\pN\s]+$/g)) {
+		if (!$('#name').val().trim() || !$('#name').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
 			check=false;
 			assignError($('#name'),'يجب ان يتكون من حروف وارقام فقط');
 		}
-		if (!$('#def_num').val().trim() && !$('#def_num').val().trim().match(/^[\pN\s]+$/g)) {
+		if (!$('#def_num').val().trim() || !$('#def_num').val().trim().match(/^[0-9]+$/)) {
 			check=false;
 			assignError($('#def_num'),'يجب ان يتكون من ارقام فقط');
 		}
-		if (!$('#address').val().trim() && !$('#address').val().trim().match(/^[\pL\pN\s]+$/g)) {
+		if (!$('#address').val().trim() || !$('#address').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
 			check=false;
 			assignError($('#address'),'يجب ان يتكون من حروف وارقام فقط');
 		}
-		if (!$('#village').val().trim() && !$('#village').val().trim().match(/^[\pL\pN\s]+$/g)) {
+		if ($('#village').val().trim() && !$('#village').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
 			check=false;
 			assignError($('#village'),'يجب ان يتكون من حروف وارقام فقط');
 		}
-		if (!$('#center').val().trim() && !$('#center').val().trim().match(/^[\pL\pN\s]+$/g)) {
+		if ($('#center').val().trim() && !$('#center').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
 			check=false;
 			assignError($('#center'),'يجب ان يتكون من حروف وارقام فقط');
 		}
-		if (!$('#city').val().trim() && !$('#city').val().trim().match(/^[\pL\pN\s]+$/g)) {
+		if (!$('#city').val().trim() || !$('#city').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
 			check=false;
 			assignError($('#city'),'يجب ان يتكون من حروف وارقام فقط');
 		}
-		if (!$('#model_used').val().trim() && !$('#model_used').val().trim().match(/^[\pL\pN\s]+$/g)) {
+		if ($('#model_used').val().trim() && !$('#model_used').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
 			check=false;
 			assignError($('#model_used'),'يجب ان يتكون من حروف وارقام فقط');
 		}
-		if (!$('#extra_data').val().trim() && !$('#extra_data').val().trim().match(/^[\pL\pN\s\(\)]+$/g)) {
+		if ($('#extra_data').val().trim() && !$('#extra_data').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9\(\)]+$/)) {
 			check=false;
 			assignError($('#extra_data'),'يجب ان يتكون من حروف وارقام () فقط');
 		}
-		if (!$('#implementing_period').val().trim() && !$('#implementing_period').val().trim().match(/^[\pN]{1,3}$/g)) {
+		if (!$('#implementing_period').val().trim() || !$('#implementing_period').val().trim().match(/^[0-9]{1,3}$/)) {
 			check=false;
 			assignError($('#implementing_period'),'يجب ان يتكون من من ارقام فقط');
 		}
-		if (!$('#floor_num').val().trim() && !$('#floor_num').val().trim().match(/^[\pL\pN\s]+$/g)) {
+		if (!$('#floor_num').val().trim() || !$('#floor_num').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
 			check=false;
 			assignError($('#floor_num'),'يجب ان يتكون من حروف وارقام فقط');
 		}
-		if (!$('#approximate_price').val().trim() && !$('#approximate_price').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+		if ($('#approximate_price').val().trim() && !$('#approximate_price').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
 			check=false;
 			assignError($('#approximate_price'),'يجب ان يتكون من ارقام فقط');
 		}
-		if ($('#cash_box').val().trim() && !$('#cash_box').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
-			check=false;
-			assignError($('#cash_box'),'يجب ان يتكون من ارقام فقط');
-		}
-		if ($('#loan').val().trim() && !$('#loan').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
-			check=false;
-			assignError($('#loan'),'يجب ان يتكون من ارقام فقط');
-		}
-		if ($('#loan_interest_rate').val().trim() && !$('#loan_interest_rate').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
-			check=false;
-			assignError($('#loan_interest_rate'),'يجب ان يتكون من ارقام فقط');
-		}
-		if ($('#bank').val().trim() && !$('#bank').val().trim().match(/^[\pL\pN\s]+$/g)) {
-			check=false;
-			assignError($('#bank'),'يجب ان يتكون من حروف وارقام فقط');
+		try {
+			if ($('#cash_box').val().trim() && !$('#cash_box').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+				check=false;
+				assignError($('#cash_box'),'يجب ان يتكون من ارقام فقط');
+			}
+			if ($('#loan').val().trim() && !$('#loan').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+				check=false;
+				assignError($('#loan'),'يجب ان يتكون من ارقام فقط');
+			}
+			if ($('#loan_interest_rate').val().trim() && !$('#loan_interest_rate').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+				check=false;
+				assignError($('#loan_interest_rate'),'يجب ان يتكون من ارقام فقط');
+			}
+			if ($('#bank').val().trim() && !$('#bank').val().trim().match(/^[a-zA-Z\u0600-\u06FF\s0-9]+$/)) {
+				check=false;
+				assignError($('#bank'),'يجب ان يتكون من حروف وارقام فقط');
+			}
+		} catch (e) {
+			console.log(e);
 		}
 		if(check){
 			this.submit();

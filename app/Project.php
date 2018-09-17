@@ -1,6 +1,8 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Term;
+use App\Production;
 
 class Project extends Model {
 	// protected $dates = ['created_at','updated_at','started_at'];
@@ -14,7 +16,7 @@ class Project extends Model {
 	{
 		return $this->hasMany('App\Term');
 	}
-	//Define the one to many relationship with expenses
+	//Define the one to many relationship with expenses ekramyat
 	public function expenses()
 	{
 		return $this->hasMany('App\Expense');
@@ -24,11 +26,19 @@ class Project extends Model {
 	{
 		return $this->hasMany('App\Graph');
 	}
+
 	//Define the one to many relationship with stores
 	public function stores()
 	{
 		return $this->hasMany('App\Store');
 	}
+
+	//has many suppliers through terms
+	public function suppliers()
+	{
+		return $this->hasManyThrough('App\Supplier','App\Term');
+	}
+
 	//Define the one to many relationship with taxes
 	public function taxes()
 	{
@@ -46,10 +56,28 @@ class Project extends Model {
 		return $this->hasManyThrough('App\Consumption','App\Term');
 	}
 
+	//has many contracts through terms
+	public function contracts()
+	{
+		return $this->hasManyThrough('App\Contract','App\Term');
+	}
+
 	//has many productions through terms
 	public function productions()
 	{
-		return $this->hasManyThrough('App\Production','App\Term');
+		// $terms = $this->terms();
+		// $productions=
+	}
+	//has many papers
+	public function papers()
+	{
+		return $this->hasMany('App\Paper');
+	}
+
+	//has many payments
+	public function payments()
+	{
+		return $this->hasMany('App\Payment');
 	}
 
 	//has many transactions through terms

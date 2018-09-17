@@ -30,7 +30,7 @@
 			</ul>
 		</div>
 	@endif
-	<form class="form-horizontal" method="post" action="{{ route('updateproject',$project->id) }}">
+	<form class="form-horizontal" method="post" id="add_project" action="{{ route('updateproject',$project->id) }}">
 		<div class="form-group @if($errors->has('organization_id')) has-error @endif">
 			<label for="organization_id" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للعميل</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">

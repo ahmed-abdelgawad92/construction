@@ -69,7 +69,11 @@
 				<div class="form-group @if($errors->has('graph')) has-error @endif">
 					<label for="graph" class="control-label col-sm-2 col-md-2 col-lg-2">أختار ملف الرسم</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="file" name="graph" id="graph" value="{{old('graph')}}" class="form-control">
+						<div class="input-group">
+						  <input type="text" class="form-control" id="file_name" placeholder="اختار ملف الرسم" aria-describedby="basic-addon2">
+						  <span class="input-group-addon" id="basic-addon2">اختار الملف</span>
+						</div>
+						<input type="file" name="graph" id="graph" value="{{old('graph')}}" class="form-control file">
 						@if($errors->has('graph'))
 							@foreach($errors->get('graph') as $error)
 								<span class="help-block">{{ $error }}</span>

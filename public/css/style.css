@@ -967,6 +967,16 @@ footer{
 .table-striped>tbody>tr:nth-of-type(odd) {
   background-color: #dbedff8a;
 }
+.file{
+	position: absolute;
+	right: 0;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	opacity: 0;
+	cursor: pointer;
+	z-index: 100;
+}
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{
   color: black !important;
