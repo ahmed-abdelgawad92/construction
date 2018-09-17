@@ -168,7 +168,7 @@
 		<div class="form-group @if($errors->has('started_at')) has-error @endif">
 			<label for="started_at" class="control-label col-sm-2 col-md-2 col-lg-2">تاريخ استلام الموقع</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="started_at" id="started_at" @if($project->started_at!=null) value="{{$project->started_at->format('Y-m-d')}}" @endif class="form-control" placeholder="أدخل تاريخ استلام الموقع">
+				<input type="text" name="started_at" autocomplete="off" id="started_at" @if($project->started_at!=null) value="{{$project->started_at}}" @endif class="form-control" placeholder="أدخل تاريخ استلام الموقع">
 				@if($errors->has('started_at'))
 					@foreach($errors->get('started_at') as $error)
 						<span class="help-block">{{ $error }}</span>

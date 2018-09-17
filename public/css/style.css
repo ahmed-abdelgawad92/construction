@@ -27,6 +27,9 @@ h5{
 	font-size: 2rem;
 	height: 40px !important;
 }
+textarea.form-control{
+	height: 200px !important;
+}
 button.form-control{
 	height: 50px !important;
 }
@@ -961,6 +964,9 @@ footer{
 .mx-auto {
   margin-left: auto !important;
 }
+.table-striped>tbody>tr:nth-of-type(odd) {
+  background-color: #dbedff8a;
+}
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{
   color: black !important;
@@ -994,4 +1000,34 @@ span.delete_phone:hover{
 /*------------------------------------Projects------------------------------------*/
 #navigation{
 	margin-bottom: 30px;
+}
+
+#float_container{
+	display: none;
+	position: fixed;
+	background: rgba(0,0,0,0.7);
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+#float_form_container{
+	display: none;
+	background: #eeeeee;
+	max-width: 80%;
+	margin: 50px auto 0;
+	padding: 40px 40px 100px;
+	border-radius: 8px;
+	position: relative;
+}
+span.close{
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	color: rgba(0, 0, 0, 0.7);
+	opacity: 1!important;
+	font-size: 35px;
+}
+form.float_form{
+	display: none;
 }

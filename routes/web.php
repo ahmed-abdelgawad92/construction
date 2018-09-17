@@ -148,6 +148,17 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'as'=>'allnotstartedproject'
 	   	]);
 
+      //Add Cash box
+      Route::put('{id}/add/cash_box',[
+        'uses'=>'ProjectController@addCashBox',
+        'as'=>'add_cash_box'
+      ])->where('id','[0-9]+');
+      //Add Loan
+      Route::put('{id}/add/loan',[
+        'uses'=>'ProjectController@addLoan',
+        'as'=>'add_loan'
+      ])->where('id','[0-9]+');
+
 	   	//start project
 	    Route::put('start/{id}',[
 	    	'uses'=>'ProjectController@startProject',

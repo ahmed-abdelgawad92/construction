@@ -10,9 +10,21 @@
 			<h4>العميل <a href="{{ route('showorganization',$org->id) }}">{{$org->name}}</a></h4>
 		</div>
 		<div class="panel-body">
+			@if(session('error'))
+				<div class="alert alert-danger">
+					<strong>{{ session('error') }}</strong>
+					<br>
+				</div>
+			@endif
 			@if(session('success'))
 				<div class="alert alert-success">
 					<strong>{{ session('success') }}</strong>
+					<br>
+				</div>
+			@endif
+			@if(session('warning'))
+				<div class="alert alert-warning">
+					<strong>{{ session('warning') }}</strong>
 					<br>
 				</div>
 			@endif
@@ -77,14 +89,16 @@
 			</ul>
 			<section id="navigation">
 				<div id="main" class="show">
-					<table class="table table-striped">
+					<table class="table table-striped mt-3">
+						<thead>
 						<tr>
 							<th>أسم المشروع </th>
-							<td>{{$project->name}}</td>
+							<th>{{$project->name}}</th>
 						</tr>
+						</thead>
 						<tr>
 							<th>الرقم التعريفى</th>
-							<td>{{$project->def_num}}</td>
+							<td>{{implode('-',str_split($project->def_num,3))}}</td>
 						</tr>
 						<tr>
 							<th>شارع</th>
@@ -128,7 +142,7 @@
 						</tr>
 						<tr>
 							<th>السعر الكلى التقريبى للمشروع</th>
-							<td>{{$project->approximate_price}}</td>
+							<td>{{number_format($project->approximate_price)}} جنيه</td>
 						</tr>
 						@if ($org->type==1)
 						<tr>
@@ -136,9 +150,39 @@
 							<td>% {{$project->non_organization_payment}}</td>
 						</tr>
 						@endif
+						@if (!empty($project->cash_box))
+						<tr>
+							<th>الصندوق</th>
+							<td>{{number_format($project->cash_box)}} جنيه</td>
+						</tr>
+						@endif
+						@if (!empty($project->loan))
+						<tr>
+							<th>قيمة القرض</th>
+							<td>جنيه {{number_format($project->loan)}}</td>
+						</tr>
+						<tr>
+							<th>نسبة الفائدة</th>
+							<td>% {{$project->loan_interest_rate}}</td>
+						</tr>
+						<tr>
+							<th>أسم البنك</th>
+							<td>{{$project->bank}}</td>
+						</tr>
+						@endif
+						<tr>
+							<th>الحالة</th>
+							@if ($project->done)
+							<td>إنتهى</td>
+							@elseif(strtotime($project->started_at)>time())
+							<td>لم يبدأ</td>
+							@else
+							<td>بدأ</td>
+							@endif
+						</tr>
 						<tr>
 							<th>تاريخ استلام الموقع</th>
-							<td>{{date("d-m-Y",strtotime($project->started_at))}}</td>
+							<td>{{date("d/m/Y",strtotime($project->started_at))}}</td>
 						</tr>
 					</table>
 				</div>
@@ -164,12 +208,44 @@
 			<a href="{{ url('term/all',$project->id) }}" class="float btn btn-primary mb-3 width-100">
 				جميع البنود
 			</a>
+			<a href="#add_cash_box" class="float btn btn-primary mb-3 width-100 open_float_div">
+			@if(!empty($project->cash_box))
+				تعديل الصندوق
+			@else
+				إضافة الصندوق
+			@endif
+			</a>
+			<a href="#add_loan" class="float btn btn-primary mb-3 width-100 open_float_div">
+			@if(!empty($project->loan))
+				تعديل القرض
+			@else
+				إضافة قرض
+			@endif
+			</a>
 			{{-- <a href="{{ route('showprojectproduction',$project->id) }}" class="float btn btn-primary mb-3">
 				أجمالى أنتاج المشروع
 			</a> --}}
-			<a href="" class="float btn btn-success mb-3">
-				إنهاء المشروع
-			</a>
+			<form method="post" action="{{route('endproject',['id'=>$project->id])}}" class="float">
+				<button type="button" data-toggle="modal" data-target="#finish_project" class="btn width-100 btn-success mb-3">إنهاء المشروع</button>
+				<div class="modal fade" id="finish_project" tabindex="-1" role="dialog">
+					<div class="modal-dialog modal-sm">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title">هل تريد إنهاء المشروع  {{$project->name}}؟</h4>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">لا
+								</button>
+								<button class="float btn btn-success mb-3">
+									إنهاء المشروع
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<input type="hidden" name="_token" value="{{csrf_token()}}">
+				<input type="hidden" name="_method" value="PUT">
+			</form>
 			<a href="{{ route('updateproject',$project->id) }}" class="float btn btn-default width-100 mb-3">
 				تعديل
 			</a>
@@ -304,5 +380,72 @@
 	<!--__________________/OffTerms______________________-->
 	</div>
 </div>
+</div>
+
+<div id="float_container">
+	<div id="float_form_container">
+		<form class="form-horizontal float_form" method="post" action="{{route('add_cash_box',['id'=>$project->id])}}" id="add_cash_box">
+			<span class="close">&times;</span>
+			<h3 class="center mb-5">إضافة قيمة الصندوق</h3>
+			<div class="form-group @if($errors->has('cash_box')) has-error @endif">
+				<label for="cash_box" class="control-label col-sm-3 col-md-2 col-lg-2">صندوق المال</label>
+				<div class="col-sm-9 col-md-10 col-lg-10">
+					<input type="text" name="cash_box" id="cash_box" value="{{$project->cash_box}}" class="form-control" placeholder="أدخل رأس مال الصندوق">
+					@if($errors->has('cash_box'))
+						@foreach($errors->get('cash_box') as $error)
+							<span class="help-block">{{ $error }}</span>
+						@endforeach
+					@endif
+				</div>
+			</div>
+			<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
+			</div>
+			@csrf
+			@method('PUT')
+		</form>
+		<form class="form-horizontal float_form" method="post" action="{{route('add_loan',['id'=>$project->id])}}" id="add_loan">
+			<span class="close">&times;</span>
+			<h3 class="center mb-5">إضافة قرض</h3>
+			<div class="form-group @if($errors->has('loan')) has-error @endif">
+				<label for="loan" class="control-label col-sm-3 col-md-2 col-lg-2">قيمة القرض</label>
+				<div class="col-sm-9 col-md-10 col-lg-10">
+					<input type="text" name="loan" id="loan" value="{{$project->loan}}" class="form-control" placeholder="أدخل قيمة القرض">
+					@if($errors->has('loan'))
+						@foreach($errors->get('loan') as $error)
+							<span class="help-block">{{ $error }}</span>
+						@endforeach
+					@endif
+				</div>
+			</div>
+			<div class="form-group @if($errors->has('loan_interest_rate')) has-error @endif">
+				<label for="loan_interest_rate" class="control-label col-sm-3 col-md-2 col-lg-2">نسبة الفائدة</label>
+				<div class="col-sm-9 col-md-10 col-lg-10">
+					<input type="text" name="loan_interest_rate" id="loan_interest_rate" value="{{$project->loan_interest_rate}}" class="form-control" placeholder="أدخل نسبة فائدة القرض">
+					@if($errors->has('loan_interest_rate'))
+						@foreach($errors->get('loan_interest_rate') as $error)
+							<span class="help-block">{{ $error }}</span>
+						@endforeach
+					@endif
+				</div>
+			</div>
+			<div class="form-group @if($errors->has('bank')) has-error @endif">
+				<label for="bank" class="control-label col-sm-3 col-md-2 col-lg-2">أسم البنك</label>
+				<div class="col-sm-9 col-md-10 col-lg-10">
+					<input type="text" name="bank" id="bank" value="{{$project->bank}}" class="form-control" placeholder="أدخل أسم البنك">
+					@if($errors->has('bank'))
+						@foreach($errors->get('bank') as $error)
+							<span class="help-block">{{ $error }}</span>
+						@endforeach
+					@endif
+				</div>
+			</div>
+			<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
+			</div>
+			@csrf
+			@method('PUT')
+		</form>
+	</div>
 </div>
 @endsection

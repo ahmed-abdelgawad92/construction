@@ -97,7 +97,7 @@
 					@if($project->started_at==null)
 					<th>لم يتم تحديد التاريخ</th>
 					@else
-					<th>{{$project->started_at->format('Y-m-d')}}</th>
+					<th>{{date("d/m/Y",strtotime($project->started_at))}}</th>
 					@endif
 					<th>{{$project->implementing_period}} شهور</th>
 					@if(Route::current()->getName()=='allnotstartedproject')

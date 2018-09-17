@@ -31,7 +31,7 @@
 		</div>
 	@endif
 	@if (count($orgs)>0)
-	<form class="form-horizontal" method="post" action="{{ route('addproject') }}">
+	<form class="form-horizontal" method="post" action="{{ route('addproject') }}" id="add_project">
 		<div class="form-group @if($errors->has('organization_id')) has-error @endif">
 			<label for="organization_id" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للعميل</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
@@ -176,7 +176,7 @@
 		<div class="form-group @if($errors->has('started_at')) has-error @endif">
 			<label for="started_at" class="control-label col-sm-2 col-md-2 col-lg-2">تاريخ استلام الموقع</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="started_at" id="started_at" value="{{old('started_at')}}" class="form-control" placeholder="أدخل تاريخ استلام الموقع">
+				<input type="text" name="started_at" id="started_at" autocomplete="off" value="{{old('started_at')}}" class="form-control" placeholder="أدخل تاريخ استلام الموقع">
 				@if($errors->has('started_at'))
 					@foreach($errors->get('started_at') as $error)
 						<span class="help-block">{{ $error }}</span>

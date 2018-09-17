@@ -216,19 +216,19 @@ $(document).ready(function() {
 		var address=$('#address');
 		var center=$('#center');
 		var city=$('#city');
-		if(!name.val().trim() && !name.val().trim().match(/^[\pL\pN\s]+$/)){
+		if(!name.val().trim() && !name.val().trim().match(/^[\pL\pN\s]+$/u)){
 			check=false;
 			assignError(name,'الاسم يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!address.val().trim() && !address.val().trim().match(/^[\pL\pN\s]+$/)){
+		if(!address.val().trim() && !address.val().trim().match(/^[\pL\pN\s]+$/u)){
 			check=false;
 			assignError(address,'العنوان يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!center.val().trim() && !center.val().trim().match(/^[\pL\pN\s]+$/)){
+		if(!center.val().trim() && !center.val().trim().match(/^[\pL\pN\s]+$/u)){
 			check=false;
 			assignError(center,'المركز يجب ان يتكون من حروف و ارقام و مسافات فقط');
 		}
-		if(!city.val().trim() && !city.val().trim().match(/^[\pL\pN\s]+$/)){
+		if(!city.val().trim() && !city.val().trim().match(/^[\pL\pN\s]+$/u)){
 			check=false;
 			assignError(city,'المدينة يجب ان تتكون من حروف و ارقام و مسافات فقط');
 		}
@@ -248,19 +248,104 @@ $(document).ready(function() {
 
 
 /******************************************Projects********************************************/
-// switch nav in project profile
-$(".navigate_to_div").click(function(e){
-	e.preventDefault();
-	$("section#navigation>div").addClass('hide').removeClass('show');
-	$(".nav-tabs li.active").removeClass('active');
-	var path=$(this).attr('data-nav-path');
-	$(path+'_nav_item').addClass('active');
-	$(path).removeClass('hide').addClass('show');
-});
+	// switch nav in project profile
+	$(".navigate_to_div").click(function(e){
+		e.preventDefault();
+		$("section#navigation>div").addClass('hide').removeClass('show');
+		$(".nav-tabs li.active").removeClass('active');
+		var path=$(this).attr('data-nav-path');
+		$(path+'_nav_item').addClass('active');
+		$(path).removeClass('hide').addClass('show');
+	});
+	//Validation of Project Creation
+	$("#add_project").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check = true;
+		if (!$('#name').val().trim() && !$('#name').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#name'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if (!$('#def_num').val().trim() && !$('#def_num').val().trim().match(/^[\pN\s]+$/g)) {
+			check=false;
+			assignError($('#def_num'),'يجب ان يتكون من ارقام فقط');
+		}
+		if (!$('#address').val().trim() && !$('#address').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#address'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if (!$('#village').val().trim() && !$('#village').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#village'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if (!$('#center').val().trim() && !$('#center').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#center'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if (!$('#city').val().trim() && !$('#city').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#city'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if (!$('#model_used').val().trim() && !$('#model_used').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#model_used'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if (!$('#extra_data').val().trim() && !$('#extra_data').val().trim().match(/^[\pL\pN\s\(\)]+$/g)) {
+			check=false;
+			assignError($('#extra_data'),'يجب ان يتكون من حروف وارقام () فقط');
+		}
+		if (!$('#implementing_period').val().trim() && !$('#implementing_period').val().trim().match(/^[\pN]{1,3}$/g)) {
+			check=false;
+			assignError($('#implementing_period'),'يجب ان يتكون من من ارقام فقط');
+		}
+		if (!$('#floor_num').val().trim() && !$('#floor_num').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#floor_num'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if (!$('#approximate_price').val().trim() && !$('#approximate_price').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#approximate_price'),'يجب ان يتكون من ارقام فقط');
+		}
+		if ($('#cash_box').val().trim() && !$('#cash_box').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#cash_box'),'يجب ان يتكون من ارقام فقط');
+		}
+		if ($('#loan').val().trim() && !$('#loan').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#loan'),'يجب ان يتكون من ارقام فقط');
+		}
+		if ($('#loan_interest_rate').val().trim() && !$('#loan_interest_rate').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#loan_interest_rate'),'يجب ان يتكون من ارقام فقط');
+		}
+		if ($('#bank').val().trim() && !$('#bank').val().trim().match(/^[\pL\pN\s]+$/g)) {
+			check=false;
+			assignError($('#bank'),'يجب ان يتكون من حروف وارقام فقط');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	//Float form in projects profile
+	$(".open_float_div").click(function(e){
+		e.preventDefault();
+		$($(this).attr('href')).show();
+		$('#float_container').fadeIn(200,function(){
+			$('#float_form_container').slideDown(100);
+		});
+	});
 
-
-
-
+	$('#float_container, span.close').click(function(){
+		$('#float_container').fadeOut(200);
+		$('#float_form_container').hide();
+		$('.float_form').hide();
+	});
+	$('#float_form_container').click(function(e){
+		e.stopPropagation();
+	});
 
 
 
