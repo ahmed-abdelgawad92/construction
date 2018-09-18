@@ -23,6 +23,10 @@ h4{
 h5{
 	font-size: 1.7rem;
 }
+pre{
+	direction : ltr !important;
+	text-align:left !important;
+}
 .form-control{
 	font-size: 2rem;
 	height: 40px !important;
@@ -259,13 +263,14 @@ textarea.text{
   direction: ltr !important;
 }
 .circle-div{
+	padding: 43% 0;
   border-radius: 50%;
-  width: 80%;
+  width: 100%;
   margin:0 auto;
   background: white;
   text-align: center;
   color: black;
-  font-size: 18px;
+  font-size: 25px;
 }
 .progress{
   background: white;
@@ -454,6 +459,15 @@ footer{
 }
 
 @media (min-width: 768px) {
+	#float_form_container{
+		display: none;
+		background: #eeeeee;
+		max-width: 70% !important;
+		margin: 50px auto 0;
+		padding: 40px 40px 100px;
+		border-radius: 8px;
+		position: relative;
+	}
   .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
     float: right;
   }
@@ -511,6 +525,15 @@ footer{
   }
 }
 @media (min-width: 992px) {
+	#float_form_container{
+		display: none;
+		background: #eeeeee;
+		max-width: 50% !important;
+		margin: 50px auto 0;
+		padding: 40px 40px 100px;
+		border-radius: 8px;
+		position: relative;
+	}
   .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
     float: right;
   }
@@ -567,6 +590,15 @@ footer{
   }
 }
 @media (min-width: 1200px) {
+	#float_form_container{
+		display: none;
+		background: #eeeeee;
+		max-width: 25% !important;
+		margin: 50px auto 0;
+		padding: 40px 40px 100px;
+		border-radius: 8px;
+		position: relative;
+	}
   .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12 {
     float: right;
   }
@@ -1024,7 +1056,7 @@ span.delete_phone:hover{
 #float_form_container{
 	display: none;
 	background: #eeeeee;
-	max-width: 80%;
+	max-width: 90%;
 	margin: 50px auto 0;
 	padding: 40px 40px 100px;
 	border-radius: 8px;

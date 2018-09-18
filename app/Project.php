@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;;
 use App\Term;
 use App\Production;
 
@@ -62,11 +63,33 @@ class Project extends Model {
 		return $this->hasManyThrough('App\Contract','App\Term');
 	}
 
-	//has many productions through terms
-	public function productions()
+	//get summary production per term
+	public function productionDetails()
 	{
-		// $terms = $this->terms();
-		// $productions=
+		$productions = DB::select("
+		select sum(productions.amount) as amount, avg(productions.rate) as rate , terms.id as term_id , terms.code as code , terms.amount as term_amount, terms.unit as unit from terms
+		left join contracts on terms.id = contracts.term_id and contracts.deleted=0
+		left join productions on contracts.id= productions.contract_id and productions.deleted=0
+		where terms.project_id=?
+		and terms.deleted=0
+		group by terms.id
+		",[$this->id]);
+
+		return $productions;
+	}
+	//get summary production per project
+	public function productionReport()
+	{
+		$productions = DB::select("
+		select distinct sum(productions.amount) as amount, avg(productions.rate) as rate , sum(terms.amount) as total_amount from terms
+		left join contracts on terms.id = contracts.term_id and contracts.deleted=0
+		left join productions on contracts.id= productions.contract_id and productions.deleted=0
+		where terms.project_id=?
+		and terms.deleted=0
+		group by terms.project_id
+		",[$this->id]);
+
+		return $productions;
 	}
 	//has many papers
 	public function papers()

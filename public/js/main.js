@@ -42,14 +42,14 @@ $(document).ready(function() {
 	});
 
 	//circle make height equal width
-	var width_circle=$('.circle-div').width();
-	$('.circle-div').height(width_circle);
-	$('.circle-div').css('line-height',width_circle+"px");
-	$(window).resize(function(){
-		width_circle=$('.circle-div').width();
-		$('.circle-div').height(width_circle);
-		$('.circle-div').css('line-height',width_circle+"px");
-	});
+	// width_circle=$('.circle-div').width();
+	// $('.circle-div').height(width_circle);
+	// $('.circle-div').css('line-height',width_circle+"px");
+	// $(window).resize(function(){
+	// 	width_circle=$('.circle-div').width();
+	// 	$('.circle-div').height(width_circle);
+	// 	$('.circle-div').css('line-height',width_circle+"px");
+	// });
 
 	//show unit in adding consumption
 	if(!$('#amount_cons').hasClass('display')){

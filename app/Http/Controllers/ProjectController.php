@@ -291,10 +291,14 @@ class ProjectController extends Controller {
 				->orderBy('started_at','desc')
 				->take(3)
 				->get();
+			$productions= $project->productionDetails();
+			$productionReport =$project->productionReport();
 			$array=[
 				'active'=>'project',
 				'project'=>$project,
 				'org'=>$org,
+				'productions'=>$productions,
+				'productionReport'=>$productionReport[0],
 				'startedTerms'=>$startedTerms,
 				'notStartedTerms'=>$notStartedTerms,
 				'doneTerms'=>$doneTerms

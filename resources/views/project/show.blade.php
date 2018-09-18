@@ -196,7 +196,64 @@
 					<div class="div" style="height:500px; width: 100%;background:grey"></div>
 				</div>
 				<div id="production" class="hide">
-					<div class="div" style="height:500px; width: 100%;background:aqua"></div>
+					@if (isset($productions) && count($productions)>0)
+						<div class="jumbotron mt-5">
+							<h2 style="border-bottom: 1px solid #000; padding-bottom: 5px;">أجمالى أنتاج المشروع</h2>
+							<br><br>
+							<div class="row">
+								<div class="col-sm-6 col-md-4 col-lg-4 col-xs-6" style="margin-bottom: 10px;">
+								</div>
+								<div class="col-sm-12 col-md-4 col-lg-4 col-xs-12" style="margin-bottom: 10px;">
+									<div class="circle-div">
+										{{ round($productionReport->rate,2) }}
+									</div>
+									<p style="text-align: center; margin-top: 8px;">متوسط تقييم الأنتاج</p>
+								</div>
+								<div class="col-sm-6 col-md-4 col-lg-4 col-xs-6" style="margin-bottom: 10px;">
+								</div>
+							</div>
+							<h3 style="text-align: center;">النسبة المئوية لما تم أنتاجه من المشروع</h3>
+							<div class="progress" style="margin-top: 15px">
+								<div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="{{round(($productionReport->amount/$productionReport->total_amount)*100,2)}}" aria-valuemax="100" style="width: {{round(($productionReport->amount/$productionReport->total_amount)*100,2)}}%; min-width: 2em;">
+									{{round(($productionReport->amount/$productionReport->total_amount)*100,2)}}%
+								</div>
+							</div>
+						</div>
+						<h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">تفاصيل الأنتاج</h4>
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>كود البند</th>
+										<th>الكمية المنتجة</th>
+										<th>الكمية الباقية</th>
+										<th>أجمالى البند</th>
+										<th>نسبة الأنتاج بالبند</th>
+										<th>التقييم</th>
+									</tr>
+								</thead>
+								<tbody>
+									@php $count=0; @endphp
+									@foreach ($productions as $production)
+									<tr>
+										<td>{{++$count}}</td>
+										<td><a href="{{route('showterm',['id'=>$production->term_id])}}">{{$production->code}}</a></td>
+										<td>{{$production->amount??0}} {{$production->unit}}</td>
+										<td>{{($production->term_amount - $production->amount)??0}} {{$production->unit}}</td>
+										<td>{{$production->term_amount}} {{$production->unit}}</td>
+										<td>{{($production->amount/$production->term_amount)*100}} %</td>
+										<td>{{round($production->rate,2)}}</td>
+									</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
+					@else
+						<div class="aler alert-warning">
+							لا يوجد إنتاج بهذا المشروع حتى الان
+						</div>
+					@endif
 				</div>
 				<div id="supplier" class="hide">
 					<div class="div" style="height:500px; width: 100%;background:pink"></div>
@@ -384,12 +441,12 @@
 
 <div id="float_container">
 	<div id="float_form_container">
-		<form class="form-horizontal float_form" method="post" action="{{route('add_cash_box',['id'=>$project->id])}}" id="add_cash_box">
+		<form class="float_form" method="post" action="{{route('add_cash_box',['id'=>$project->id])}}" id="add_cash_box">
 			<span class="close">&times;</span>
 			<h3 class="center mb-5">إضافة قيمة الصندوق</h3>
 			<div class="form-group @if($errors->has('cash_box')) has-error @endif">
-				<label for="cash_box" class="control-label col-sm-3 col-md-2 col-lg-2">صندوق المال</label>
-				<div class="col-sm-9 col-md-10 col-lg-10">
+				<label for="cash_box" class="control-label">صندوق المال</label>
+				<div class="">
 					<input type="text" name="cash_box" id="cash_box" value="{{$project->cash_box}}" class="form-control" placeholder="أدخل رأس مال الصندوق">
 					@if($errors->has('cash_box'))
 						@foreach($errors->get('cash_box') as $error)
@@ -398,18 +455,18 @@
 					@endif
 				</div>
 			</div>
-			<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
-				<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
+			<div class="center">
+				<button class="btn btn-primary form-control" style="width:50%" id="save_btn">حفظ</button>
 			</div>
 			@csrf
 			@method('PUT')
 		</form>
-		<form class="form-horizontal float_form" method="post" action="{{route('add_loan',['id'=>$project->id])}}" id="add_loan">
+		<form class="float_form" method="post" action="{{route('add_loan',['id'=>$project->id])}}" id="add_loan">
 			<span class="close">&times;</span>
 			<h3 class="center mb-5">إضافة قرض</h3>
 			<div class="form-group @if($errors->has('loan')) has-error @endif">
-				<label for="loan" class="control-label col-sm-3 col-md-2 col-lg-2">قيمة القرض</label>
-				<div class="col-sm-9 col-md-10 col-lg-10">
+				<label for="loan" class="control-label ">قيمة القرض</label>
+				<div class="">
 					<input type="text" name="loan" id="loan" value="{{$project->loan}}" class="form-control" placeholder="أدخل قيمة القرض">
 					@if($errors->has('loan'))
 						@foreach($errors->get('loan') as $error)
@@ -419,8 +476,8 @@
 				</div>
 			</div>
 			<div class="form-group @if($errors->has('loan_interest_rate')) has-error @endif">
-				<label for="loan_interest_rate" class="control-label col-sm-3 col-md-2 col-lg-2">نسبة الفائدة</label>
-				<div class="col-sm-9 col-md-10 col-lg-10">
+				<label for="loan_interest_rate" class="control-label ">نسبة الفائدة</label>
+				<div class="">
 					<input type="text" name="loan_interest_rate" id="loan_interest_rate" value="{{$project->loan_interest_rate}}" class="form-control" placeholder="أدخل نسبة فائدة القرض">
 					@if($errors->has('loan_interest_rate'))
 						@foreach($errors->get('loan_interest_rate') as $error)
@@ -430,8 +487,8 @@
 				</div>
 			</div>
 			<div class="form-group @if($errors->has('bank')) has-error @endif">
-				<label for="bank" class="control-label col-sm-3 col-md-2 col-lg-2">أسم البنك</label>
-				<div class="col-sm-9 col-md-10 col-lg-10">
+				<label for="bank" class="control-label">أسم البنك</label>
+				<div class="">
 					<input type="text" name="bank" id="bank" value="{{$project->bank}}" class="form-control" placeholder="أدخل أسم البنك">
 					@if($errors->has('bank'))
 						@foreach($errors->get('bank') as $error)
@@ -440,8 +497,8 @@
 					@endif
 				</div>
 			</div>
-			<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
-				<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
+			<div class="center">
+				<button class="btn btn-primary form-control" style="width:50%" id="save_btn">حفظ</button>
 			</div>
 			@csrf
 			@method('PUT')
