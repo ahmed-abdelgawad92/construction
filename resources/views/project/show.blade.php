@@ -187,7 +187,40 @@
 					</table>
 				</div>
 				<div id="raw" class="hide">
-					<div class="div" style="height:500px; width: 100%;background:red"></div>
+					@if (isset($productions) && count($productions)>0)
+						<h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">جميع الخامات الباقية و المستهلكة</h4>
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>النوع</th>
+										<th>الوحدة</th>
+										<th>اجمالي ما تم توريده</th>
+										<th>اجمالي ما تم استخدامه</th>
+										<th>الكمية الباقية</th>
+									</tr>
+								</thead>
+								<tbody>
+									@php $count=0;@endphp
+									@foreach ($stores as $stock)
+									<tr>
+										<td>{{++$count}}</td>
+										<td><a href="#">{{$stock->store_type}}</a></td>
+										<td>{{$stock->unit}}</td>
+										<td>{{$stock->store_amount??0}}</td>
+										<td>{{$stock->consumed_amount??0}}</td>
+										<td>{{($stock->store_amount-$stock->consumed_amount > 0)? $stock->store_amount-$stock->consumed_amount: 0}}</td>
+									</tr>
+									@endforeach
+								</tbody>
+							</table>
+						</div>
+						@else
+							<div class="alert alert-warning">
+								لا يوجد خامات او استهلاك بالمشروع
+							</div>
+						@endif
 				</div>
 				<div id="consumption" class="hide">
 					<div class="div" style="height:500px; width: 100%;background:blue"></div>
@@ -256,7 +289,47 @@
 					@endif
 				</div>
 				<div id="supplier" class="hide">
-					<div class="div" style="height:500px; width: 100%;background:pink"></div>
+					@if (isset($productions) && count($productions)>0)
+						<h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">جميع الموردين و الخامات التى وردوها</h4>
+						<div class="table-responsive">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>المورد</th>
+										<th>نوع الخام</th>
+										<th>الكمية الموردة</th>
+										<th>سعر الوحدة</th>
+										<th>السعر الكلي</th>
+										<th>المبلغ المدفوع</th>
+										<th>المبلغ الباقى</th>
+										<th>تاريخ التوريد</th>
+									</tr>
+								</thead>
+								<tbody>
+									@php $count=0;@endphp
+									@foreach ($suppliers as $supplier)
+									<tr>
+										<td>{{++$count}}</td>
+										<td><a href="#">{{$supplier->name}}</a></td>
+										<td>{{$supplier->type}}</td>
+										<td>{{$supplier->amount}}</td>
+										<td>{{$supplier->unit_price}}</td>
+										<td>{{$supplier->total_price}}</td>
+										<td>{{$supplier->paid}}</td>
+										<td>{{$supplier->total_price-$supplier->paid}}</td>
+										<td>{{date('d/m/Y',strtotime($supplier->created_at))}}</td>
+									</tr>
+									@endforeach
+								</tbody>
+							</table>
+							@if($count==10)
+							<caption><a href="">جميع الموردين لهذا المشروع و تقرير كامل بجميع المعاملات </a></caption>
+							@endif
+						</div>
+					@else
+						<div class="alert alert-warning">لم يتم توريد خامات إلى هذا المشروع حتى الان</div>
+					@endif
 				</div>
 			</section>
 			<a href="{{ url('term/add',$project->id) }}" class="float btn btn-primary mb-3 width-100">

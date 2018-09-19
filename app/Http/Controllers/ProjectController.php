@@ -293,15 +293,19 @@ class ProjectController extends Controller {
 				->get();
 			$productions= $project->productionDetails();
 			$productionReport =$project->productionReport();
+			$suppliers= $project->supplierDetails();
+			$stores = $project->stockReport();
 			$array=[
 				'active'=>'project',
 				'project'=>$project,
 				'org'=>$org,
 				'productions'=>$productions,
 				'productionReport'=>$productionReport[0],
+				'stores'=>$stores,
 				'startedTerms'=>$startedTerms,
 				'notStartedTerms'=>$notStartedTerms,
-				'doneTerms'=>$doneTerms
+				'doneTerms'=>$doneTerms,
+				'suppliers'=>$suppliers
 			];
 			return view('project.show',$array);
 		}else

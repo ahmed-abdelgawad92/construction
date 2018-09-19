@@ -37,7 +37,38 @@ class Project extends Model {
 	//has many suppliers through terms
 	public function suppliers()
 	{
-		return $this->hasManyThrough('App\Supplier','App\Term');
+		return $this->hasManyThrough('App\Supplier','App\Store');
+	}
+
+	//has many suppliers through terms
+	public function supplierDetails()
+	{
+		$suppliers = DB::select("
+		select suppliers.id as sup_id, suppliers.name as name , stores.amount as amount,stores.value as unit_price,(stores.amount * stores.value) as total_price , stores.created_at as created_at ,stores.type as type ,stores.amount_paid as paid from stores
+		join suppliers on suppliers.id = stores.supplier_id and suppliers.deleted = 0
+		where stores.project_id=?
+		and stores.deleted=0
+		order by name , stores.created_at desc
+		limit 10
+		",[$this->id]);
+
+		return $suppliers;
+	}
+	//has many suppliers through terms
+	public function stockReport()
+	{
+		$stock = DB::select("
+		select  stores.type as store_type , SUM(stores.amount) as store_amount , stores.unit as unit,
+		(
+			SELECT SUM(consumptions.amount) from consumptions
+			where consumptions.term_id in (select id from terms where terms.project_id=? and terms.deleted=0)
+  		and consumptions.type = store_type group by consumptions.type
+		) as consumed_amount
+  	from stores where stores.project_id =?  group by store_type
+		ORDER BY `store_type`  ASC
+		",[$this->id,$this->id]);
+
+		return $stock;
 	}
 
 	//Define the one to many relationship with taxes
@@ -81,13 +112,13 @@ class Project extends Model {
 	public function productionReport()
 	{
 		$productions = DB::select("
-		select distinct sum(productions.amount) as amount, avg(productions.rate) as rate , sum(terms.amount) as total_amount from terms
+		select sum(productions.amount) as amount, avg(productions.rate) as rate , (select distinct sum(terms.amount) from terms where terms.project_id=? and terms.deleted =0 ) as total_amount   from terms
 		left join contracts on terms.id = contracts.term_id and contracts.deleted=0
 		left join productions on contracts.id= productions.contract_id and productions.deleted=0
 		where terms.project_id=?
-		and terms.deleted=0
+    and terms.deleted = 0
 		group by terms.project_id
-		",[$this->id]);
+		",[$this->id,$this->id]);
 
 		return $productions;
 	}
