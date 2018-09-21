@@ -37,9 +37,9 @@
 				</div>
 			@endif
 			@if(count($projects)>0)
-			<form method="post" action="{{ route('addterm') }}" class="form-horizontal">
+			<form method="post" action="{{ route('addterm') }}" id="add_term" class="form-horizontal">
 				<div class="form-group @if($errors->has('project_id')) has-error @endif">
-					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للمشروع</label>
+					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للمشروع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="project_id" id="project_id" class="form-control">
 							@if(count($projects)==1)
@@ -59,7 +59,7 @@
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('type')) has-error @endif">
-					<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع البند</label>
+					<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع البند *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="type" id="type" class="form-control">
 							<option value="0">أختار نوع البند</option>
@@ -78,9 +78,9 @@
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('code')) has-error @endif">
-					<label for="code" class="control-label col-sm-2 col-md-2 col-lg-2">كود البند</label>
+					<label for="code" class="control-label col-sm-2 col-md-2 col-lg-2">كود البند *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="code" id="code" class="form-control" placeholder="أدخل كود البند" value="{{old('code')}}">
+						<input type="text" name="code" id="code" class="form-control number" placeholder="أدخل كود البند" value="{{old('code')}}">
 						@if($errors->has('code'))
 							@foreach($errors->get('code') as $error)
 								<span class="help-block">{{ $error }}</span>
@@ -89,7 +89,7 @@
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('statement')) has-error @endif">
-					<label for="statement" class="control-label col-sm-2 col-md-2 col-lg-2">بيان الأعمال</label>
+					<label for="statement" class="control-label col-sm-2 col-md-2 col-lg-2">بيان الأعمال *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<textarea name="statement" id="statement" class="form-control" placeholder="أدخل بيان الأعمال">{{old('statement')}}</textarea>
 						@if($errors->has('statement'))
@@ -100,7 +100,7 @@
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('unit')) has-error @endif">
-					<label for="unit" class="control-label col-sm-2 col-md-2 col-lg-2">الوحدة</label>
+					<label for="unit" class="control-label col-sm-2 col-md-2 col-lg-2">الوحدة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="unit" id="unit" class="form-control" placeholder="أدخل الوحدة" value="{{old('unit')}}">
 						@if($errors->has('unit'))
@@ -111,9 +111,9 @@
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('amount')) has-error @endif">
-					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
+					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="amount" id="amount" class="form-control" placeholder="أدخل الكمية" value="{{old('amount')}}">
+						<input type="text" name="amount" id="amount" class="form-control number" placeholder="أدخل الكمية" value="{{old('amount')}}">
 						@if($errors->has('amount'))
 							@foreach($errors->get('amount') as $error)
 								<span class="help-block">{{ $error }}</span>
@@ -122,11 +122,22 @@
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('value')) has-error @endif">
-					<label for="value" class="control-label col-sm-2 col-md-2 col-lg-2">القيمة</label>
+					<label for="value" class="control-label col-sm-2 col-md-2 col-lg-2">القيمة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="value" id="value" class="form-control" placeholder="أدخل القيمة" value="{{old('value')}}">
+						<input type="text" name="value" id="value" class="form-control number" placeholder="أدخل القيمة" value="{{old('value')}}">
 						@if($errors->has('value'))
 							@foreach($errors->get('value') as $error)
+								<span class="help-block">{{ $error }}</span>
+							@endforeach
+						@endif
+					</div>
+				</div>
+				<div class="form-group @if($errors->has('started_at')) has-error @endif">
+					<label for="started_at" class="control-label col-sm-2 col-md-2 col-lg-2">تاريخ البدء</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<input type="text" name="started_at" id="started_at" autocomplete="off" value="{{old('started_at')}}" class="form-control" placeholder="أدخل تاريخ استلام الموقع">
+						@if($errors->has('started_at'))
+							@foreach($errors->get('started_at') as $error)
 								<span class="help-block">{{ $error }}</span>
 							@endforeach
 						@endif

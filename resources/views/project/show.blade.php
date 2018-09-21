@@ -215,7 +215,45 @@
 						@endif
 				</div>
 				<div id="employee" class="hide">
-					<div class="div" style="height:500px; width: 100%;background:grey"></div>
+					@if (count($employees)>0)
+						@foreach ($employees as $employee)
+						<div class="bordered-right border-primary mt-5">
+							<div class="row">
+							<div class="col-xs-9 col-sm-8 ">
+								<table class="table table-striped borderless" style="margin-bottom:0 !important">
+									<tr>
+										<td>اسم الموظف</td>
+										<td>{{$employee->name}}</td>
+									</tr>
+									<tr>
+										<td>الوظيفة</td>
+										<td>{{$employee->job}}</td>
+									</tr>
+									<tr>
+										<td>المرتب</td>
+										<td>{{$employee->pivot->salary}}</td>
+									</tr>
+									<tr>
+										<td>تاريخ البدء</td>
+										<td>{{date('d/m/Y',strtotime($employee->pivot->created_at))}}</td>
+									</tr>
+									<tr>
+										<td>تاريخ انتهاء الوظيفة</td>
+										<td> {{date('d/m/Y',strtotime($employee->pivot->ended_at))}}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-xs-3 col-sm-4">
+								<a href="#" class="btn btn-warning w-100 mt-3">انهاء الوظيفة</a>
+								<a href="#" class="btn btn-warning w-100 mt-3">انهاء الوظيفة</a>
+								<a href="#" class="btn btn-warning w-100 mt-3">انهاء الوظيفة</a>
+							</div>
+							</div>
+						</div>
+						@endforeach
+					@else
+						<div class="alert alert-warning">لا يوجد موظفيين منتدبين بهذا المشروع</div>
+					@endif
 				</div>
 				<div id="production" class="hide">
 					@if (isset($productions) && count($productions)>0)
@@ -495,6 +533,31 @@
 		<div class="panel-heading project-heading">
 			<h4>البنود المعطلة</h4>
 		</div>
+		<div class="panel-body">
+			@if(count($disabledTerms)>0)
+			@foreach($disabledTerms as $term)
+			<div class="bordered-right">
+				<a href="{{ route('showterm',$term->id) }}" class="whole">
+				<h4>
+					كود البند	: {{$term->code}}<br>
+				 	نوع البند	: {{$term->type}}
+				</h4>
+				<p>
+					<span class="label label-default">بيان الأعمال</span>
+					 {{$term->statement}}
+				</p>
+				</a>
+			</div>
+			@endforeach
+			<div class="row item" style="text-align: center;">
+				<a href="{{ url('term/all/notStarted') }}" class="btn btn-default">
+					جميع البنود المعطلة
+				</a>
+			</div>
+			@else
+				<div class="alert alert-warning">لا يوجد بنود معطلة</div>
+			@endif
+		</div>
 	</div>
 	<!--__________________/OffTerms______________________-->
 	</div>
@@ -509,7 +572,7 @@
 			<div class="form-group @if($errors->has('cash_box')) has-error @endif">
 				<label for="cash_box" class="control-label">صندوق المال</label>
 				<div class="">
-					<input type="text" name="cash_box" id="cash_box" value="{{$project->cash_box}}" class="form-control" placeholder="أدخل رأس مال الصندوق">
+					<input type="text" name="cash_box" id="cash_box" value="{{$project->cash_box}}" class="form-control number" placeholder="أدخل رأس مال الصندوق">
 					@if($errors->has('cash_box'))
 						@foreach($errors->get('cash_box') as $error)
 							<span class="help-block">{{ $error }}</span>
@@ -529,7 +592,7 @@
 			<div class="form-group @if($errors->has('loan')) has-error @endif">
 				<label for="loan" class="control-label ">قيمة القرض</label>
 				<div class="">
-					<input type="text" name="loan" id="loan" value="{{$project->loan}}" class="form-control" placeholder="أدخل قيمة القرض">
+					<input type="text" name="loan" id="loan" value="{{$project->loan}}" class="form-control number" placeholder="أدخل قيمة القرض">
 					@if($errors->has('loan'))
 						@foreach($errors->get('loan') as $error)
 							<span class="help-block">{{ $error }}</span>
@@ -540,7 +603,7 @@
 			<div class="form-group @if($errors->has('loan_interest_rate')) has-error @endif">
 				<label for="loan_interest_rate" class="control-label ">نسبة الفائدة</label>
 				<div class="">
-					<input type="text" name="loan_interest_rate" id="loan_interest_rate" value="{{$project->loan_interest_rate}}" class="form-control" placeholder="أدخل نسبة فائدة القرض">
+					<input type="text" name="loan_interest_rate" id="loan_interest_rate" value="{{$project->loan_interest_rate}}" class="form-control number" placeholder="أدخل نسبة فائدة القرض">
 					@if($errors->has('loan_interest_rate'))
 						@foreach($errors->get('loan_interest_rate') as $error)
 							<span class="help-block">{{ $error }}</span>

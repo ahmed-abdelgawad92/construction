@@ -199,7 +199,7 @@ $(document).ready(function() {
 			alert("عذراً لا يمكنك وضع اكثر من 10 أرقام!");
 			return false;
 		}
-		$('<div class="form-group" id="del_phone'+$(".phone_input").length+'"><label for="phone'+$(".phone_input").length+'" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون <span data-phone="'+$(".phone_input").length+'" class="glyphicon glyphicon-trash delete_phone"></span></label><div class="col-sm-8 col-md-8 col-lg-8"><input type="text" id="phone'+$(".phone_input").length+'" name="phone['+$(".phone_input").length+']" value="" class="form-control phone_input" placeholder="أدخل التليفون"></div></div></div>').insertAfter("#phone_template");
+		$('<div class="form-group" id="del_phone'+$(".phone_input").length+'"><label for="phone'+$(".phone_input").length+'" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون <span data-phone="'+$(".phone_input").length+'" class="glyphicon glyphicon-trash delete_phone"></span></label><div class="col-sm-8 col-md-8 col-lg-8"><input type="text" id="phone'+$(".phone_input").length+'" name="phone['+$(".phone_input").length+']" value="" class="form-control phone_input number" placeholder="أدخل التليفون"></div></div></div>').insertAfter("#phone_template");
 	});
 	//delete phone numbers input
 	$(document).on('click', 'span.delete_phone', function(e) {
@@ -355,6 +355,66 @@ $(document).ready(function() {
 		e.stopPropagation();
 	});
 
+/******************************************Terms********************************************/
+	//validate term creation
+	$("#add_term").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check = true;
+		if(!$("#project_id").val().trim()||$("#project_id").val().trim()==0){
+			assignError($("#project_id"),'من فضلك أختار مشروع اتابع له هذا البند');
+			check=false;
+		}else if(!$("#project_id").val().trim().match(/^[0-9]+$/)){
+			assignError($("#project_id"),'من فضلك لا تغير قيمة المشروع');
+			check=false;
+		}
+		if (!$('#type').val().trim()||$('#type').val().trim()==0) {
+			assignError($("#type"),'من فضلك أدخل نوع البند');
+			check=false;
+		}
+		if(!$('#code').val().trim()){
+			assignError($("#code"),'من فضلك أدخل كود البند');
+			check=false;
+		}else if(!$('#code').val().trim().match(/^[0-9\/]+$/)){
+			assignError($("#code"),'كود البند يجب أن يتكون من أرقام و / فقط');
+			check=false;
+		}
+		if(!$("#statement").val().trim()){
+			assignError($("#statement"),'يجب ادخال بيان الاعمال');
+			check=false;
+		}
+		if(!$("#unit").val().trim()){
+			assignError($("#unit"),'يجب ان تتكون من حروف و ارقام و مسافات فقط');
+			check=false;
+		}
+		if(!$("#amount").val().trim() || !$("#amount").val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			assignError($("#amount"),'الكمية يجب أن تتكون من أرقام فقط');
+			check=false;
+		}
+		if(!$("#value").val().trim() || !$("#value").val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			assignError($("#value"),'القيمة يجب أن تتكون من أرقام فقط');
+			check=false;
+		}
+		if ($("#started_at").val().trim()) {
+			if(!Date.parse($("#started_at").val().trim())){
+				assignError($("#started_at"),'يجب ادخال تاريخ صحيح');
+				check=false;
+			}
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
 
+
+
+
+
+
+	/******************************************Projects********************************************/
+	/******************************************Projects********************************************/
 
 });

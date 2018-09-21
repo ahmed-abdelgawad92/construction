@@ -93,10 +93,11 @@ class TermController extends Controller {
 				'project_id'=>'required|numeric|exists:projects,id',
 				'type'=>'required|exists:term_types,name',
 				'code'=>'regex:/^[\pN\/]+$/u',
-				'statement'=>'regex:/^[\pL\pN\s\.\+\-\_\(\)\*\&\%\"\:\!\,\؟\?]+$/u',
-				'unit'=>'alpha_num',
+				'statement'=>'string',
+				'unit'=>'regex:/^[\pL\pN\s]+$/u',
 				'amount'=>'numeric',
-				'value'=>'numeric'
+				'value'=>'numeric',
+				'started_at'=>'nullable|date'
 			];
 			//messages
 			$error_messages=[
@@ -106,10 +107,11 @@ class TermController extends Controller {
 				'type.required'=>'من فضلك أدخل نوع البند',
 				'type.exists'=>'نوع البند يجب أن يكون موجود فى قاعدة البيانات',
 				'code.regex'=>'كود البند يجب أن يتكون من أرقام و / فقط',
-				'statement.regex'=>'بيان الأعمال يجب أن يتكون من حروف و أرقام و .,:"!?  +-_* () & % ',
-				'unit.alpha_num'=>'',
+				'statement.regex'=>'يجب ادخال بيان الاعمال',
+				'unit.regex'=>'يجب ان تتكون من حروف و ارقام و مسافات فقط',
 				'amount.numeric'=>'الكمية يجب أن تتكون من أرقام فقط',
-				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط'
+				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط',
+				'started_at.date'=>'يجب ادخال تاريخ صحيح'
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
@@ -131,7 +133,7 @@ class TermController extends Controller {
 			if(!$saved){
 				return redirect()->back()->withInput()->with('insert_error','حدث خطأ خلال أضافة هذا البند يرجى المحاولة فى وقت لاحق');
 			}
-			return redirect()->back()->with('success','تم أضافة البند صاحب الكود '.$term->code.' بنجاح');
+			return redirect()->route('addterm',['id'=>$term->project_id])->with('success','تم أضافة البند صاحب الكود '.$term->code.' بنجاح');
 		}
 		else
 			abort('404');

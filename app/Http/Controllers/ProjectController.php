@@ -274,6 +274,7 @@ class ProjectController extends Controller {
 			$startedTerms=$project->terms()
 				->where('started_at','<=',Carbon::today())
 				->where('done',0)
+				->where('disabled',0)
 				->orderBy('started_at','asc')
 				->take(3)
 				->get();
@@ -291,6 +292,13 @@ class ProjectController extends Controller {
 				->orderBy('started_at','desc')
 				->take(3)
 				->get();
+			$disabledTerms=$project->terms()
+				->where('done',0)
+				->where('disabled',1)
+				->orderBy('started_at','desc')
+				->take(3)
+				->get();
+			$employees = $project->employees;
 			$productions= $project->productionDetails();
 			$productionReport =$project->productionReport();
 			$suppliers= $project->supplierDetails();
@@ -304,8 +312,10 @@ class ProjectController extends Controller {
 				'stores'=>$stores,
 				'startedTerms'=>$startedTerms,
 				'notStartedTerms'=>$notStartedTerms,
+				'disabledTerms'=>$disabledTerms,
 				'doneTerms'=>$doneTerms,
-				'suppliers'=>$suppliers
+				'suppliers'=>$suppliers,
+				'employees'=>$employees
 			];
 			return view('project.show',$array);
 		}else

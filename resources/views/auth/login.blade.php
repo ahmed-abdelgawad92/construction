@@ -19,7 +19,7 @@
 					<div class="form-group">
 						<label class="col-md-2 col-md-offset-2 control-label">أسم المستخدم</label>
 						<div class="col-md-6">
-							<input type="text" class="form-control" id="username" name="username" value="{{ old('username') }}">
+							<input type="text" class="form-control" autocomplete="off" id="username" name="username" value="{{ old('username') }}">
 						</div>
 					</div>
 

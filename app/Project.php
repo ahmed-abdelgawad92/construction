@@ -41,16 +41,19 @@ class Project extends Model {
 	}
 
 	//has many suppliers through terms
-	public function supplierDetails()
+	public function supplierDetails(bool $flag=true,int $limit=10)
 	{
-		$suppliers = DB::select("
+		$sql="
 		select suppliers.id as sup_id, suppliers.name as name , stores.amount as amount,stores.value as unit_price,(stores.amount * stores.value) as total_price , stores.created_at as created_at ,stores.type as type ,stores.amount_paid as paid from stores
 		join suppliers on suppliers.id = stores.supplier_id and suppliers.deleted = 0
 		where stores.project_id=?
 		and stores.deleted=0
 		order by name , stores.created_at desc
-		limit 10
-		",[$this->id]);
+		";
+		if ($flag) {
+			$sql.=" limit $limit";
+		}
+		$suppliers = DB::select($sql,[$this->id]);
 
 		return $suppliers;
 	}

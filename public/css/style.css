@@ -1009,6 +1009,9 @@ footer{
 	cursor: pointer;
 	z-index: 100;
 }
+.number{
+	direction: ltr !important;
+}
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{
   color: black !important;
@@ -1072,4 +1075,11 @@ span.close{
 }
 form.float_form{
 	display: none;
+}
+
+table.borderless tr td,table.borderless tr th{
+	border: 0 !important;
+}
+table.borderless tr td:first-of-type{
+	width: 150px !important;
 }

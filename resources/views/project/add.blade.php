@@ -33,7 +33,7 @@
 	@if (count($orgs)>0)
 	<form class="form-horizontal" method="post" action="{{ route('addproject') }}" id="add_project">
 		<div class="form-group @if($errors->has('organization_id')) has-error @endif">
-			<label for="organization_id" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للعميل</label>
+			<label for="organization_id" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للعميل *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<select class="form-control" name="organization_id" id="organization_id">
 					@if(count($orgs)==1)
@@ -53,7 +53,7 @@
 			</div>
 		</div>
 		<div class="form-group @if($errors->has('name')) has-error @endif">
-			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المشروع</label>
+			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المشروع *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="name" id="name" value="{{old('name')}}" class="form-control" placeholder="أدخل أسم المشروع">
 				@if($errors->has('name'))
@@ -64,9 +64,9 @@
 			</div>
 		</div>
 		<div class="form-group @if($errors->has('def_num')) has-error @endif">
-			<label for="def_num" class="control-label col-sm-2 col-md-2 col-lg-2">الرقم التعريفى للمشروع</label>
+			<label for="def_num" class="control-label col-sm-2 col-md-2 col-lg-2">الرقم التعريفى للمشروع *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="def_num" id="def_num" value="{{old('def_num')}}" class="form-control" placeholder="أدخل الرقم التعريفى للمشروع">
+				<input type="text" name="def_num" id="def_num" value="{{old('def_num')}}" class="form-control number" placeholder="أدخل الرقم التعريفى للمشروع">
 				@if($errors->has('def_num'))
 					@foreach($errors->get('def_num') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -75,7 +75,7 @@
 			</div>
 		</div>
 		<div class="form-group @if($errors->has('address')) has-error @endif">
-			<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">شارع</label>
+			<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">شارع *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="address" id="address" value="{{old('address')}}" class="form-control" placeholder="أدخل الشارع">
 				@if($errors->has('address'))
@@ -108,7 +108,7 @@
 			</div>
 		</div>
 		<div class="form-group @if($errors->has('city')) has-error @endif">
-			<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">مدينة</label>
+			<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">مدينة *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="city" id="city" value="{{old('city')}}" class="form-control" placeholder="أدخل المدينة">
 				@if($errors->has('city'))
@@ -141,9 +141,9 @@
 			</div>
 		</div>
 		<div class="form-group @if($errors->has('implementing_period')) has-error @endif">
-			<label for="implementing_period" class="control-label col-sm-2 col-md-2 col-lg-2">مدة التنفيذ (بالشهر)</label>
+			<label for="implementing_period" class="control-label col-sm-2 col-md-2 col-lg-2">مدة التنفيذ (بالشهر) *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="implementing_period" id="implementing_period" value="{{old('implementing_period')}}" class="form-control" placeholder="أدخل مدة التنفيذ بالشهور">
+				<input type="text" name="implementing_period" id="implementing_period" value="{{old('implementing_period')}}" class="form-control number" placeholder="أدخل مدة التنفيذ بالشهور">
 				@if($errors->has('implementing_period'))
 					@foreach($errors->get('implementing_period') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -152,7 +152,7 @@
 			</div>
 		</div>
 		<div class="form-group @if($errors->has('floor_num')) has-error @endif">
-			<label for="floor_num" class="control-label col-sm-2 col-md-2 col-lg-2">عدد الأدوار</label>
+			<label for="floor_num" class="control-label col-sm-2 col-md-2 col-lg-2">عدد الأدوار *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="floor_num" id="floor_num" value="{{old('floor_num')}}" class="form-control" placeholder="أدخل عدد الأدوار">
 				@if($errors->has('floor_num'))
@@ -165,7 +165,7 @@
 		<div class="form-group @if($errors->has('approximate_price')) has-error @endif">
 			<label for="approximate_price" class="control-label col-sm-2 col-md-2 col-lg-2">السعر الكلى التقريبى للمشروع</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="approximate_price" id="approximate_price" value="{{old('approximate_price')}}" class="form-control" placeholder="أدخل السعر الكلى التقريبى للمشروع">
+				<input type="text" name="approximate_price" id="approximate_price" value="{{old('approximate_price')}}" class="form-control number" placeholder="أدخل السعر الكلى التقريبى للمشروع">
 				@if($errors->has('approximate_price'))
 					@foreach($errors->get('approximate_price') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -187,7 +187,7 @@
 		<div class="form-group @if($errors->has('cash_box')) has-error @endif">
 			<label for="cash_box" class="control-label col-sm-2 col-md-2 col-lg-2">صندوق المال</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="cash_box" id="cash_box" value="{{old('cash_box')}}" class="form-control" placeholder="أدخل رأس مال الصندوق">
+				<input type="text" name="cash_box" id="cash_box" value="{{old('cash_box')}}" class="form-control number" placeholder="أدخل رأس مال الصندوق">
 				@if($errors->has('cash_box'))
 					@foreach($errors->get('cash_box') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -198,7 +198,7 @@
 		<div class="form-group @if($errors->has('loan')) has-error @endif">
 			<label for="loan" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة القرض</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="loan" id="loan" value="{{old('loan')}}" class="form-control" placeholder="أدخل قيمة القرض">
+				<input type="text" name="loan" id="loan" value="{{old('loan')}}" class="form-control number" placeholder="أدخل قيمة القرض">
 				@if($errors->has('loan'))
 					@foreach($errors->get('loan') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -209,7 +209,7 @@
 		<div class="form-group @if($errors->has('loan_interest_rate')) has-error @endif">
 			<label for="loan_interest_rate" class="control-label col-sm-2 col-md-2 col-lg-2">نسبة الفائدة</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="loan_interest_rate" id="loan_interest_rate" value="{{old('loan_interest_rate')}}" class="form-control" placeholder="أدخل نسبة فائدة القرض">
+				<input type="text" name="loan_interest_rate" id="loan_interest_rate" value="{{old('loan_interest_rate')}}" class="form-control number" placeholder="أدخل نسبة فائدة القرض">
 				@if($errors->has('loan_interest_rate'))
 					@foreach($errors->get('loan_interest_rate') as $error)
 						<span class="help-block">{{ $error }}</span>
