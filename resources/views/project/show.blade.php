@@ -35,19 +35,9 @@
 				<li class="dropdown raw_nav_item" role="presentation">
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">مخازن <span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="#" class="navigate_to_div" data-nav-path="#raw">تقرير بالخامات</a></li>
+						<li><a href="#" class="navigate_to_div" data-nav-path="#raw">تقرير بالخامات و الاستهلاك</a></li>
 						<li><a href="{{ route('addstores',['cid'=>0,'pid'=>$project->id]) }}">أضافة خامات</a></li>
 						<li><a href="{{ route('allstores',$project->id) }}">عرض جميع الخامات بالمشروع</a></li>
-					</ul>
-				</li>
-				<li id="consumption_nav_item" role="presentation">
-					<a class="navigate_to_div" data-nav-path="#consumption" role="button" href="#">الاستهلاك</a>
-				</li>
-				<li class="dropdown" role="presentation">
-					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">رسومات <span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href="{{ route('addgraphs',$project->id) }}">أضافة رسم</a></li>
-						<li><a href="{{ route('allgraph',$project->id) }}">عرض جميع الرسومات</a></li>
 					</ul>
 				</li>
 				<li  id="employee_nav_item" class="dropdown" role="presentation">
@@ -59,10 +49,12 @@
 					</ul>
 				</li>
 				<li class="dropdown" role="presentation">
-					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">ورقيات <span class="caret"></span></a>
+					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">ورقيات و رسومات <span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="#">إضافة ورقية</a></li>
 						<li><a href="#">جميع ورقيات المشروع</a></li>
+						<li><a href="{{ route('addgraphs',$project->id) }}">أضافة رسم</a></li>
+						<li><a href="{{ route('allgraph',$project->id) }}">عرض جميع الرسومات</a></li>
 					</ul>
 				</li>
 
@@ -187,7 +179,7 @@
 					</table>
 				</div>
 				<div id="raw" class="hide">
-					@if (isset($productions) && count($productions)>0)
+					@if (isset($stores) && count($stores)>0)
 						<h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">جميع الخامات الباقية و المستهلكة</h4>
 						<div class="table-responsive">
 							<table class="table table-bordered">
@@ -217,13 +209,10 @@
 							</table>
 						</div>
 						@else
-							<div class="alert alert-warning">
+							<div class="alert alert-warning mt-5">
 								لا يوجد خامات او استهلاك بالمشروع
 							</div>
 						@endif
-				</div>
-				<div id="consumption" class="hide">
-					<div class="div" style="height:500px; width: 100%;background:blue"></div>
 				</div>
 				<div id="employee" class="hide">
 					<div class="div" style="height:500px; width: 100%;background:grey"></div>
@@ -283,13 +272,13 @@
 							</table>
 						</div>
 					@else
-						<div class="aler alert-warning">
+						<div class="alert alert-warning mt-5">
 							لا يوجد إنتاج بهذا المشروع حتى الان
 						</div>
 					@endif
 				</div>
 				<div id="supplier" class="hide">
-					@if (isset($productions) && count($productions)>0)
+					@if (isset($suppliers) && count($suppliers)>0)
 						<h4 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">جميع الموردين و الخامات التى وردوها</h4>
 						<div class="table-responsive">
 							<table class="table table-bordered">
@@ -328,7 +317,7 @@
 							@endif
 						</div>
 					@else
-						<div class="alert alert-warning">لم يتم توريد خامات إلى هذا المشروع حتى الان</div>
+						<div class="alert alert-warning mt-5">لم يتم توريد خامات إلى هذا المشروع حتى الان</div>
 					@endif
 				</div>
 			</section>

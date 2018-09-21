@@ -62,9 +62,9 @@ class Project extends Model {
 		(
 			SELECT SUM(consumptions.amount) from consumptions
 			where consumptions.term_id in (select id from terms where terms.project_id=? and terms.deleted=0)
-  		and consumptions.type = store_type group by consumptions.type
+  		and consumptions.type = store_type and consumptions.deleted=0 group by consumptions.type
 		) as consumed_amount
-  	from stores where stores.project_id =?  group by store_type
+  	from stores where stores.project_id =? and stores.deleted=0 group by store_type
 		ORDER BY `store_type`  ASC
 		",[$this->id,$this->id]);
 

@@ -300,7 +300,7 @@ class ProjectController extends Controller {
 				'project'=>$project,
 				'org'=>$org,
 				'productions'=>$productions,
-				'productionReport'=>$productionReport[0],
+				'productionReport'=>$productionReport[0]??null,
 				'stores'=>$stores,
 				'startedTerms'=>$startedTerms,
 				'notStartedTerms'=>$notStartedTerms,
