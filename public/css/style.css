@@ -1012,6 +1012,28 @@ footer{
 .number{
 	direction: ltr !important;
 }
+
+/*---------------------------------------------FORM---------------------------------------------*/
+select.form-control {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('dropdown.svg');
+    background-position: 2% 50%;
+    background-repeat: no-repeat;
+    background-size: 16px;
+}
+.input-right{
+	width: 50% !important;
+	float: right;
+	border-top-left-radius: 0 !important;
+	border-bottom-left-radius: 0 !important;
+}
+.input-left{
+	width: 50% !important;
+	float: left;
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{
   color: black !important;

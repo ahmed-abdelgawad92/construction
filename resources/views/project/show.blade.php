@@ -32,7 +32,7 @@
 				<li class="active" id="main_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#main" href="#">الرئيسية</a></li>
 				<li id="production_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#production" href="#">تقرير الانتاج</a></li>
 				<li id="supplier_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#supplier" href="#">الموردين</a></li>
-				<li class="dropdown raw_nav_item" role="presentation">
+				<li class="dropdown" id="raw_nav_item" role="presentation">
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">مخازن <span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="#" class="navigate_to_div" data-nav-path="#raw">تقرير بالخامات و الاستهلاك</a></li>
@@ -252,7 +252,7 @@
 						</div>
 						@endforeach
 					@else
-						<div class="alert alert-warning">لا يوجد موظفيين منتدبين بهذا المشروع</div>
+						<div class="alert alert-warning mt-5">لا يوجد موظفيين منتدبين بهذا المشروع</div>
 					@endif
 				</div>
 				<div id="production" class="hide">

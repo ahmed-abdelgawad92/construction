@@ -19,14 +19,14 @@
 					<div class="form-group">
 						<label class="col-md-2 col-md-offset-2 control-label">أسم المستخدم</label>
 						<div class="col-md-6">
-							<input type="text" class="form-control" autocomplete="off" id="username" name="username" value="{{ old('username') }}">
+							<input type="text" class="form-control number" autocomplete="off" id="username" name="username" value="{{ old('username') }}">
 						</div>
 					</div>
 
 					<div class="form-group">
 						<label class="col-md-2 col-md-offset-2 control-label">كلمة المرور</label>
 						<div class="col-md-6">
-							<input type="password" class="form-control" id="password" name="password">
+							<input type="password" class="form-control number" id="password" name="password">
 						</div>
 					</div>
 					<div class="form-group">
