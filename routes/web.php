@@ -259,6 +259,12 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'as'=>'addterm'
 	    ]);
 
+      //Get Statement
+      Route::get('get_statement/{code}',[
+        'uses'=>'TermController@getStatement',
+        'as'=>'get_statement'
+        ])->where('code','[0-9\/\s]+');
+
 	    //Update Term in the db
 	    Route::put('update/{id}',[
 	    	'uses'=>'TermController@update',

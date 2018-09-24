@@ -11,6 +11,7 @@ use Validator;
 use Carbon\Carbon;
 use App\Contractor;
 use App\TermType;
+use App\Log;
 
 class TermController extends Controller {
 
@@ -59,7 +60,15 @@ class TermController extends Controller {
 			return view('term.all',$array);
 		}
 	}
-
+	public function getStatement($code = null)
+	{
+		$term = Term::where("code",$code)->first();
+		if($term){
+			return json_encode(["state"=>"OK","statement"=>$term->statement,"unit"=>$term->unit]);
+		}else {
+			return json_encode(["state"=>"NOK", "code"=>422]);
+		}
+	}
 	/**
 	 * Show the form for creating a new resource.
 	 *
@@ -91,12 +100,14 @@ class TermController extends Controller {
 			//rules
 			$rules=[
 				'project_id'=>'required|numeric|exists:projects,id',
-				'type'=>'required|exists:term_types,name',
+				'type_select'=>'required_without:type_text|exists:term_types,name',
+				'type_text'=>'required_without:type_select',
 				'code'=>'regex:/^[\pN\/]+$/u',
 				'statement'=>'string',
 				'unit'=>'regex:/^[\pL\pN\s]+$/u',
 				'amount'=>'numeric',
 				'value'=>'numeric',
+				'num_phases'=>'nullable|numeric',
 				'started_at'=>'nullable|date'
 			];
 			//messages
@@ -104,13 +115,15 @@ class TermController extends Controller {
 				'project_id.required'=>'من فضلك أختار مشروع اتابع له هذا البند',
 				'project_id.numeric'=>'من فضلك لا تغير قيمة المشروع',
 				'project_id.exists'=>'هذا المشروع غير موجود بقاعدة البيانات',
-				'type.required'=>'من فضلك أدخل نوع البند',
-				'type.exists'=>'نوع البند يجب أن يكون موجود فى قاعدة البيانات',
+				'type_select.required_without'=>'من فضلك أختار او أدخل نوع البند',
+				'type_select.exists'=>'نوع البند يجب أن يكون موجود فى قاعدة البيانات',
+				'type_text.required_without'=>'من فضلك أختار او أدخل نوع البند',
 				'code.regex'=>'كود البند يجب أن يتكون من أرقام و / فقط',
-				'statement.regex'=>'يجب ادخال بيان الاعمال',
+				'statement.string'=>'يجب ادخال بيان الاعمال',
 				'unit.regex'=>'يجب ان تتكون من حروف و ارقام و مسافات فقط',
 				'amount.numeric'=>'الكمية يجب أن تتكون من أرقام فقط',
 				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط',
+				'num_phases.numeric'=>'عدد المراحل يجب أن يتكون من أرقام فقط',
 				'started_at.date'=>'يجب ادخال تاريخ صحيح'
 			];
 			//validate
@@ -121,18 +134,33 @@ class TermController extends Controller {
 
 			//save in db
 			$term=new Term;
-			$term->type=$req->input("type");
+			if(!empty($req->input("type_text"))){
+				$term_type=new TermType;
+				$term_type->name=$req->input("type_text");
+				$term_type->save();
+				$term->type=$req->input("type_text");
+			}else{
+				$term->type=$req->input("type_select");
+			}
 			$term->code=$req->input("code");
 			$term->statement=$req->input('statement');
 			$term->unit=$req->input('unit');
 			$term->amount=$req->input('amount');
 			$term->value=$req->input('value');
+			$term->num_phases=$req->input("num_phases")??1;
+			$term->started_at=$req->input('started_at');
 			$term->project_id=$req->input('project_id');
 
 			$saved=$term->save();
 			if(!$saved){
 				return redirect()->back()->withInput()->with('insert_error','حدث خطأ خلال أضافة هذا البند يرجى المحاولة فى وقت لاحق');
 			}
+			$log = new Log;
+			$log->table="terms";
+			$log->record_id=$term->id;
+			$log->action="create";
+			$log->user_id=Auth::user()->id;
+			$log->save();
 			return redirect()->route('addterm',['id'=>$term->project_id])->with('success','تم أضافة البند صاحب الكود '.$term->code.' بنجاح');
 		}
 		else

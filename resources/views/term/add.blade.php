@@ -16,6 +16,11 @@
 			@if (count($errors) > 0)
 				<div class="alert alert-danger">
 					<strong>خطأ</strong>
+					<ul>
+					@foreach ($errors as $err)
+						<li>{{$err}}</li>
+					@endforeach
+					</ul>
 				</div>
 			@endif
 			@if(session('insert_error'))
@@ -47,7 +52,7 @@
 							@else
 								<option value="0">أختار مشروع</option>
 								@foreach($projects as $project)
-								<option value="{{$project->id}}">{{$project->name}}</option>
+								<option @if (old('project_id')) selected @endif value="{{$project->id}}">{{$project->name}}</option>
 								@endforeach
 							@endif
 						</select>
@@ -60,10 +65,11 @@
 				</div>
 				<div class="form-group @if($errors->has('type_select')||$errors->has('type_text')) has-error @endif">
 					<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع البند *</label>
-					<div class="col-sm-8 col-md-8 col-lg-8">
+					<div class="col-sm-8 col-md-8 col-lg-8" >
+						<div class="input-group w-100" id="type">
 						@if (count($term_types)>0)
 						<select name="type_select" id="type_select" class="form-control input-right">
-							<option value="0">أختار نوع البند</option>
+							<option value="">أختار نوع البند</option>
 							@foreach($term_types as $type)
 							<option @if($type->name==old('type_select')) selected @endif value="{{$type->name}}">
 							{{$type->name}}
@@ -82,11 +88,12 @@
 								<span class="help-block">{{ $error }}</span>
 							@endforeach
 						@endif
+						</div>
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('code')) has-error @endif">
 					<label for="code" class="control-label col-sm-2 col-md-2 col-lg-2">كود البند *</label>
-					<div class="col-sm-8 col-md-8 col-lg-8">
+					<div class="col-sm-8 col-md-8 col-lg-8" id="get_statement">
 						<input type="text" name="code" id="code" class="form-control number" placeholder="أدخل كود البند" value="{{old('code')}}">
 						@if($errors->has('code'))
 							@foreach($errors->get('code') as $error)
@@ -140,9 +147,9 @@
 					</div>
 				</div>
 				<div class="form-group @if($errors->has('num_phases')) has-error @endif">
-					<label for="num_phases" class="control-label col-sm-2 col-md-2 col-lg-2">القيمة *</label>
+					<label for="num_phases" class="control-label col-sm-2 col-md-2 col-lg-2">عدد المراحل</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="num_phases" id="num_phases" class="form-control number" placeholder="أدخل القيمة" value="{{old('num_phases')}}">
+						<input type="text" name="num_phases" id="num_phases" class="form-control number" placeholder="أدخل عدد المراحل" value="{{old('num_phases')}}">
 						@if($errors->has('num_phases'))
 							@foreach($errors->get('num_phases') as $error)
 								<span class="help-block">{{ $error }}</span>

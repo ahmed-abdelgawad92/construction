@@ -369,8 +369,8 @@ $(document).ready(function() {
 			assignError($("#project_id"),'من فضلك لا تغير قيمة المشروع');
 			check=false;
 		}
-		if (!$('#type').val().trim()||$('#type').val().trim()==0) {
-			assignError($("#type"),'من فضلك أدخل نوع البند');
+		if ($('#type_select').val().trim()==0 && !$('#type_text').val().trim()) {
+			assignError($("#type"),'من فضلك أدخل او اختار نوع البند');
 			check=false;
 		}
 		if(!$('#code').val().trim()){
@@ -396,6 +396,12 @@ $(document).ready(function() {
 			assignError($("#value"),'القيمة يجب أن تتكون من أرقام فقط');
 			check=false;
 		}
+		if($("#num_phases").val().trim()){
+			if(!$("#num_phases").val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+				assignError($("#num_phases"),'عدد المراحل يجب أن يتكون من أرقام فقط');
+				check=false;
+			}
+		}
 		if ($("#started_at").val().trim()) {
 			if(!Date.parse($("#started_at").val().trim())){
 				assignError($("#started_at"),'يجب ادخال تاريخ صحيح');
@@ -409,7 +415,19 @@ $(document).ready(function() {
 		return false;
 	});
 
-
+	$("#get_statement #code").blur(function(){
+		var code= $(this).val().trim();
+		$.ajax({
+			url : "/term/get_statement/"+encodeURIComponent(code),
+			method: "GET",
+			dataType: "JSON"
+		}).done(function(msg){
+			if (msg.state=="OK") {
+				$('#statement').val(msg.statement);
+				$('#unit').val(msg.unit);
+			}
+		});
+	});
 
 
 

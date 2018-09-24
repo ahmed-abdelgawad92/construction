@@ -1024,15 +1024,19 @@ select.form-control {
 }
 .input-right{
 	width: 50% !important;
-	float: right;
+	float: right !important;
 	border-top-left-radius: 0 !important;
 	border-bottom-left-radius: 0 !important;
+	border-top-right-radius: 4px !important;
+	border-bottom-right-radius: 4px !important;
 }
 .input-left{
 	width: 50% !important;
-	float: left;
+	float: left !important;
 	border-top-right-radius: 0 !important;
 	border-bottom-right-radius: 0 !important;
+	border-top-left-radius: 4px !important;
+	border-bottom-left-radius: 4px !important;
 }
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{
@@ -1104,4 +1108,15 @@ table.borderless tr td,table.borderless tr th{
 }
 table.borderless tr td:first-of-type{
 	width: 150px !important;
+}
+
+
+
+
+
+
+/*------------------------------------Terms------------------------------------*/
+#type.has-error, #type.is-invalid{
+	border : 1px solid #dc3545;
+	border-radius: 4px;
 }
