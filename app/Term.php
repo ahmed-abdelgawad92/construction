@@ -3,7 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 
 class Term extends Model {
-	protected $dates = ['created_at','updated_at','started_at'];
+	public $dates = ['created_at','updated_at','started_at'];
 	//Define the one to many relationship with project
 	public function project()
 	{

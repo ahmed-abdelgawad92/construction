@@ -25,7 +25,7 @@ class TermController extends Controller {
 		if(Auth::user()->type=='admin'){
 			if(isset($id))
 			{
-				$terms=Term::where('project_id',$id)->orderBy('code')->get();
+				$terms=Term::where('project_id',$id)->orderBy('code')->paginate(30);
 				$project=Project::findOrFail($id);
 				if(Route::current()->getName()=='allterm')
 					$active='term';
@@ -60,6 +60,22 @@ class TermController extends Controller {
 			return view('term.all',$array);
 		}
 	}
+	//get all none starting Terms
+	public function getNotstartedTerms($id)
+	{
+		$project =Project::findOrFail($id);
+		$terms= $project->terms()->where('done',0)->where('disabled',0)->where('deleted',0)->where(function($query){
+			$query->where('started_at',null)->orWhere('started_at','>',time());
+		})->paginate(30);
+		$array=[
+			'active'=>'term',
+			'terms'=>$terms,
+			'project'=>$project
+		];
+		return view('term.all',$array);
+	}
+
+	//return through AJAX the statement of the first term with a given code to make it easy to the user
 	public function getStatement($code = null)
 	{
 		$term = Term::where("code",$code)->first();
@@ -100,8 +116,8 @@ class TermController extends Controller {
 			//rules
 			$rules=[
 				'project_id'=>'required|numeric|exists:projects,id',
-				'type_select'=>'required_without:type_text|exists:term_types,name',
-				'type_text'=>'required_without:type_select',
+				'type_select'=>'nullable|exists:term_types,name',
+				'type_text'=>'nullable|unique:term_types,name',
 				'code'=>'regex:/^[\pN\/]+$/u',
 				'statement'=>'string',
 				'unit'=>'regex:/^[\pL\pN\s]+$/u',
@@ -115,9 +131,8 @@ class TermController extends Controller {
 				'project_id.required'=>'من فضلك أختار مشروع اتابع له هذا البند',
 				'project_id.numeric'=>'من فضلك لا تغير قيمة المشروع',
 				'project_id.exists'=>'هذا المشروع غير موجود بقاعدة البيانات',
-				'type_select.required_without'=>'من فضلك أختار او أدخل نوع البند',
 				'type_select.exists'=>'نوع البند يجب أن يكون موجود فى قاعدة البيانات',
-				'type_text.required_without'=>'من فضلك أختار او أدخل نوع البند',
+				'type_text.unique'=>'نوع البند موجود بالفعل في قاعدة البيانات ، من فضلك اختار النوع من الخيارات',
 				'code.regex'=>'كود البند يجب أن يتكون من أرقام و / فقط',
 				'statement.string'=>'يجب ادخال بيان الاعمال',
 				'unit.regex'=>'يجب ان تتكون من حروف و ارقام و مسافات فقط',
@@ -129,6 +144,9 @@ class TermController extends Controller {
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
 			if($validator->fails()){
+				if (empty($req->input("type_text")) && empty($req->input('type_select'))) {
+					$validator->getMessageBag()->add('type_select','من فضلك أختار او أدخل نوع البند');
+				}
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 
@@ -139,8 +157,17 @@ class TermController extends Controller {
 				$term_type->name=$req->input("type_text");
 				$term_type->save();
 				$term->type=$req->input("type_text");
-			}else{
+				$log = new Log;
+				$log->table="term_types";
+				$log->record_id=$term_type->id;
+				$log->action="create";
+				$log->user_id=Auth::user()->id;
+				$log->description="قام باضافة نوع بند جديد";
+				$log->save();
+			}elseif(!empty($req->input('type_select'))){
 				$term->type=$req->input("type_select");
+			}else{
+				return redirect()->back()->withErrors(['type_select'=>'من فضلك أختار او أدخل نوع البند'])->withInput();
 			}
 			$term->code=$req->input("code");
 			$term->statement=$req->input('statement');
@@ -159,9 +186,10 @@ class TermController extends Controller {
 			$log->table="terms";
 			$log->record_id=$term->id;
 			$log->action="create";
+			$log->description="قام باضافة بند جديد الي مشروع ".$term->project->name;
 			$log->user_id=Auth::user()->id;
 			$log->save();
-			return redirect()->route('addterm',['id'=>$term->project_id])->with('success','تم أضافة البند صاحب الكود '.$term->code.' بنجاح');
+			return redirect()->action('TermController@create',['id'=>$term->project_id])->with('success','تم أضافة البند صاحب الكود '.$term->code.' بنجاح');
 		}
 		else
 			abort('404');
@@ -221,7 +249,115 @@ class TermController extends Controller {
 	public function update(Request $req,$id)
 	{
 		if(Auth::user()->type=='admin'){
-
+			//rules
+			$rules=[
+				'type_select'=>'nullable|exists:term_types,name',
+				'type_text'=>'nullable|unique:term_types,name',
+				'code'=>'regex:/^[\pN\/]+$/u',
+				'statement'=>'string',
+				'unit'=>'regex:/^[\pL\pN\s]+$/u',
+				'amount'=>'numeric',
+				'value'=>'numeric',
+				'num_phases'=>'nullable|numeric',
+				'started_at'=>'nullable|date'
+			];
+			//messages
+			$error_messages=[
+				'type_select.exists'=>'نوع البند يجب أن يكون موجود فى قاعدة البيانات',
+				'type_text.unique'=>'نوع البند موجود بالفعل في قاعدة البيانات ، من فضلك اختار النوع من الخيارات',
+				'code.regex'=>'كود البند يجب أن يتكون من أرقام و / فقط',
+				'statement.string'=>'يجب ادخال بيان الاعمال',
+				'unit.regex'=>'يجب ان تتكون من حروف و ارقام و مسافات فقط',
+				'amount.numeric'=>'الكمية يجب أن تتكون من أرقام فقط',
+				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط',
+				'num_phases.numeric'=>'عدد المراحل يجب أن يتكون من أرقام فقط',
+				'started_at.date'=>'يجب ادخال تاريخ صحيح'
+			];
+			//validate
+			$validator=Validator::make($req->all(),$rules,$error_messages);
+			if($validator->fails()){
+				if (empty($req->input("type_text")) && empty($req->input('type_select'))) {
+					$validator->getMessageBag()->add('type_select','من فضلك أختار او أدخل نوع البند');
+				}
+				return redirect()->back()->withErrors($validator)->withInput();
+			}
+			$description="قام بتعديل هذا البند ,";
+			$check= false;
+			//save in db
+			$term= Term::findOrFail($id);
+			if(!empty($req->input("type_text"))){
+				$term_type=new TermType;
+				$term_type->name=$req->input("type_text");
+				$term_type->save();
+				$description.=" تغيير النوع من ".$term->type." الى ".$req->input("type_text")." ,";
+				$term->type=$req->input("type_text");
+				$check=true;
+				$log = new Log;
+				$log->table="term_types";
+				$log->record_id=$term_type->id;
+				$log->action="create";
+				$log->user_id=Auth::user()->id;
+				$log->description="قام باضافة نوع بند جديد";
+				$log->save();
+			}elseif(!empty($req->input('type_select'))){
+				if ($term->type!=$req->input("type_select")) {
+					$description.=" تغيير النوع من ".$term->type." الى ".$req->input("type_select")." , ";
+					$term->type=$req->input("type_select");
+					$check=true;
+				}
+			}else{
+				return redirect()->back()->withErrors(['type_select'=>'من فضلك أختار او أدخل نوع البند'])->withInput();
+			}
+			if($term->code!=$req->input("code")){
+				$description.="تغيير كود البند من ".$term->code." الى ".$req->input("code")." , ";
+				$term->code=$req->input("code");
+				$check=true;
+			}
+			if($term->statement!=$req->input("statement")){
+				$description.="تغيير بيان الاعمال من ".$term->statement." الى ".$req->input("statement")." , ";
+				$term->statement=$req->input('statement');
+				$check=true;
+			}
+			if($term->unit!=$req->input("unit")){
+				$description.="تغيير الوحدة من ".$term->unit." الى ".$req->input("unit")." , ";
+				$term->unit=$req->input('unit');
+				$check=true;
+			}
+			if($term->amount!=$req->input("amount")){
+				$description.="تغيير كمية البند من ".$term->amount." الى ".$req->input("amount")." , ";
+				$term->amount=$req->input('amount');
+				$check=true;
+			}
+			if($term->value!=$req->input("value")){
+				$description.="تغيير القيمة من ".$term->value." الى ".$req->input("value")." , ";
+				$term->value=$req->input('value');
+				$check=true;
+			}
+			if($term->num_phases!=$req->input("num_phases")){
+				$description.="تغيير عدد مراحل البند من ".$term->num_phases." الى ".$req->input("num_phases")." , ";
+				$term->num_phases=$req->input("num_phases")??1;
+				$check=true;
+			}
+			if($term->started_at!=$req->input("started_at")){
+				$description.="تغيير تاريخ بداية البند من ".$term->started_at??'لم يحدد بعد '." الى ".$req->input("started_at")." , ";
+				$term->started_at=$req->input('started_at');
+				$check=true;
+			}
+			if ($check) {
+				$saved=$term->save();
+				if(!$saved){
+					return redirect()->back()->withInput()->with('insert_error','حدث خطأ خلال تعديل هذا البند يرجى المحاولة فى وقت لاحق');
+				}
+				$log = new Log;
+				$log->table="terms";
+				$log->record_id=$term->id;
+				$log->action="update";
+				$log->description=$description;
+				$log->user_id=Auth::user()->id;
+				$log->save();
+				return redirect()->back()->with('success','تم تعديل البند صاحب الكود '.$term->code.' بنجاح');
+			}
+			return redirect()->back()->with('warning','لا يوجد تغيير حتى يتم تعديله');
 		}
 		else
 			abort('404');
@@ -248,10 +384,111 @@ class TermController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function getStart($id)
+	public function startTerm($id)
 	{
 		if(Auth::user()->type=='admin'){
-
+			$term=Term::findOrFail($id);
+			$msg="تم بدء البند صاحب الكود رقم : ".$term->code;
+			$term->started_at=date("Y-m-d");
+			$saved=$term->save();
+			if(!$saved){
+				return redirect()->back()->with("insert_error","يوجد عطل بالسيرفر ، من فضلك حاول مرة اخرى");
+			}
+			$log = new Log;
+			$log->table="terms";
+			$log->record_id=$term->id;
+			$log->action="update";
+			$log->description= "قام ببدء البند يوم ".date("d/m/Y");
+			$log->save();
+			return redirect()->back()->with("success",$msg);
+		}
+		else
+			abort('404');
+	}
+	/**
+	 * Show view for starting Term
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function endTerm($id)
+	{
+		if(Auth::user()->type=='admin'){
+			$term=Term::findOrFail($id);
+			$msg="تم انهاء البند صاحب الكود رقم : ".$term->code;
+			$term->done=1;
+			$term->ended_at=date("Y-m-d");
+			$saved=$term->save();
+			if(!$saved){
+				return redirect()->back()->with("insert_error","يوجد عطل بالسيرفر ، من فضلك حاول مرة اخرى");
+			}
+			$log = new Log;
+			$log->table="terms";
+			$log->record_id=$term->id;
+			$log->action="update";
+			$log->description= "قام بانهاء البند يوم ".date("d/m/Y");
+			$log->save();
+			return redirect()->back()->with("success",$msg);
+		}
+		else
+			abort('404');
+	}
+	/**
+	 * Show view for starting Term
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function disableTerm($id)
+	{
+		if(Auth::user()->type=='admin'){
+			$term=Term::findOrFail($id);
+			$msg="تم تعطيل البند صاحب الكود رقم : ".$term->code;
+			if ($term->disable==0) {
+				$term->disable=1;
+				$saved=$term->save();
+				if(!$saved){
+					return redirect()->back()->with("insert_error","يوجد عطل بالسيرفر ، من فضلك حاول مرة اخرى");
+				}
+				$log = new Log;
+				$log->table="terms";
+				$log->record_id=$term->id;
+				$log->action="update";
+				$log->description= "قام بتعطيل البند يوم ".date("d/m/Y");
+				$log->save();
+				return redirect()->back()->with("success",$msg);
+			}
+			return redirect()->back()->with('success',"البند بالفعل معطل");
+		}
+		else
+			abort('404');
+	}
+	/**
+	 * Show view for starting Term
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function enableTerm($id)
+	{
+		if(Auth::user()->type=='admin'){
+			$term=Term::findOrFail($id);
+			$msg="تم تفعيل البند صاحب الكود رقم : ".$term->code;
+			if ($term->disable!=0) {
+				$term->disable=0;
+				$saved=$term->save();
+				if(!$saved){
+					return redirect()->back()->with("insert_error","يوجد عطل بالسيرفر ، من فضلك حاول مرة اخرى");
+				}
+				$log = new Log;
+				$log->table="terms";
+				$log->record_id=$term->id;
+				$log->action="update";
+				$log->description= "قام بتفعيل البند يوم ".date("d/m/Y");
+				$log->save();
+				return redirect()->back()->with("success",$msg);
+			}
+			return redirect()->back()->with("success","البند بالفعل مُفعل");
 		}
 		else
 			abort('404');

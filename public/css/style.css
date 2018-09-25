@@ -996,8 +996,23 @@ footer{
 .mx-auto {
   margin-left: auto !important;
 }
+.pagination{
+	margin: 5px auto;
+}
+.page-link{
+	direction: ltr !important;
+}
+.pagination>.active>span{
+	background: #597dbf;
+}
+.block{
+	display: block;
+}
+.toggle-group{
+	text-align: center !important;
+}
 .table-striped>tbody>tr:nth-of-type(odd) {
-  background-color: #dbedff8a;
+  background-color: #dbedff38;
 }
 .file{
 	position: absolute;
@@ -1037,6 +1052,15 @@ select.form-control {
 	border-bottom-right-radius: 0 !important;
 	border-top-left-radius: 4px !important;
 	border-bottom-left-radius: 4px !important;
+}
+.btn-primary{
+	background-color: #597dbf !important;
+	transition: 1s all;
+}
+.btn-primary:hover{
+	background-color: #597dbfba !important;
+	border-color: #ababab !important;
+	transition: 1s all;
 }
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{

@@ -329,7 +329,6 @@ $(document).ready(function() {
 				assignError($('#bank'),'يجب ان يتكون من حروف وارقام فقط');
 			}
 		} catch (e) {
-			console.log(e);
 		}
 		if(check){
 			this.submit();
@@ -362,14 +361,21 @@ $(document).ready(function() {
 		$(".is-invalid").removeClass('is-invalid');
 		$('.invalid-feedback').remove();
 		var check = true;
-		if(!$("#project_id").val().trim()||$("#project_id").val().trim()==0){
-			assignError($("#project_id"),'من فضلك أختار مشروع اتابع له هذا البند');
-			check=false;
-		}else if(!$("#project_id").val().trim().match(/^[0-9]+$/)){
-			assignError($("#project_id"),'من فضلك لا تغير قيمة المشروع');
-			check=false;
+		if($("#project_id").length){ // Check if element exists
+			if(!$("#project_id").val().trim()||$("#project_id").val().trim()==0){
+				assignError($("#project_id"),'من فضلك أختار مشروع اتابع له هذا البند');
+				check=false;
+			}else if(!$("#project_id").val().trim().match(/^[0-9]+$/)){
+				assignError($("#project_id"),'من فضلك لا تغير قيمة المشروع');
+				check=false;
+			}
 		}
-		if ($('#type_select').val().trim()==0 && !$('#type_text').val().trim()) {
+		if ($('#type_select').length) { // Check if element exists
+			if(!$('#type_select').val().trim() && !$('#type_text').val().trim()) {
+				assignError($("#type"),'من فضلك أدخل او اختار نوع البند');
+				check=false;
+			}
+		}else if(!$('#type_text').val().trim()){
 			assignError($("#type"),'من فضلك أدخل او اختار نوع البند');
 			check=false;
 		}

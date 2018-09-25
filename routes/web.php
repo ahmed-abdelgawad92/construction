@@ -288,6 +288,12 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'as'=>'allterm'
 	    ])->where('id','[0-9]+');
 
+      //show all not started terms
+      Route::get("all/not_started/{id}",[
+          'uses'=>'TermController@getNotstartedTerms',
+          'as'=>'notstartedterms'
+      ])->where('id','[0-9]+');
+
 	    //find Term by id
 	    Route::get('/{id}',[
 	    	'uses'=>'TermController@show',
@@ -296,7 +302,7 @@ Route::group(['middleware' => 'auth'], function() {
 
 	   	//Start Term by id
 	    Route::get('start/{id}',[
-	    	'uses'=>'TermController@getStart',
+	    	'uses'=>'TermController@startTerm',
 	    	'as'=>'startterm'
 	    ])->where('id', '[0-9]+');
 	    //stop term by if

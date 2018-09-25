@@ -300,7 +300,13 @@
 										<td>{{++$count}}</td>
 										<td><a href="{{route('showterm',['id'=>$production->term_id])}}">{{$production->code}}</a></td>
 										<td>{{$production->amount??0}} {{$production->unit}}</td>
-										<td>{{($production->term_amount - $production->amount)??0}} {{$production->unit}}</td>
+										<td>
+											@if (($production->term_amount - $production->amount)>0)
+											{{($production->term_amount - $production->amount)}}
+											@else
+											0
+											@endif
+											{{$production->unit}}</td>
 										<td>{{$production->term_amount}} {{$production->unit}}</td>
 										<td>{{($production->amount/$production->term_amount)*100}} %</td>
 										<td>{{round($production->rate,2)}}</td>
@@ -452,7 +458,7 @@
 				</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
-				<a href="{{ url('term/all/notStarted') }}" class="btn btn-default">
+				<a href="{{ route("notstartedterms",['id'=>$project->id]) }}" class="btn btn-default">
 					جميع البنود التى لم تبدأ
 				</a>
 			</div>
@@ -515,6 +521,8 @@
 					 {{$term->statement}}
 				</p>
 				</a>
+				<a href="#" class="btn btn-danger my-2 mx-1 width-100">تعطيل</a>
+				<a href="#" class="btn btn-success my-2 mx-1 width-100">انهاء</a>
 			</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
@@ -547,6 +555,7 @@
 					 {{$term->statement}}
 				</p>
 				</a>
+				<a href="#" class="btn btn-success my-2 mx-1 width-100">تفعيل</a>
 			</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
