@@ -293,6 +293,26 @@ Route::group(['middleware' => 'auth'], function() {
           'uses'=>'TermController@getNotstartedTerms',
           'as'=>'notstartedterms'
       ])->where('id','[0-9]+');
+      //show all started terms
+      Route::get("all/started/{id}",[
+        'uses'=>'TermController@getStartedTerms',
+        'as'=>'startedterms'
+        ])->where('id','[0-9]+');
+      //show all disabled terms
+      Route::get("all/disabled/{id}",[
+          'uses'=>'TermController@getDisabledTerms',
+          'as'=>'disabledterms'
+      ])->where('id','[0-9]+');
+      //show all done terms
+      Route::get("all/done/{id}",[
+          'uses'=>'TermController@getDoneTerms',
+          'as'=>'doneterms'
+      ])->where('id','[0-9]+');
+      //show all deleted terms
+      Route::get("all/deleted/{id}",[
+          'uses'=>'TermController@getDeletedTerms',
+          'as'=>'deletedterms'
+      ])->where('id','[0-9]+');
 
 	    //find Term by id
 	    Route::get('/{id}',[
@@ -305,11 +325,23 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'uses'=>'TermController@startTerm',
 	    	'as'=>'startterm'
 	    ])->where('id', '[0-9]+');
-	    //stop term by if
+	    //stop term by id
 	    Route::get('end/{id}',[
 	    	'uses'=>'TermController@endTerm',
 	    	'as'=>'endterm'
 	    ])->where('id','[0-9]+');
+	    //enable term by id
+	    Route::get('enable/{id}',[
+	    	'uses'=>'TermController@enableTerm',
+	    	'as'=>'enableterm'
+	    ])->where('id','[0-9]+');
+	    //disable term by id
+	    Route::get('disable/{id}',[
+	    	'uses'=>'TermController@disableTerm',
+	    	'as'=>'disableterm'
+	    ])->where('id','[0-9]+');
+
+
 	    //contract term
 	    Route::get('contract/{id}',[
 	    	'uses'=>'TermController@getTermContract',

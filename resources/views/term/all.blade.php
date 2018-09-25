@@ -40,6 +40,12 @@
 			<h3>أختار بند لكى تضيف أستهلاك اليه</h3>
 		@elseif(Route::current()->getName()=='notstartedterms')
 			<h3>جميع البنود التى لم تبدأ بمشروع <a href="{{route('showproject',['id'=>$project->id])}}">{{$project->name}}</a></h3>
+		@elseif(Route::current()->getName()=='startedterms')
+			<h3>جميع البنود التي بدأت بمشروع <a href="{{route('showproject',['id'=>$project->id])}}">{{$project->name}}</a></h3>
+		@elseif(Route::current()->getName()=='disabledterms')
+			<h3>جميع البنود المعطلة بمشروع <a href="{{route('showproject',['id'=>$project->id])}}">{{$project->name}}</a></h3>
+		@elseif(Route::current()->getName()=='doneterms')
+			<h3>جميع البنود المنتهية بمشروع <a href="{{route('showproject',['id'=>$project->id])}}">{{$project->name}}</a></h3>
 		@endif
 		</div>
 		<div class="panel-body">
@@ -87,8 +93,17 @@
 						<td>{{$term->value*$term->amount}}</td>
 						<td>
 							<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-default block">تعديل</a>
-							<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-primary block mt-2">ابدا الان</a>
-							<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-danger block mt-2">مسح</a>
+							@if ($term->started_at==null || date("Y-m-d",strtotime($term->started_at))>date("Y-m-d"))
+							<a href="{{route('startterm',['id'=>$term->id])}}" class="btn btn-primary block mt-2">ابدا الان</a>
+							@elseif ($term->done==0)
+							<a href="{{route('endterm',['id'=>$term->id])}}" class="btn btn-success block mt-2">انهاء</a>
+							@endif
+							@if ($term->disabled==0)
+							<a href="{{route('disableterm',['id'=>$term->id])}}" class="btn btn-dark block mt-2">تعطيل</a>
+							@else
+							<a href="{{route('enableterm',['id'=>$term->id])}}" class="btn btn-enable block mt-2">تفعيل</a>
+							@endif
+							<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-danger block mt-2">حذف</a>
 						</td>
 						@if(Route::current()->getName()=='allterm')
 						<td>

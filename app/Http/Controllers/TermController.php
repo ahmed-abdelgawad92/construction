@@ -65,8 +65,56 @@ class TermController extends Controller {
 	{
 		$project =Project::findOrFail($id);
 		$terms= $project->terms()->where('done',0)->where('disabled',0)->where('deleted',0)->where(function($query){
-			$query->where('started_at',null)->orWhere('started_at','>',time());
+			$query->where('started_at',null)->orWhereDate('started_at','>',date("Y-m-d"));
 		})->paginate(30);
+		$array=[
+			'active'=>'term',
+			'terms'=>$terms,
+			'project'=>$project
+		];
+		return view('term.all',$array);
+	}
+	//get all starting Terms
+	public function getStartedTerms($id)
+	{
+		$project =Project::findOrFail($id);
+		$terms= $project->terms()->where('done',0)->where('disabled',0)->where('deleted',0)->WhereDate('started_at','<=',date("Y-m-d"))->paginate(30);
+		$array=[
+			'active'=>'term',
+			'terms'=>$terms,
+			'project'=>$project
+		];
+		return view('term.all',$array);
+	}
+	//get all disabled Terms
+	public function getDisabledTerms($id)
+	{
+		$project =Project::findOrFail($id);
+		$terms= $project->terms()->where('done',0)->where('disabled',1)->where('deleted',0)->paginate(30);
+		$array=[
+			'active'=>'term',
+			'terms'=>$terms,
+			'project'=>$project
+		];
+		return view('term.all',$array);
+	}
+	//get all none starting Terms
+	public function getDoneTerms($id)
+	{
+		$project =Project::findOrFail($id);
+		$terms= $project->terms()->where('done',1)->where('deleted',0)->paginate(30);
+		$array=[
+			'active'=>'term',
+			'terms'=>$terms,
+			'project'=>$project
+		];
+		return view('term.all',$array);
+	}
+	//get all none starting Terms
+	public function getDeletedTerms($id)
+	{
+		$project =Project::findOrFail($id);
+		$terms= $project->terms()->where('deleted',1)->paginate(30);
 		$array=[
 			'active'=>'term',
 			'terms'=>$terms,
@@ -444,8 +492,8 @@ class TermController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$term=Term::findOrFail($id);
 			$msg="تم تعطيل البند صاحب الكود رقم : ".$term->code;
-			if ($term->disable==0) {
-				$term->disable=1;
+			if ($term->disabled==0) {
+				$term->disabled=1;
 				$saved=$term->save();
 				if(!$saved){
 					return redirect()->back()->with("insert_error","يوجد عطل بالسيرفر ، من فضلك حاول مرة اخرى");
@@ -474,8 +522,8 @@ class TermController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$term=Term::findOrFail($id);
 			$msg="تم تفعيل البند صاحب الكود رقم : ".$term->code;
-			if ($term->disable!=0) {
-				$term->disable=0;
+			if ($term->disabled!=0) {
+				$term->disabled=0;
 				$saved=$term->save();
 				if(!$saved){
 					return redirect()->back()->with("insert_error","يوجد عطل بالسيرفر ، من فضلك حاول مرة اخرى");

@@ -6,8 +6,13 @@
 	<div class="col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-md-offset-0 col-lg-offset-0">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>مشروع {{$project->name}}</h3>
-			<h4>العميل <a href="{{ route('showorganization',$org->id) }}">{{$org->name}}</a></h4>
+			<div class="row">
+			<div class="col-xs-4 col-md-3 col-lg-2 col-sm-4"><img src="{{asset('images/logo_3omad_shadow.png')}}" class="w-100" alt=""></div>
+			<div class="col-xs-8 col-md-9 col-lg-10 col-sm-8">
+				<h3>مشروع {{$project->name}}</h3>
+				<h4>العميل <a href="{{ route('showorganization',$org->id) }}">{{$org->name}}</a></h4>
+			</div>
+			</div>
 		</div>
 		<div class="panel-body">
 			@if(session('error'))
@@ -521,12 +526,12 @@
 					 {{$term->statement}}
 				</p>
 				</a>
-				<a href="#" class="btn btn-danger my-2 mx-1 width-100">تعطيل</a>
-				<a href="#" class="btn btn-success my-2 mx-1 width-100">انهاء</a>
+				<a href="{{route('disableterm',['id'=>$term->id])}}" class="btn btn-dark my-2 mx-1 width-100">تعطيل</a>
+				<a href="{{route('endterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">انهاء</a>
 			</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
-				<a href="{{ url('term/all/notStarted') }}" class="btn btn-default">
+				<a href="{{route('startedterms',['id'=>$project->id])}}" class="btn btn-default">
 					جميع البنود التى بدأت
 				</a>
 			</div>
@@ -555,11 +560,11 @@
 					 {{$term->statement}}
 				</p>
 				</a>
-				<a href="#" class="btn btn-success my-2 mx-1 width-100">تفعيل</a>
+				<a href="{{route('enableterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">تفعيل</a>
 			</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
-				<a href="{{ url('term/all/notStarted') }}" class="btn btn-default">
+				<a href="{{route('disabledterms',['id'=>$project->id])}}" class="btn btn-default">
 					جميع البنود المعطلة
 				</a>
 			</div>
@@ -569,6 +574,44 @@
 		</div>
 	</div>
 	<!--__________________/OffTerms______________________-->
+	<!--__________________DeletedTerms______________________-->
+	<div class="panel panel-danger">
+		<div class="panel-heading relative">
+			<h4>البنود المحذوفة</h4>
+			@if(count($deletedTerms)>0)
+			<img src="{{asset('images/recycle_full.png')}}" id="recycle" alt="">
+			@else
+			<img src="{{asset('images/recycle.ico')}}" id="recycle" alt="">
+			@endif
+		</div>
+		<div class="panel-body">
+			@if(count($deletedTerms)>0)
+			@foreach($deletedTerms as $term)
+			<div class="bordered-right">
+				<a href="{{ route('showterm',$term->id) }}" class="whole">
+				<h4>
+					كود البند	: {{$term->code}}<br>
+				 	نوع البند	: {{$term->type}}
+				</h4>
+				<p>
+					<span class="label label-default">بيان الأعمال</span>
+					 {{$term->statement}}
+				</p>
+				</a>
+				<a href="{{route('enableterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">تفعيل</a>
+			</div>
+			@endforeach
+			<div class="row item" style="text-align: center;">
+				<a href="{{route('deletedterms',['id'=>$project->id])}}" class="btn btn-default">
+					جميع البنود المحذوقة
+				</a>
+			</div>
+			@else
+				<div class="alert alert-warning">لا يوجد بنود المحذوفة</div>
+			@endif
+		</div>
+	</div>
+	<!--__________________/DeletedTerms______________________-->
 	</div>
 </div>
 </div>

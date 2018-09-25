@@ -298,6 +298,11 @@ class ProjectController extends Controller {
 				->orderBy('started_at','desc')
 				->take(3)
 				->get();
+			$deletedTerms=$project->terms()
+				->where('deleted',1)
+				->orderBy('started_at','desc')
+				->take(3)
+				->get();
 			$employees = $project->employees;
 			$productions= $project->productionDetails();
 			$productionReport =$project->productionReport();
@@ -313,6 +318,7 @@ class ProjectController extends Controller {
 				'startedTerms'=>$startedTerms,
 				'notStartedTerms'=>$notStartedTerms,
 				'disabledTerms'=>$disabledTerms,
+				'deletedTerms'=>$deletedTerms,
 				'doneTerms'=>$doneTerms,
 				'suppliers'=>$suppliers,
 				'employees'=>$employees
