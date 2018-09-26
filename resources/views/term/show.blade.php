@@ -204,16 +204,16 @@
 		</div>
 		<div class="panel-body">
 			@if(count($notes)>0)
-			<div class="row">
 			@foreach($notes as $note)
-			<div class="col-xs-6">
+			<div class="row mb-4">
+			<div class="col-xs-12">
 				<div class="note">
 					{{$note->note}}
 					<div class="note-time">{{date("d/m/Y",strtotime($note->created_at))}}</div>
 				</div>
 			</div>
-			@endforeach
 			</div>
+			@endforeach
 			<div class="row item" style="text-align: center;">
 				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-warning">
 					جميع الاحظات بالبند
