@@ -25,7 +25,7 @@ class TermController extends Controller {
 		if(Auth::user()->type=='admin'){
 			if(isset($id))
 			{
-				$terms=Term::where('project_id',$id)->orderBy('code')->paginate(30);
+				$terms=Term::where('project_id',$id)->where('deleted',0)->orderBy('code')->paginate(30);
 				$project=Project::findOrFail($id);
 				if(Route::current()->getName()=='allterm')
 					$active='term';
@@ -45,22 +45,8 @@ class TermController extends Controller {
 				abort('404');
 			}
 		}
-		else
-		{
-			if(!isset($id)){
-				$con_id=Auth::user()->contractor->id;
-				$terms=Term::where('contractor_id',$con_id)->orderBy('created_at','asc')->get();
-				$array=['active'=>'term','terms'=>$terms];
-			}else{
-				$con_id=Auth::user()->contractor->id;
-				$terms=Term::where('contractor_id',$con_id)->where('project_id',$id)->orderBy('created_at','desc')->get();
-				$project=Project::where('id',$id)->get();
-				$array=['active'=>'term','terms'=>$terms,'project'=>$project];
-			}
-			return view('term.all',$array);
-		}
 	}
-	//get all none starting Terms
+	//get all none starting Terms of a specific project
 	public function getNotstartedTerms($id)
 	{
 		$project =Project::findOrFail($id);
@@ -74,7 +60,7 @@ class TermController extends Controller {
 		];
 		return view('term.all',$array);
 	}
-	//get all starting Terms
+	//get all starting Terms of a specific project
 	public function getStartedTerms($id)
 	{
 		$project =Project::findOrFail($id);
@@ -86,7 +72,7 @@ class TermController extends Controller {
 		];
 		return view('term.all',$array);
 	}
-	//get all disabled Terms
+	//get all disabled Terms of a specific project
 	public function getDisabledTerms($id)
 	{
 		$project =Project::findOrFail($id);
@@ -98,7 +84,7 @@ class TermController extends Controller {
 		];
 		return view('term.all',$array);
 	}
-	//get all none starting Terms
+	//get all Done Terms of a specific project
 	public function getDoneTerms($id)
 	{
 		$project =Project::findOrFail($id);
@@ -110,7 +96,7 @@ class TermController extends Controller {
 		];
 		return view('term.all',$array);
 	}
-	//get all none starting Terms
+	//get all deleted Terms of a specific project
 	public function getDeletedTerms($id)
 	{
 		$project =Project::findOrFail($id);
@@ -253,21 +239,21 @@ class TermController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$term=Term::findOrFail($id);
-			$productions=$term->productions()->orderBy('created_at','desc')->take(3)->get();
+			$productions=$term->productions()->where('productions.deleted',0)->orderBy('productions.created_at','desc')->take(3)->get();
+			$contracts=$term->contracts()->where('deleted',0)->orderBy('created_at','desc')->with('contractor')->get();
 			$consumptions=$term->consumptions()->orderBy('created_at','desc')->take(3)->get();
-			$array=['active'=>'term','term'=>$term,'productions'=>$productions,'consumptions'=>$consumptions];
+			$notes=$term->notes()->orderBy('created_at','desc')->take(3)->get();
+			$array=[
+				'active'=>'term',
+				'term'=>$term,
+				'productions'=>$productions,
+				'consumptions'=>$consumptions,
+				'contracts'=>$contracts,
+				'notes'=>$notes
+			];
 			return view('term.show',$array);
-		}
-		else
-		{
-			$term=Term::where('id',$id)->where('contractor_id',Auth::user()->contractor->id)->get();
-			if(count($term)>0){
-				$array=['active'=>'term','term'=>$term];
-				return view('term.show',$array);
-			}
-			else
+		}else
 				abort('404');
-		}
 	}
 
 	/**

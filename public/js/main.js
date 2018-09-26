@@ -434,6 +434,13 @@ $(document).ready(function() {
 			}
 		});
 	});
+	// Show Contract within term profile
+	$(".show_contract").click(function(){
+		$("#contract_term").text($(this).attr("data-contract"));
+		$('#float_container').fadeIn(200,function(){
+			$('#float_form_container').slideDown(100);
+		});
+	});
 
 
 

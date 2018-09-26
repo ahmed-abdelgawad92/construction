@@ -46,6 +46,8 @@
 			<h3>جميع البنود المعطلة بمشروع <a href="{{route('showproject',['id'=>$project->id])}}">{{$project->name}}</a></h3>
 		@elseif(Route::current()->getName()=='doneterms')
 			<h3>جميع البنود المنتهية بمشروع <a href="{{route('showproject',['id'=>$project->id])}}">{{$project->name}}</a></h3>
+		@elseif(Route::current()->getName()=='deletedterms')
+			<h3>جميع البنود المحذوفة بمشروع <a href="{{route('showproject',['id'=>$project->id])}}">{{$project->name}}</a></h3>
 		@endif
 		</div>
 		<div class="panel-body">
@@ -65,7 +67,7 @@
 					<th>القيمة</th>
 					<th>الاوامر</th>
 					@if(Route::current()->getName()=='allterm')
-					<th>حالة التعاقد</th>
+					<th>الحالة</th>
 					@endif
 					</tr>
 				</thead>
@@ -92,63 +94,42 @@
 						<td>{{$term->value}}</td>
 						<td>{{$term->value*$term->amount}}</td>
 						<td>
-							<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-default block">تعديل</a>
-							@if ($term->started_at==null || date("Y-m-d",strtotime($term->started_at))>date("Y-m-d"))
-							<a href="{{route('startterm',['id'=>$term->id])}}" class="btn btn-primary block mt-2">ابدا الان</a>
-							@elseif ($term->done==0)
-							<a href="{{route('endterm',['id'=>$term->id])}}" class="btn btn-success block mt-2">انهاء</a>
-							@endif
-							@if ($term->disabled==0)
-							<a href="{{route('disableterm',['id'=>$term->id])}}" class="btn btn-dark block mt-2">تعطيل</a>
+							@if ($term->deleted == 0)
+								<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-default block">تعديل</a>
+								@if (($term->started_at==null || date("Y-m-d",strtotime($term->started_at))>date("Y-m-d")) && $term->done==0)
+									<a href="{{route('startterm',['id'=>$term->id])}}" class="btn btn-primary block mt-2">ابدا الان</a>
+								@elseif ($term->done==0)
+									<a href="{{route('endterm',['id'=>$term->id])}}" class="btn btn-success block mt-2">انهاء</a>
+								@endif
+								@if ($term->disabled==0 && $term->done==0)
+									<a href="{{route('disableterm',['id'=>$term->id])}}" class="btn btn-dark block mt-2">تعطيل</a>
+								@elseif ($term->done==0)
+									<a href="{{route('enableterm',['id'=>$term->id])}}" class="btn btn-enable block mt-2">تفعيل</a>
+								@endif
+								<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-danger block mt-2">حذف</a>
 							@else
-							<a href="{{route('enableterm',['id'=>$term->id])}}" class="btn btn-enable block mt-2">تفعيل</a>
+								<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-success block mt-2">استرجاع</a>
 							@endif
-							<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-danger block mt-2">حذف</a>
 						</td>
 						@if(Route::current()->getName()=='allterm')
 						<td>
-							@if($term->contractor_id!=null)
-								متعاقد
-							@else
-								لم يتم التعاقد
+							@if (($term->started_at==null || date("Y-m-d",strtotime($term->started_at))>date("Y-m-d")) &&$term->done==0)
+								لم يبدأ<br>
+							@endif
+							@if ($term->disabled==1)
+								مُعطل <br>
+							@endif
+							@if ($term->done==1)
+								انتهى <br>
+							@endif
+							@if ($term->deleted==1)
+								محذوف
+							@endif
+							@if ((!($term->started_at==null || date("Y-m-d",strtotime($term->started_at))>date("Y-m-d")) &&$term->done==0 &&$term->disabled==0&&$term->deleted==0))
+								جارى التنفيذ<br>
 							@endif
 						</td>
 						@endif
-					</tr>
-				@endforeach
-				</tbody>
-			</table>
-			{{ $terms->links() }}
-			</div>
-			@else
-			<div class="alert alert-warning">
-				<p>لا يوجد بنود</p>
-			</div>
-			@endif
-		@else
-			@if(count($terms)>0)
-			<div class="table-responsive center">
-			<table class="table table-bordered">
-				<thead>
-					<tr>
-					<th>#</th>
-					<th>نوع البند</th>
-					<th>كود البند</th>
-					<th>بيان الأعمال</th>
-					<th>وحدة</th>
-					<th>الكمية</th>
-					</tr>
-				</thead>
-				<tbody>
-				<?php $count=1;?>
-				@foreach($terms as $term)
-					<tr>
-						<td>{{$count++}}</td>
-						<td>{{$term->type}}</td>
-						<th>{{$term->code}}</th>
-						<td><a href="{{ route('showterm',$term->id) }}">{{$term->statement}}</a></td>
-						<td>{{$term->unit}}</td>
-						<td>{{$term->amount}}</td>
 					</tr>
 				@endforeach
 				</tbody>

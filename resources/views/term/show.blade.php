@@ -14,17 +14,38 @@
 					<br>
 				</div>
 			@endif
-			<table class="table table-striped">
-				<tr><th style="min-width: 100px;">كود البند </th><td>{{$term->code}}</td></tr>
-				<tr><th style="min-width: 100px;">نوع البند </th><td>{{$term->type}}</td></tr>
-				<tr><th style="min-width: 100px;">بيان الأعمال </th><td>{{$term->statement}}</td></tr>
-				<tr><th style="min-width: 100px;">الوحدة </th><td>{{$term->unit}}</td></tr>
-				<tr><th style="min-width: 100px;">الكمية </th><td>{{$term->amount}}</td></tr>
-				<tr><th style="min-width: 100px;">الفئة </th><td>{{$term->value}}</td></tr>
-				<tr><th style="min-width: 100px;">الجملة </th><td>{{$term->amount*$term->value}}</td></tr>
-			</table>
-			<a href="{{route('termcontract',$term->id)}}" class="float btn btn-primary">عقد البند</a>
+			<div class="row mb-1">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">كود البند </h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->code}}</h4></div>
+			</div>
+			<div class="row mb-1">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">نوع البند </h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->type}}</h4></div>
+			</div>
+			<div class="row mb-1">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">بيان الأعمال </h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->statement}}</h4></div>
+			</div>
+			<div class="row mb-1">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الوحدة </h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->unit}}</h4></div>
+			</div>
+			<div class="row mb-1">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الكمية </h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->amount}}</h4></div>
+			</div>
+			<div class="row mb-1">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الفئة </h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->value}}</h4></div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الجملة</h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->amount*$term->value}}</div>
+			</div>
+			<a href="{{route('addcontract',$term->id)}}" class="float btn btn-dark">عقد البند</a>
 			<a href="{{route('addproduction',$term->id)}}" class="float btn btn-primary">أضافة أنتاج</a>
+			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة أستهلاك</a>
+			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة ملحوظة</a>
 			<a href="{{route('updateterm',$term->id)}}" class="float btn btn-default">تعديل</a>
 			<form action="{{route('deleteterm',$term->id)}}" class="float">
 				<button type="button" data-toggle="modal" data-target="#delete" class="btn btn-danger">حذف</button>
@@ -47,6 +68,63 @@
 			</form>
 		</div>
 	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3>جميع المقاولين المتعاقد معهم في هذا البند</h3>
+		</div>
+		<div class="panel-body">
+		@if (count($contracts)>0)
+				<div class="row">
+				@foreach ($contracts as $contract)
+				<div class="col-md-12 col-lg-6">
+				<div class="card mt-2">
+				<div class="row">
+					<div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
+						<a href="#"><img src="{{asset('images/contractor.png')}}" class="w-100 contractor-img" alt=""></a>
+					</div>
+					<div class="col-xs-8 col-sm-8 col-md-9 col-lg-8">
+							<div class="mb-2">
+								<span class="label label-default">اسم المقاول</span>
+								{{$contract->contractor->name}}
+							</div>
+							<div class="mb-2">
+								<span class="label label-default">تليفون</span>
+								{{$contract->contractor->phone}}
+							</div>
+							<div class="mb-2">
+								<span class="label label-default">نوع المقاول</span>
+								{{$contract->contractor->type}}
+							</div>
+							<div class="mb-2">
+								<span class="label label-default">سعر الوحدة</span>
+								{{$contract->unit_price}} جنيه
+							</div>
+							<div class="mb-2">
+								<span class="label label-default">تاريخ بداية العقد</span>
+								{{date('d/m/Y',strtotime($contract->started_at))}}
+							</div>
+						@if ($contract->ended_at!=null)
+							<div class="mb-2">
+								<span class="label label-default">تاريخ نهاية العقد</span>
+								{{date('d/m/Y',strtotime($contract->ended_at))}}
+							</div>
+						@endif
+					</div>
+				</div>
+				<div class="center mt-3">
+					<button class="btn btn-dark show_contract" data-contract="{{nl2br($contract->contract_text)}}">أفتح العقد</button>
+					<a href="{{route('updatecontract',['id'=>$term->id])}}" class="btn btn-default">تعديل العقد</a>
+					<a href="{{route('endcontract',['id'=>$term->id])}}" class="btn btn-success">انهاءالعقد</a>
+				</div>
+				</div>
+				</div>
+				@endforeach
+				</div>
+		@else
+			<div class="alert alert-warning">لا يوجد عقود مع مقاولين لهذا البند حتى الان <a href="{{route('addcontract',$term->id)}}" class="btn btn-warning">عقد البند</a></div>
+		@endif
+		</div>
+	</div>
 	</div>
 	<div class="col-md-4 col-lg-4 col-sm-4">
 	<div class="panel panel-default">
@@ -57,7 +135,15 @@
 			@if(count($productions)>0)
 			@foreach($productions as $production)
 				<div class="bordered-right whole">
-					<h4>تقييم {{$production->rate}}</h4>
+					<h4>تقييم
+						@for ($i=0; $i < 10; $i++)
+							@if ($i<$production->rate)
+							<span class="glyphicon glyphicon-star"></span>
+							@else
+							<span class="glyphicon glyphicon-star-empty"></span>
+							@endif
+						@endfor
+					</h4>
 					<p>
 						<span class="label label-default">كمية الأنتاج</span>
 						 {{$production->amount}}
@@ -68,13 +154,13 @@
 						@endif
 						<br>
 						<span class="label label-default">تاريخ الأنتاج</span>
-						 {{$production->created_at->format('Y-m-d')}}
+						 {{date("d/m/Y",strtotime($production->created_at))}}
 					</p>
 				</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
 				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-default">
-					مجموع الأنتاج
+					مجموع الأنتاج بالبند
 				</a>
 			</div>
 			@else
@@ -82,6 +168,69 @@
 			@endif
 		</div>
 	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading project-heading">
+			<h3>أخر أستهلاك لهذا البند</h3>
+		</div>
+		<div class="panel-body">
+			@if(count($consumptions)>0)
+			@foreach($consumptions as $consumption)
+				<div class="bordered-right whole">
+					<p>
+						<span class="label label-default">نوع الخام</span>
+						 {{$consumption->type}}
+						<br>
+						<span class="label label-default">كمية الأستهلاك</span>
+						 {{$consumption->amount}}
+						<br>
+						<span class="label label-default">تاريخ الأستهلاك</span>
+						 {{date("d/m/Y",strtotime($consumption->created_at))}}
+					</p>
+				</div>
+			@endforeach
+			<div class="row item" style="text-align: center;">
+				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-default">
+					مجموع الأستهلاك بالبند
+				</a>
+			</div>
+			@else
+				<div class="alert alert-warning">لا يوجد أستهلاك <a href="{{ route('addconsumption',$term->id) }}" class="btn btn-warning">أضافة أستهلاك</a></div>
+			@endif
+		</div>
+	</div>
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			<h3>أخر ملاحظات مدونة بهذا البند</h3>
+		</div>
+		<div class="panel-body">
+			@if(count($notes)>0)
+			<div class="row">
+			@foreach($notes as $note)
+			<div class="col-xs-6">
+				<div class="note">
+					{{$note->note}}
+					<div class="note-time">{{date("d/m/Y",strtotime($note->created_at))}}</div>
+				</div>
+			</div>
+			@endforeach
+			</div>
+			<div class="row item" style="text-align: center;">
+				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-warning">
+					جميع الاحظات بالبند
+				</a>
+			</div>
+			@else
+				<div class="alert alert-warning">لا يوجد ملاحظات <a href="{{ route('addconsumption',$term->id) }}" class="btn btn-warning">أضافة ملاحظة</a></div>
+			@endif
+		</div>
+	</div>
+	</div>
+</div>
+<div id="float_container">
+	<div id="float_form_container">
+		<span class="close">&times;</span>
+		<h3 class="center">عقد كتابى بين المقاول و الشركة</h3>
+		<p id="contract_term"></p>
 	</div>
 </div>
 @endsection

@@ -12,12 +12,17 @@ class Term extends Model {
 	//Define the one to many relationship with production
 	public function productions()
 	{
-		return $this->hasMany('App\Production');
+		return $this->hasManyThrough('App\Production','App\Contract');
 	}
-	//Define the one to many relationship with labor_supplier
-	public function contractor()
+	//Define the many to many relationship with labor_supplier
+	public function contractors()
 	{
-		return $this->belongsTo('App\Contractor');
+		return $this->hasManyThrough('App\Contractor','App\Contract');
+	}
+	//Define the one to many relationship with contracts
+	public function contracts()
+	{
+		return $this->hasMany('App\Contract');
 	}
 	//Define the one to many relationship with consumption
 	public function consumptions()
@@ -28,6 +33,11 @@ class Term extends Model {
 	public function transactions()
 	{
 		return $this->hasMany('App\Transaction');
+	}
+	//1 to many with Notes
+	public function notes()
+	{
+		return $this->hasMany('App\Note');
 	}
 
 }

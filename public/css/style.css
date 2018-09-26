@@ -1005,6 +1005,12 @@ footer{
 .pagination>.active>span{
 	background: #597dbf;
 }
+.table tbody tr:hover{
+	background: #eee !important;
+}
+.border_bottom{
+	border-bottom: 1px solid #597dbf;
+}
 .block{
 	display: block;
 }
@@ -1170,4 +1176,59 @@ table.borderless tr td:first-of-type{
 #type.has-error, #type.is-invalid{
 	border : 1px solid #dc3545;
 	border-radius: 4px;
+}
+.box-heading{
+	text-align: center;
+	border-radius: 4px;
+	background-color: #f9f9f9;
+	padding: 10px;
+}
+.box-heading-right{
+	text-align: center;
+	border-radius: 4px;
+	background-color: #2a3f54;
+	color: #fff;
+	padding: 10px;
+}
+.text-right{
+	text-align: right;
+}
+.contractor-img{
+	padding: 10px 5px;
+	background: white;
+	border-radius: 4px;
+}
+.contractor-img:hover{
+	background: #ccc;
+}
+.glyphicon-star,.glyphicon-star-empty{
+	top: 5px;
+	color: #949494;
+	font-size: 22px;
+}
+.glyphicon-star{
+	color: #f3d255 !important;
+}
+.card{
+	background-color: whitesmoke;
+	border-radius: 4px;
+	padding: 30px 20px;
+}
+.note{
+	position: relative;
+	width: 95%;
+	margin: 0 auto;
+	background-image: url('../images/pin.png');
+	background-size: 40px;
+	background-position: center top;
+	background-repeat: no-repeat;
+	background-color: #ffff9a;
+  transform: rotate(-3deg);
+	padding: 35px 10px;
+}
+.note-time{
+	position: absolute;
+	bottom: 5px;
+	left: 10px;
+	color: #868686;
 }

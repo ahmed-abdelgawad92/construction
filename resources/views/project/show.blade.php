@@ -495,7 +495,7 @@
 			</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
-				<a href="{{ url('term/all/notStarted') }}" class="btn btn-default">
+				<a href="{{route('doneterms',['id'=>$project->id])}}" class="btn btn-default">
 					جميع البنود التى لم تبدأ
 				</a>
 			</div>

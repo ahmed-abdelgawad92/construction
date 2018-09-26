@@ -383,6 +383,34 @@ Route::group(['middleware' => 'auth'], function() {
 	    ]);
 	});
 
+	//Contracts Manipulations
+	Route::group(['prefix' => 'contract'], function() {
+    //Create Contract
+    Route::get('create/{id}',[
+      'uses'=>"ContractController@create",
+      'as'=>'addcontract'
+    ])->where('id','[0-9]+');
+    Route::post('create/{id}',[
+      'uses'=>"ContractController@store",
+      'as'=>'addcontract'
+    ])->where('id','[0-9]+');
+
+    //Update Contract
+    Route::get('update/{id}',[
+      'uses'=>"ContractController@edit",
+      'as'=>'updatecontract'
+    ])->where('id','[0-9]+');
+    Route::put('update/{id}',[
+      'uses'=>"ContractController@update",
+      'as'=>'updatecontract'
+    ])->where('id','[0-9]+');
+
+    //End Contract
+    Route::get('endcontract/{id}',[
+      'uses'=>"ContractController@endContract",
+      'as'=>'endcontract'
+    ])->where('id','[0-9]+');
+  });
 	//Contractors Manipulations
 	Route::group(['prefix' => 'contractor'], function() {
 	    //Add Contractor
