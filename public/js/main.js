@@ -341,13 +341,15 @@ $(document).ready(function() {
 	//Float form in projects profile
 	$(".open_float_div").click(function(e){
 		e.preventDefault();
+		$("body").css('overflow','hidden');
 		$($(this).attr('href')).show();
 		$('#float_container').fadeIn(200,function(){
 			$('#float_form_container').slideDown(100);
 		});
 	});
 
-	$('#float_container, span.close').click(function(){
+	$('#float_container, span.close, button.btn-close').click(function(){
+		$("body").css('overflow','auto');
 		$('#float_container').fadeOut(200);
 		$('#float_form_container').hide();
 		$('.float_form').hide();
@@ -438,16 +440,53 @@ $(document).ready(function() {
 	});
 	// Show Contract within term profile
 	$(".show_contract").click(function(){
+		$("body").css('overflow','hidden');
 		$("#contract_term").text($(this).attr("data-contract"));
 		$('#float_container').fadeIn(200,function(){
 			$('#float_form_container').slideDown(100);
+			$('#show_contract').show();
 		});
 	});
 
 
-
-
-	/******************************************Projects********************************************/
-	/******************************************Projects********************************************/
+	/******************************************Notes********************************************/
+	//validate note before creating
+	$("#add_note").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check = true;
+		if (!$("#note").val().trim()) {
+			check=false;
+			assignError($("#note"),'يجب أدخال الملحوظة حتى يتم حفظها');
+		}
+		if (!$("#title").val().trim()) {
+			check=false;
+			assignError($("#title"),'يجب أدخال العنوان حتى يتم حفظها');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	$(".note").mouseover(function(e){
+		$(this).children('.note_control').stop().fadeIn(200);
+	});
+	$(".note").mouseout(function(e){
+		$(this).children('.note_control').stop().fadeOut(200);
+	});
+	//delete note modal
+	$(".note_delete").click(function(e){
+		e.preventDefault();
+		$("body").css('overflow','hidden');
+		var link = $(this).attr('href');
+		$('#float_container').fadeIn(200,function(){
+			$('#float_form_container').slideDown(100);
+			$("#delete_note").show();
+			$("#delete_note a.btn-danger").attr('href',link);
+		});
+	});
+	/******************************************Productions********************************************/
 
 });

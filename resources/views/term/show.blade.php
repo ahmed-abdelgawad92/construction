@@ -3,7 +3,7 @@
 @section('content')
 @if($term->deleted==0)
 <div class="content">
-	<div class="col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-md-offset-0 col-lg-offset-0">
+	<div class="col-md-7 col-lg-8 col-sm-12">
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3>بند تابع للمشروع <a href="{{route('showproject',$term->project->id)}}">{{$term->project->name}}</a> </h3>
@@ -46,7 +46,7 @@
 			<a href="{{route('addcontract',$term->id)}}" class="float btn btn-dark">عقد البند</a>
 			<a href="{{route('addproduction',$term->id)}}" class="float btn btn-primary">أضافة أنتاج</a>
 			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة أستهلاك</a>
-			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة ملحوظة</a>
+			<a href="#add_note" class="float btn btn-warning open_float_div" >أضافة ملحوظة</a>
 			<a href="{{route('updateterm',$term->id)}}" class="float btn btn-default">تعديل</a>
 			<button type="button" data-toggle="modal" data-target="#delete" class="btn btn-danger float">حذف</button>
 				<div class="modal fade" id="delete" tabindex="-1" role="dialog">
@@ -109,7 +109,7 @@
 					</div>
 				</div>
 				<div class="center mt-3">
-					<button class="btn btn-dark show_contract" data-contract="{{nl2br($contract->contract_text)}}">أفتح العقد</button>
+					<button class="btn btn-dark show_contract" data-contract="@if (!empty($contract->contract_text)) {!!nl2br($contract->contract_text)!!} @else لا يوجد نص للعقد @endif">أفتح العقد</button>
 					<a href="{{route('updatecontract',['id'=>$term->id])}}" class="btn btn-default">تعديل العقد</a>
 					<a href="{{route('endcontract',['id'=>$term->id])}}" class="btn btn-success">انهاءالعقد</a>
 				</div>
@@ -123,7 +123,7 @@
 		</div>
 	</div>
 	</div>
-	<div class="col-md-4 col-lg-4 col-sm-4">
+	<div class="col-md-5 col-lg-4 col-sm-12">
 	<div class="panel panel-default">
 		<div class="panel-heading project-heading">
 			<h3>أخر أنتاج لهذا البند</h3>
@@ -207,19 +207,24 @@
 			<div class="row mb-4">
 			<div class="col-xs-12">
 				<div class="note">
-					{{$note->note}}
+					<h3 class="center">{{$note->title}}</h3>
+					{!!nl2br($note->note)!!}
 					<div class="note-time">{{date("d/m/Y",strtotime($note->created_at))}}</div>
+					<div class="note_control">
+						<a href="{{route("deletenote",['id'=>$note->id])}}" class="note_delete"><span class="glyphicon glyphicon-trash"></span></a>
+						<a href="{{route("updatenote",['id'=>$note->id])}}" class="note_update"><span class="glyphicon glyphicon-edit"></span></a>
+					</div>
 				</div>
 			</div>
 			</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
-				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-warning">
+				<a href="{{ route('allnote',$term->id) }}" class="btn btn-warning">
 					جميع الاحظات بالبند
 				</a>
 			</div>
 			@else
-				<div class="alert alert-warning">لا يوجد ملاحظات <a href="{{ route('addconsumption',$term->id) }}" class="btn btn-warning">أضافة ملاحظة</a></div>
+				<div class="alert alert-warning">لا يوجد ملاحظات <a href="{{ route('addnote',$term->id) }}" class="btn btn-warning">أضافة ملاحظة</a></div>
 			@endif
 		</div>
 	</div>
@@ -228,8 +233,41 @@
 <div id="float_container">
 	<div id="float_form_container">
 		<span class="close">&times;</span>
-		<h3 class="center">عقد كتابى بين المقاول و الشركة</h3>
-		<p id="contract_term"></p>
+		<div id="show_contract" class="float_form">
+			<h3 class="center">عقد كتابى بين المقاول و الشركة</h3>
+			<p id="contract_term"></p>
+		</div>
+		<form action="{{route('addnote',['id'=>$term->id])}}" method="post" class="float_form" id="add_note">
+			<div class="form-group @if($errors->has('title')) has-error @endif">
+				<label for="title" class="control-label">عنوان</label>
+				<div>
+					<input type="text" name="title" id="title" class="form-control" placeholder="أدخل العنوان" value="{{old('title')}}"/>
+					@if($errors->has('title'))
+						@foreach($errors->get('title') as $error)
+							<span class="help-block">{{ $error }}</span>
+						@endforeach
+					@endif
+				</div>
+			</div>
+			<div class="form-group @if($errors->has('note')) has-error @endif">
+				<label for="note" class="control-label">ملحوظة</label>
+				<div>
+					<textarea name="note" id="note" class="form-control note" placeholder="أكتب ملحوظة" value="{{old('note')}}"></textarea>
+					@if($errors->has('note'))
+						@foreach($errors->get('note') as $error)
+							<span class="help-block">{{ $error }}</span>
+						@endforeach
+					@endif
+				</div>
+			</div>
+			<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
+			<input type="hidden" name="_token" value="{{csrf_token()}}">
+		</form>
+		<div class="float_form" id="delete_note">
+			<h4>هل تريد فعلا حذف هذه الملحوظة؟</h4>
+			<button class="btn btn-default btn-close">لا</button>
+			<a href="" class="btn btn-danger">نعم</a>
+		</div>
 	</div>
 </div>
 @else

@@ -50,17 +50,15 @@ class NoteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-
+    public function store(Request $req, $id){
         //rules
         $rules=[
-          'term_id'=>"required|exists:terms,id",
+          "title"=>"required",
           "note"=>"required"
         ];
         //error_messages
         $error_messages=[
-          'term_id.required'=>'يجب أدخال البند',
-          'term_id.exists'=>'البند يجب ان يكون بقاعدة البيانات',
+          'title.required'=>'من فضلك أدخل العنوان',
           'note.required'=>'من فضلك أدخل الملحوظة'
         ];
         //validate
@@ -70,9 +68,11 @@ class NoteController extends Controller
         }
 
         //store Note
+        $term=Term::findOrFail($id);
         $note = new Note;
+        $note->title=$req->input("title");
         $note->note=$req->input("note");
-        $note->term_id=$req->input("term_id");
+        $note->term_id=$term->id;
         $saved= $note->save();
 
         //check if saved correctly
@@ -123,14 +123,16 @@ class NoteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req, $id)
     {
       //rules
       $rules=[
+        "title"=>"required",
         "note"=>"required"
       ];
       //error_messages
       $error_messages=[
+        'title.required'=>'من فضلك أدخل العنوان',
         'note.required'=>'من فضلك أدخل الملحوظة'
       ];
       //validate
@@ -143,8 +145,13 @@ class NoteController extends Controller
       $check=false;
       //store Note
       $note = Note::findOrFail($id);
+      if ($note->title!=$req->input("title")) {
+        $description.='قام بتغيير العنوان من "'.$note->title.'" إلى "'.$req->input("title").'" .';
+        $check=true;
+        $note->title=$req->input("title");
+      }
       if ($note->note!=$req->input("note")) {
-        $description='قام بتغيير الملحوظة من "'.$note->note.'" إلى "'.$req->input("note").'" .';
+        $description.='قام بتغيير الملحوظة من "'.$note->note.'" إلى "'.$req->input("note").'" .';
         $check=true;
         $note->note=$req->input("note");
       }
@@ -152,16 +159,16 @@ class NoteController extends Controller
         $saved= $note->save();
         //check if saved correctly
         if (!$saved) {
-          return redirect()->back()->with("insert_error","حدث عطل خلال حفظ هذه الملحوظة , من فضلك حاول مرة اخرى في وقت لاحق");
+          return redirect()->back()->with("insert_error","حدث عطل خلال تعديل هذه الملحوظة , من فضلك حاول مرة اخرى في وقت لاحق");
         }
         $log = new Log;
         $log->table="notes";
-        $log->action="create";
+        $log->action="update";
         $log->record_id=$note->id;
-        $log->description="قام بأضافة ملحوظة بالبند";
+        $log->description=$description;
         $log->user_id=Auth::user()->id;
         $log->save();
-        return redirect()->back()->with('success',"تم أضافة الملحوظة بنجاح");
+        return redirect()->back()->with('success',"تم تعديل الملحوظة بنجاح");
       }
       return redirect()->back()->with('info',"لا يوجد تعديل حتى يتم تعديله");
     }
@@ -181,6 +188,13 @@ class NoteController extends Controller
         if (!$saved) {
           return redirect()->back()->with("insert_error","حدث عطل خلال حفظ هذه الملحوظة , من فضلك حاول مرة اخرى في وقت لاحق");
         }
+        $log = new Log;
+        $log->table="notes";
+        $log->record_id=$note->id;
+        $log->action="delete";
+        $log->user_id=Auth::user()->id;
+        $log->description="قام بحذف هذه الملحوظة";
+        $log->save();
         return redirect()->back()->with('success',"تم حذف الملحوظة بنجاح");
       }
       return redirect()->back()->with('success',"الملحوظة محذوفة بالفعل");

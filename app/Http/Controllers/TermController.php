@@ -242,7 +242,7 @@ class TermController extends Controller {
 			$productions=$term->productions()->where('productions.deleted',0)->orderBy('productions.created_at','desc')->take(3)->get();
 			$contracts=$term->contracts()->where('deleted',0)->orderBy('created_at','desc')->with('contractor')->get();
 			$consumptions=$term->consumptions()->orderBy('created_at','desc')->take(3)->get();
-			$notes=$term->notes()->orderBy('created_at','desc')->take(3)->get();
+			$notes=$term->notes()->where('deleted',0)->orderBy('created_at','desc')->take(3)->get();
 			$array=[
 				'active'=>'term',
 				'term'=>$term,
