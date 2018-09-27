@@ -37,6 +37,9 @@ textarea.form-control{
 button.form-control{
 	height: 50px !important;
 }
+a.no-underline{
+	text-decoration: none;
+}
 .width-100{
   width: 100px;
 }
@@ -1226,6 +1229,7 @@ table.borderless tr td:first-of-type{
   transform: rotate(-3deg);
 	padding: 35px 10px;
   box-shadow: 2px 2px 10px #cccc;
+	min-height: 250px;
 }
 .note-time{
 	position: absolute;

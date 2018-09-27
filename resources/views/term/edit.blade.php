@@ -5,7 +5,7 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3>
-			تعديل بند الى مشروع <a href="{{ route('showproject',$term->project->id) }}">{{$term->project->name}}</a>
+			تعديل <a href="{{route("showterm",['id'=>$term->id])}}">بند</a> الى مشروع <a href="{{ route('showproject',['id'=>$term->project_id]) }}">{{$term->project->name}}</a>
 			</h3>
 		</div>
 		<div class="panel-body">
@@ -138,7 +138,7 @@
 				<div class="form-group @if($errors->has('started_at')) has-error @endif">
 					<label for="started_at" class="control-label col-sm-2 col-md-2 col-lg-2">تاريخ البدء</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="started_at" id="started_at" autocomplete="off" value="{{$term->started_at}}" class="form-control" placeholder="أدخل تاريخ استلام الموقع">
+						<input type="text" name="started_at" id="started_at" autocomplete="off" value="{{date("Y-m-d",strtotime($term->started_at))}}" class="form-control" placeholder="أدخل تاريخ استلام الموقع">
 						@if($errors->has('started_at'))
 							@foreach($errors->get('started_at') as $error)
 								<span class="help-block">{{ $error }}</span>

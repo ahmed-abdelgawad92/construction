@@ -8,7 +8,8 @@ use Illuminate\Http\Request;
 use App\Production;
 use App\Project;
 use App\Term;
-
+use App\Log;
+use App\Contract;
 use Validator;
 use Auth;
 
@@ -103,7 +104,12 @@ class ProductionController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$term=Term::findOrFail($id);
-			$array=['active'=>'pro','term'=>$term];
+			$contracts=$term->contracts;
+			$array=[
+				'active'=>'pro',
+				'term'=>$term,
+				'contracts'=>$contracts
+			];
 			return view('production.add',$array);
 		}
 		else
@@ -122,7 +128,8 @@ class ProductionController extends Controller {
 			$rules=[
 				'amount'=>'required|numeric',
 				'rate'=>'required|in:1,2,3,4,5,6,7,8,9,10',
-				'note'=>'required_if:rate,1,2,3,4,5,6,7'
+				'note'=>'required_if:rate,1,2,3,4,5,6,7',
+				'contract_id'=>'required|exists:contracts,id'
 			];
 			//error messages
 			$error_messages=[
@@ -130,22 +137,32 @@ class ProductionController extends Controller {
 				'amount.numeric'=>'كمية الأنتاج لابد أن تتكون من أرقام فقط',
 				'rate.required'=>'يجب أختيار التقييم المناسب',
 				'rate.in'=>'التقييم يجب أن يكون رقم من 1 الى 10',
-				'note.required_if'=>'يجب كتلبة ملحوظة توضح سبب التقييم'
+				'note.required_if'=>'يجب كتلبة ملحوظة توضح سبب التقييم',
+				'contract_id.required'=>'من فضلك اختار المقاول الذى قام بهذه الكمية من الأنتاج',
+				'contract_id.exists'=>'لابد من وجود عقد لهذالمقاول'
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
 			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
-
+			$term = Term::findOrFail($id);
 			$production = new Production;
 			$production->amount=$req->input('amount');
 			$production->rate=$req->input('rate');
 			$production->note=$req->input('note');
-			$production->term_id=$id;
+			$production->contract_id=$req->input('contract_id');
 			$saved=$production->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة كمية الأنتاج , يرجى المحاولة فى وقت لاحق');
+			}
+			$log = new Log;
+			$log->table="productions";
+			$log->action="create";
+			$log->user_id=Auth::user()->id;
+			$log->record_id= $production->id;
+			$log->description="قام بأضافة كمية انتاج ".$production->amount." ".$term->unit." إلى هذا البند ";
+			$log->save();
 			return redirect()->route('addconsumption',$id)->with('success','تم أضافة الأنتاج بنجاح الى هذا البند');
 		}
 		else
@@ -162,7 +179,14 @@ class ProductionController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$production=Production::findOrFail($id);
-			$array=['active'=>'pro','production'=>$production];
+			$term=$production->term();
+			$contracts = $term->contracts;
+			$array=[
+				'active'=>'pro',
+				'production'=>$production,
+				'contracts'=>$contracts,
+				'term'=>$term
+			];
 			return view('production.edit',$array);
 		}
 		else
@@ -182,7 +206,8 @@ class ProductionController extends Controller {
 			$rules=[
 				'amount'=>'required|numeric',
 				'rate'=>'required|in:1,2,3,4,5,6,7,8,9,10',
-				'note'=>'required_if:rate,1,2,3,4,5,6,7'
+				'note'=>'required_if:rate,1,2,3,4,5,6,7',
+				'contract_id'=>'required|exists:contracts,id'
 			];
 			//error messages
 			$error_messages=[
@@ -190,7 +215,9 @@ class ProductionController extends Controller {
 				'amount.numeric'=>'كمية الأنتاج لابد أن تتكون من أرقام فقط',
 				'rate.required'=>'يجب أختيار التقييم المناسب',
 				'rate.in'=>'التقييم يجب أن يكون رقم من 1 الى 10',
-				'note.required_if'=>'يجب كتلبة ملحوظة توضح سبب التقييم'
+				'note.required_if'=>'يجب كتلبة ملحوظة توضح سبب التقييم',
+				'contract_id.required'=>'من فضلك اختار المقاول الذى قام بهذه الكمية من الأنتاج',
+				'contract_id.exists'=>'لابد من وجود عقد لهذالمقاول'
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
@@ -198,17 +225,51 @@ class ProductionController extends Controller {
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 
+			$description="";
+			$check=false;
+
 			$production =Production::findOrFail($id);
-			$production->amount=$req->input('amount');
-			$production->rate=$req->input('rate');
-			if($req->input('rate')>=8)
+			if($production->contract_id!=$req->input("contract_id")){
+				$contractor = Contract::findOrFail($req->input("contract_id"))->contractor;
+				$description.="قام بتغيير المقاول الذى قام بكمية الانتاج من ".$production->contractor()->name." إلى ".$contractor->name." . ";
+				$check=true;
+				$production->contract_id=$req->input("contract_id");
+			}
+			if($production->amount!=$req->input('amount')){
+				$description.="قام بتغيير الكمية من ".$production->amount." ".$production->term()->unit." إلى ".$req->input("amount")." ".$production->term()->unit." . ";
+				$check=true;
+				$production->amount=$req->input("amount");
+			}
+			if($production->rate!=$req->input("rate")){
+				$description.="قام بتغيير تقييم الانتاج من ".$production->rate." إلى ".$req->input("rate")." . ";
+				$check=true;
+				$production->rate=$req->input("rate");
+			}
+			if($req->input('rate')>=8){
 				$production->note="";
-			else
-				$production->note=$req->input('note');
-			$saved=$production->save();
-			if(!$saved)
-				return redirect()->back()->with('update_error','حدث عطل خلال تعديل كمية الأنتاج , يرجى المحاولة فى وقت لاحق');
-			return redirect()->route('showtermproduction',$production->term_id)->with('success','تم تعديل الأنتاج بنجاح');
+			}
+			else{
+				if ($production->note!=$req->input('note')) {
+					$check=true;
+					$description.="قام بتغيير الملحوظة لهذا الأنتاج .";
+					$production->note=$req->input('note');
+				}
+			}
+			if($check){
+				$saved=$production->save();
+				if(!$saved){
+					return redirect()->back()->with('update_error','حدث عطل خلال تعديل كمية الأنتاج , يرجى المحاولة فى وقت لاحق');
+				}
+				$log = new Log;
+				$log->table="productions";
+				$log->action="update";
+				$log->user_id=Auth::user()->id;
+				$log->record_id= $production->id;
+				$log->description=$description;
+				$log->save();
+				return redirect()->route('showtermproduction',$production->term()->id)->with('success','تم تعديل الأنتاج بنجاح');
+			}
+			return redirect()->back()->with("info","لا يوجد تغيير حتى يتم تعديله!");
 		}
 		else
 			abort('404');

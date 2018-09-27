@@ -30,12 +30,13 @@
 					</ul>
 				</div>
 			@endif
+			@if (count($contracts)>0)
 			<form method="post" action="{{ route('addproduction',$term->id) }}" class="form-horizontal">
 				<div class="form-group @if($errors->has('amount')) has-error @endif">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
-							<input type="text" name="amount" id="amount" value="{{old('amount')}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
+							<input type="text" name="amount" id="amount" value="{{old('amount')}}" class="form-control number" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
 							<span class="input-group-addon" id="basic-addon1">{{$term->unit}}</span>
 						</div>
 						@if($errors->has('amount'))
@@ -45,11 +46,26 @@
 						@endif
 					</div>
 				</div>
+				@if (count($contracts)>1)
+				<div class="form-group @if($errors->has('contract_id')) has-error @endif">
+					<label for="contract_id" class="control-label col-sm-2 col-md-2 col-lg-2">اختار المقاول</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<select class="form-control" name="contract_id" id="contract_id">
+							<option value="0">اختار المقاول</option>
+							@foreach ($contracts as $contract)
+							<option @if(old("contract_id")==$contract->id) selected @endif value="{{$contract->id}}">{{$contract->contractor->name." - ( ".$contract->contractor->type." )"}}</option>
+							@endforeach
+						</select>
+					</div>
+				</div>
+				@else
+				<input type="hidden" name="contract_id" value="{{$contracts[0]->id}}">
+				@endif
 				<div class="form-group @if($errors->has('rate')) has-error @endif">
 					<label for="rate" class="control-label col-sm-2 col-md-2 col-lg-2">تقييم الأنتاج</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="rate" id="rate_prod" class="form-control">
-							<option value="0">أدخل تقييم الأنتاج	</option>
+							<option value="0">أدخل تقييم الأنتاج</option>
 							<option value="1" @if(old('rate')==1) selected @endif >1</option>
 							<option value="2" @if(old('rate')==2) selected @endif >2</option>
 							<option value="3" @if(old('rate')==3) selected @endif >3</option>
@@ -84,6 +100,9 @@
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">
 			</form>
+			@else
+			<div class="alert alert-warning">لا يوجد عقود مع مقاوليين حتى يتم أضافة أنتاج إلى هذا البند <a href="#" class="btn btn-warning">أنشاء عقد</a></div>
+			@endif
 		</div>
 	</div>
 </div>

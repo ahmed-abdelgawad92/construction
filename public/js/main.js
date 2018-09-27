@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	//activate tooltips
+	$('[data-toggle="tooltip"]').tooltip();
 	$('#side-bar-icon').click(function(){
 		if($('#side-bar').css('display')=='none'){
 			$('#side-bar').stop().fadeIn(300);

@@ -4,7 +4,7 @@
 <div class="content">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>تعديل أنتاج للبند <a href="{{ route('showterm',$production->term_id) }}">{{$production->term->code}}</a> بمشروع <a href="{{ route('showproject',$production->term->project->id) }}">{{$production->term->project->name}}</a></h3>
+			<h3>تعديل أنتاج للبند <a href="{{ route('showterm',$term->id) }}">{{$term->code}}</a> بمشروع <a href="{{ route('showproject',$term->project->id) }}">{{$term->project->name}}</a></h3>
 		</div>
 		<div class="panel-body">
 			@if (count($errors) > 0)
@@ -30,13 +30,23 @@
 					</ul>
 				</div>
 			@endif
+			@if(session('info'))
+				<div class="alert alert-info">
+					<strong>تنبيه</strong>
+					<br>
+					<ul>
+						<li>{{ session('info') }}</li>
+					</ul>
+				</div>
+			@endif
+			@if (count($contracts)>0)
 			<form method="post" action="{{ route('updateproduction',$production->id) }}" class="form-horizontal">
 				<div class="form-group @if($errors->has('amount')) has-error @endif">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
-							<input type="text" name="amount" id="amount" value="{{$production->amount}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
-							<span class="input-group-addon" id="basic-addon1">{{$production->term->unit}}</span>
+							<input type="text" name="amount" id="amount" value="{{$production->amount}}" class="form-control number" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
+							<span class="input-group-addon" id="basic-addon1">{{$term->unit}}</span>
 						</div>
 						@if($errors->has('amount'))
 							@foreach($errors->get('amount') as $error)
@@ -45,6 +55,21 @@
 						@endif
 					</div>
 				</div>
+				@if (count($contracts)>1)
+				<div class="form-group @if($errors->has('contract_id')) has-error @endif">
+					<label for="contract_id" class="control-label col-sm-2 col-md-2 col-lg-2">اختار المقاول</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<select class="form-control" name="contract_id" id="contract_id">
+							<option value="0">اختار المقاول</option>
+							@foreach ($contracts as $contract)
+							<option @if($production->contract_id==$contract->id) selected @endif value="{{$contract->id}}">{{$contract->contractor->name." - ( ".$contract->contractor->type." )"}}</option>
+							@endforeach
+						</select>
+					</div>
+				</div>
+				@else
+				<input type="hidden" name="contract_id" value="{{$production->contract_id}}">
+				@endif
 				<div class="form-group @if($errors->has('rate')) has-error @endif">
 					<label for="rate" class="control-label col-sm-2 col-md-2 col-lg-2">تقييم الأنتاج</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -85,6 +110,9 @@
 				<input type="hidden" name="_token" value="{{csrf_token()}}">
 				<input type="hidden" name="_method" value="PUT">
 			</form>
+			@else
+			<div class="alert alert-warning">لا يوجد عقود مع مقاوليين حتى يتم أضافة أنتاج إلى هذا البند <a href="#" class="btn btn-warning">أنشاء عقد</a></div>
+			@endif
 		</div>
 	</div>
 </div>

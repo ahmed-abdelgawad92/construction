@@ -272,6 +272,7 @@ class ProjectController extends Controller {
 			$project=Project::findOrFail($id);
 			$org=$project->organization;
 			$startedTerms=$project->terms()
+				->where('deleted',0)
 				->where('started_at','<=',Carbon::today())
 				->where('done',0)
 				->where('disabled',0)
@@ -279,6 +280,7 @@ class ProjectController extends Controller {
 				->take(3)
 				->get();
 			$notStartedTerms=$project->terms()
+				->where('deleted',0)
 				->where('done',0)
 				->where(function($query){
 					$query->where('started_at','>',Carbon::today())
@@ -288,11 +290,13 @@ class ProjectController extends Controller {
 				->take(3)
 				->get();
 			$doneTerms=$project->terms()
+				->where('deleted',0)
 				->where('done',1)
 				->orderBy('started_at','desc')
 				->take(3)
 				->get();
 			$disabledTerms=$project->terms()
+				->where('deleted',0)
 				->where('done',0)
 				->where('disabled',1)
 				->orderBy('started_at','desc')

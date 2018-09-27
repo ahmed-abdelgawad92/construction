@@ -598,7 +598,7 @@
 					 {{$term->statement}}
 				</p>
 				</a>
-				<a href="{{route('enableterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">تفعيل</a>
+				<a href="{{route('restoreterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">إسترجاع</a>
 			</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">

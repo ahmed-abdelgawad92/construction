@@ -276,12 +276,6 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'as'=>'updateterm'
 	    ])->where('id', '[0-9]+');
 
-	    //Delete Term from the db
-	    Route::delete('delete/{id}',[
-	    	'uses'=>'TermController@destroy',
-	    	'as'=>'deleteterm'
-	    ])->where('id', '[0-9]+');
-
 	    //Show All Terms
 	    Route::get('all/{id?}',[
 	    	'uses'=>'TermController@index',
@@ -320,6 +314,11 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'as'=>'showterm'
 	    ])->where('id', '[0-9]+');
 
+      //Delete Term from the db
+	    Route::get('delete/{id}',[
+	    	'uses'=>'TermController@destroy',
+	    	'as'=>'deleteterm'
+	    ])->where('id', '[0-9]+');
 	   	//Start Term by id
 	    Route::get('start/{id}',[
 	    	'uses'=>'TermController@startTerm',
@@ -339,6 +338,11 @@ Route::group(['middleware' => 'auth'], function() {
 	    Route::get('disable/{id}',[
 	    	'uses'=>'TermController@disableTerm',
 	    	'as'=>'disableterm'
+	    ])->where('id','[0-9]+');
+	    //restore term by id
+	    Route::get('restore/{id}',[
+	    	'uses'=>'TermController@restoreTerm',
+	    	'as'=>'restoreterm'
 	    ])->where('id','[0-9]+');
 
 
@@ -1075,11 +1079,42 @@ Route::group(['middleware' => 'auth'], function() {
 		Route::put('update/{id}',[
 			'uses'=>'TransactionController@update',
 			'as'=>'updatetransaction'
-		]);
+		])->where('id','[0-9]+');
 		//delete transaction
 		Route::get('delete/{id}',[
 			'uses'=>'TransactionController@destroy',
 			'as'=>'deletetransaction'
-		]);
+		])->where('id','[0-9]+');
 	});
+  //Routes to manipulate notes within terms
+  Route::group(['prefix'=>'notes'],function(){
+    //add Notes
+    Route::get('add/{id}',[
+      'uses'=>'NoteController@create',
+      'as'=>'addnote'
+    ])->where('id','[0-9]+');
+    Route::post('add/{id}',[
+      'uses'=>'NoteController@store',
+      'as'=>'addnote'
+    ])->where('id','[0-9]+');
+    //update Notes
+    Route::get('update/{id}',[
+      'uses'=>'NoteController@edit',
+      'as'=>'updatenote'
+    ])->where('id','[0-9]+');
+    Route::put('update/{id}',[
+      'uses'=>'NoteController@update',
+      'as'=>'updatenote'
+    ])->where('id','[0-9]+');
+    //show all Notes
+    Route::get('all/{id}',[
+      'uses'=>'NoteController@index',
+      'as'=>'allnote'
+    ])->where('id','[0-9]+');
+    //delete note
+    Route::get('delete/{id}',[
+      'uses'=>'NoteController@destroy',
+      'as'=>'deletenote'
+    ])->where('id','[0-9]+');
+  });
 });

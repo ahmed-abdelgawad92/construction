@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Term;
 use App\Project;
@@ -406,7 +406,122 @@ class TermController extends Controller {
 	public function destroy($id)
 	{
 		if(Auth::user()->type=='admin'){
-
+			// get all related data to this term
+			$term = Term::findOrFail($id);
+			$productions = $term->productions();
+			$notes = $term->notes();
+			$contracts = $term->contracts();
+			$consumptions = $term->consumptions();
+			//open a transaction to delete all data
+			try{
+				DB::beginTransaction();
+				foreach ($productions as $production) {
+					if($production->deleted==0){
+						$production->deleted = 1;
+						$production->save();
+					}
+				}
+				foreach ($notes as $note) {
+					if ($note->deleted==0) {
+						$note->deleted = 1;
+						$note->save();
+					}
+				}
+				foreach ($contracts as $contract) {
+					if ($contract->deleted==0) {
+						$contract->deleted = 1;
+						$contract->save();
+					}
+				}
+				foreach ($consumptions as $consumption) {
+					if ($consumption->deleted==0) {
+						$consumption->deleted = 1;
+						$consumption->save();
+					}
+				}
+				$term->deleted=1;
+				$term->save();
+				//add log to show which user did what
+				$log = new Log;
+				$log->table="terms";
+				$log->record_id=$term->id;
+				$log->user_id=Auth::user()->id;
+				$log->action="delete";
+				$log->description="قام بحذف البند صاحب الكود رقم ".$term->code." و جميع البيانات المتعلقة به الا المستخلصات";
+				$log->save();
+				//commit transaction
+				DB::commit();
+			}catch(Exception $e){
+				dd($e);
+				DB::rollBack();
+				return redirect()->back()->with("insert_error","حدث عطل خلال حذف البند ، من فضلك حاول مرة اخرى فى وقتاً لاحق");
+			}
+			return redirect()->route("showproject",['id'=>$term->project_id])->with('success','تم حذف البند بنجاح');
+		}
+		else
+			abort('404');
+	}
+	/**
+	 * restore the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function restoreTerm($id)
+	{
+		if(Auth::user()->type=='admin'){
+			// get all related data to this term
+			$term = Term::findOrFail($id);
+			$productions = $term->productions();
+			$notes = $term->notes();
+			$contracts = $term->contracts();
+			$consumptions = $term->consumptions();
+			$term_updated_at=date("Y-m-d",strtotime($term->updated_at));
+			//open a transaction to restore all data
+			try{
+				DB::beginTransaction();
+				foreach ($productions as $production) {
+					if (date("Y-m-d",strtotime($production->updated_at))==$term_updated_at) {
+						$production->deleted = 0;
+						$production->save();
+					}
+				}
+				foreach ($notes as $note) {
+					if (date("Y-m-d",strtotime($note->updated_at))==$term_updated_at) {
+						$note->deleted = 0;
+						$note->save();
+					}
+				}
+				foreach ($contracts as $contract) {
+					if (date("Y-m-d",strtotime($contract->updated_at))==$term_updated_at) {
+						$contract->deleted = 0;
+						$contract->save();
+					}
+				}
+				foreach ($consumptions as $consumption) {
+					if (date("Y-m-d",strtotime($consumption->updated_at))==$term_updated_at) {
+						$consumption->deleted = 0;
+						$consumption->save();
+					}
+				}
+				$term->deleted=0;
+				$term->save();
+				//add log to show which user did what
+				$log = new Log;
+				$log->table="terms";
+				$log->record_id=$term->id;
+				$log->user_id=Auth::user()->id;
+				$log->action="restore";
+				$log->description="قام باسترجاع هذا البند المحذوف";
+				$log->save();
+				//commit transaction
+				DB::commit();
+			}catch(Exception $e){
+				dd($e);
+				DB::rollBack();
+				return redirect()->back()->with("insert_error","حدث عطل خلال استرجاع البند ، من فضلك حاول مرة اخرى فى وقتاً لاحق");
+			}
+			return redirect()->route("showterm",['id'=>$term->id])->with('success','تم استرجاع البند بنجاح');
 		}
 		else
 			abort('404');

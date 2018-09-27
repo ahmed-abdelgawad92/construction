@@ -1,6 +1,7 @@
 @extends('layouts.master')
 @section('title','بيانات البند')
 @section('content')
+@if($term->deleted==0)
 <div class="content">
 	<div class="col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-md-offset-0 col-lg-offset-0">
 	<div class="panel panel-default">
@@ -47,8 +48,7 @@
 			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة أستهلاك</a>
 			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة ملحوظة</a>
 			<a href="{{route('updateterm',$term->id)}}" class="float btn btn-default">تعديل</a>
-			<form action="{{route('deleteterm',$term->id)}}" class="float">
-				<button type="button" data-toggle="modal" data-target="#delete" class="btn btn-danger">حذف</button>
+			<button type="button" data-toggle="modal" data-target="#delete" class="btn btn-danger float">حذف</button>
 				<div class="modal fade" id="delete" tabindex="-1" role="dialog">
 					<div class="modal-dialog modal-sm">
 						<div class="modal-content">
@@ -58,14 +58,11 @@
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">لا
 								</button>
-								<button class="btn btn-danger">نعم</button>
+								<a href="{{route('deleteterm',$term->id)}}" class="btn btn-danger">نعم</a>
 							</div>
 						</div>
 					</div>
 				</div>
-				<input type="hidden" name="_token" value="{{csrf_token()}}">
-				<input type="hidden" name="_method" value="DELETE">
-			</form>
 		</div>
 	</div>
 	<div class="panel panel-default">
@@ -134,7 +131,8 @@
 		<div class="panel-body">
 			@if(count($productions)>0)
 			@foreach($productions as $production)
-				<div class="bordered-right whole">
+				<div class="bordered-right whole" title="أضغط للتعديل">
+					<a href="{{route('updateproduction',['id'=>$production->id])}}" class="no-underline">
 					<h4>تقييم
 						@for ($i=0; $i < 10; $i++)
 							@if ($i<$production->rate)
@@ -156,6 +154,7 @@
 						<span class="label label-default">تاريخ الأنتاج</span>
 						 {{date("d/m/Y",strtotime($production->created_at))}}
 					</p>
+					</a>
 				</div>
 			@endforeach
 			<div class="row item" style="text-align: center;">
@@ -233,4 +232,11 @@
 		<p id="contract_term"></p>
 	</div>
 </div>
+@else
+<div class="alert alert-info mt-5 center">
+	<img src="{{asset("images/deleted.png")}}" style="width:40%;" alt="">
+	<h3 class="center">هذا  البند تم حذفه</h3>
+	<a href="{{route('restoreterm',['id'=>$term->id])}}" class="btn btn-primary">استرجاع البند المحذوف</a>
+</div>
+@endif
 @endsection
