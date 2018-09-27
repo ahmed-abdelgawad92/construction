@@ -43,7 +43,7 @@
 			@endif
 			@if(count($projects)>0)
 			<form method="post" action="{{ route('addterm') }}" id="add_term" class="form-horizontal">
-				<div class="form-group @if($errors->has('project_id')) has-error @endif">
+				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
 					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للمشروع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="project_id" id="project_id" class="form-control">
@@ -63,7 +63,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('type_select')||$errors->has('type_text')) has-error @endif">
+				<div class="form-group row @if($errors->has('type_select')||$errors->has('type_text')) has-error @endif">
 					<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع البند *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8" >
 						<div class="input-group w-100" id="type">
@@ -91,7 +91,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('code')) has-error @endif">
+				<div class="form-group row @if($errors->has('code')) has-error @endif">
 					<label for="code" class="control-label col-sm-2 col-md-2 col-lg-2">كود البند *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8" id="get_statement">
 						<input type="text" name="code" id="code" class="form-control number" placeholder="أدخل كود البند" value="{{old('code')}}">
@@ -102,7 +102,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('statement')) has-error @endif">
+				<div class="form-group row @if($errors->has('statement')) has-error @endif">
 					<label for="statement" class="control-label col-sm-2 col-md-2 col-lg-2">بيان الأعمال *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<textarea name="statement" id="statement" class="form-control" placeholder="أدخل بيان الأعمال">{{old('statement')}}</textarea>
@@ -113,7 +113,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('unit')) has-error @endif">
+				<div class="form-group row @if($errors->has('unit')) has-error @endif">
 					<label for="unit" class="control-label col-sm-2 col-md-2 col-lg-2">الوحدة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="unit" id="unit" class="form-control" placeholder="أدخل الوحدة" value="{{old('unit')}}">
@@ -124,7 +124,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('amount')) has-error @endif">
+				<div class="form-group row @if($errors->has('amount')) has-error @endif">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="amount" id="amount" class="form-control number" placeholder="أدخل الكمية" value="{{old('amount')}}">
@@ -135,7 +135,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('value')) has-error @endif">
+				<div class="form-group row @if($errors->has('value')) has-error @endif">
 					<label for="value" class="control-label col-sm-2 col-md-2 col-lg-2">القيمة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="value" id="value" class="form-control number" placeholder="أدخل القيمة" value="{{old('value')}}">
@@ -146,7 +146,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('num_phases')) has-error @endif">
+				<div class="form-group row @if($errors->has('num_phases')) has-error @endif">
 					<label for="num_phases" class="control-label col-sm-2 col-md-2 col-lg-2">عدد المراحل</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="num_phases" id="num_phases" class="form-control number" placeholder="أدخل عدد المراحل" value="{{old('num_phases')}}">
@@ -157,7 +157,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('started_at')) has-error @endif">
+				<div class="form-group row @if($errors->has('started_at')) has-error @endif">
 					<label for="started_at" class="control-label col-sm-2 col-md-2 col-lg-2">تاريخ البدء</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="started_at" id="started_at" autocomplete="off" value="{{old('started_at')}}" class="form-control" placeholder="أدخل تاريخ استلام الموقع">
@@ -168,7 +168,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">

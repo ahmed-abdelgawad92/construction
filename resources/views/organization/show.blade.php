@@ -85,8 +85,8 @@
 </div>
 </div>
 	@if(count($projects)>0)
+	<h3 class="center">جميع مشروعات العميل {{$org->name}}</h3>
 	<div class="row">
-		<h3 class="center">جميع مشروعات العميل {{$org->name}}</h3>
 		<?php $count=0; ?>
 		@foreach($projects as $project)
 		<?php $count++; ?>

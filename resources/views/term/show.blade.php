@@ -3,15 +3,28 @@
 @section('content')
 @if($term->deleted==0)
 <div class="content">
+	<div class="row">
 	<div class="col-md-7 col-lg-8 col-sm-12">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>بند تابع للمشروع <a href="{{route('showproject',$term->project->id)}}">{{$term->project->name}}</a> </h3>
+			<h3>بند تابع للمشروع <a href="{{route('showproject',$term->project_id)}}">{{$term->project->name}}</a> </h3>
 		</div>
 		<div class="panel-body">
 			@if(session('success'))
 				<div class="alert alert-success">
 					<strong>{{ session('success') }}</strong>
+					<br>
+				</div>
+			@endif
+			@if(session('insert_error'))
+				<div class="alert alert-danger">
+					<strong>{{ session('insert_error') }}</strong>
+					<br>
+				</div>
+			@endif
+			@if(session('info'))
+				<div class="alert alert-info">
+					<strong>{{ session('info') }}</strong>
 					<br>
 				</div>
 			@endif
@@ -208,7 +221,7 @@
 			<div class="col-xs-12">
 				<div class="note">
 					<h3 class="center">{{$note->title}}</h3>
-					{!!nl2br($note->note)!!}
+					{!!nl2br(htmlspecialchars($note->note))!!}
 					<div class="note-time">{{date("d/m/Y",strtotime($note->created_at))}}</div>
 					<div class="note_control">
 						<a href="{{route("deletenote",['id'=>$note->id])}}" class="note_delete"><span class="glyphicon glyphicon-trash"></span></a>
@@ -220,7 +233,7 @@
 			@endforeach
 			<div class="row item" style="text-align: center;">
 				<a href="{{ route('allnote',$term->id) }}" class="btn btn-warning">
-					جميع الاحظات بالبند
+					جميع الملاحظات بالبند
 				</a>
 			</div>
 			@else
@@ -252,7 +265,7 @@
 			<div class="form-group @if($errors->has('note')) has-error @endif">
 				<label for="note" class="control-label">ملحوظة</label>
 				<div>
-					<textarea name="note" id="note" class="form-control note" placeholder="أكتب ملحوظة" value="{{old('note')}}"></textarea>
+					<textarea name="note" id="note" class="form-control note" placeholder="أكتب ملحوظة">{{old('note')}}</textarea>
 					@if($errors->has('note'))
 						@foreach($errors->get('note') as $error)
 							<span class="help-block">{{ $error }}</span>
@@ -268,6 +281,7 @@
 			<button class="btn btn-default btn-close">لا</button>
 			<a href="" class="btn btn-danger">نعم</a>
 		</div>
+	</div>
 	</div>
 </div>
 @else

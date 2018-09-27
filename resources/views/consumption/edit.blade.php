@@ -40,7 +40,7 @@
 				</div>
 			@endif
 			<form method="post" action="{{ route('updateconsumption',$consumption->id) }}" class="form-horizontal">
-				<div class="form-group @if($errors->has('type')) has-error @endif">
+				<div class="form-group row @if($errors->has('type')) has-error @endif">
 					<label for="type_consumption" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select id="type_consumption" name="type" class="form-control">
@@ -63,7 +63,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('amount')) has-error @endif">
+				<div class="form-group row @if($errors->has('amount')) has-error @endif">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
@@ -77,7 +77,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">تعديل</button>
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">

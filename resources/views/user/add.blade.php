@@ -31,7 +31,7 @@
 				</div>
 			@endif
 			<form method="post" action="{{ route('adduser') }}" class="form-horizontal">
-				<div class="form-group @if($errors->has('username')) has-error @endif">
+				<div class="form-group row @if($errors->has('username')) has-error @endif">
 					<label for="username" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المستخدم</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="username" id="username" value="{{old('username')}}" class="form-control" placeholder="أدخل أسم المستخدم">
@@ -42,7 +42,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('password')) has-error @endif">
+				<div class="form-group row @if($errors->has('password')) has-error @endif">
 					<label for="password" class="control-label col-sm-2 col-md-2 col-lg-2">كلمة المرور</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="password" name="password" id="password" class="form-control" placeholder="أدخل كلمة المرور">
@@ -53,7 +53,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('repassword')) has-error @endif">
+				<div class="form-group row @if($errors->has('repassword')) has-error @endif">
 					<label for="repassword" class="control-label col-sm-2 col-md-2 col-lg-2">أعادة كلمة المرور</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="password" name="repassword" id="repassword" class="form-control" placeholder="أعادة أدخال كلمة المرور">
@@ -64,7 +64,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('type')) has-error @endif">
+				<div class="form-group row @if($errors->has('type')) has-error @endif">
 					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الحساب</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<label>
@@ -80,7 +80,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if(isset($cont)) display @endif @if(old('contractor_id')) display @endif
+				<div class="form-group row @if(isset($cont)) display @endif @if(old('contractor_id')) display @endif
 					@if($errors->has('contractor_id')) has-error display @endif" @if(!isset($cont) && !$errors->has('contractor_id') && !old('contractor_id')) style="display: none" @endif id="contractor-select">
 					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -107,7 +107,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">

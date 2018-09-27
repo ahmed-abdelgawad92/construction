@@ -8,7 +8,7 @@
 		</div>
 		<div class="panel-body">
 			<form method="post" action="{{ route('addtermtype') }}" class="form-horizontal">
-				<div class="form-group @if($errors->has('type')) has-error @endif ">
+				<div class="form-group row @if($errors->has('type')) has-error @endif ">
 					<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع بند</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="type" id="type" class="form-control" placeholder="أدخل نوع البند">
@@ -19,7 +19,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>
 				<input type="hidden" name="_token" value="{{ csrf_token() }}">

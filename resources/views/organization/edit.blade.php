@@ -28,7 +28,7 @@
 		</div>
 	@endif
 	<form class="form-horizontal" method="post" id="addOrganization" action="{{ route('updateorganization',$org->id) }}">
-		<div class="form-group @if($errors->has('name')) has-error @endif">
+		<div class="form-group row @if($errors->has('name')) has-error @endif">
 			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم العميل</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="name" id="name" value="{{$org->name}}" class="form-control" placeholder="أدخل أسم العميل">
@@ -39,7 +39,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('address')) has-error @endif">
+		<div class="form-group row @if($errors->has('address')) has-error @endif">
 			<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">شارع</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="address" id="address" value="{{$org->address}}" class="form-control" placeholder="أدخل الشارع">
@@ -50,7 +50,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('center')) has-error @endif">
+		<div class="form-group row @if($errors->has('center')) has-error @endif">
 			<label for="center" class="control-label col-sm-2 col-md-2 col-lg-2">مركز</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="center" id="center" value="{{$org->center}}" class="form-control" placeholder="أدخل المركز">
@@ -61,7 +61,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('city')) has-error @endif">
+		<div class="form-group row @if($errors->has('city')) has-error @endif">
 			<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">مدينة</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="city" id="city" value="{{$org->city}}" class="form-control" placeholder="أدخل المدينة">
@@ -76,7 +76,7 @@
 		$phones=explode(';',$org->phone);
 		@endphp
 		@for($i=0;$i<count($phones);$i++)
-		<div class="form-group @if($errors->has('phone.'.$i)) has-error @endif" @if($i==0) id="phone_template" @else id="del_phone{{$i}}" @endif>
+		<div class="form-group row @if($errors->has('phone.'.$i)) has-error @endif" @if($i==0) id="phone_template" @else id="del_phone{{$i}}" @endif>
 			<label for="phone{{$i}}" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون @if($i==0)<a href="#" id="add_another_phone"> أضافة رقم جديد؟</a>@else <span data-phone="{{$i}}" class="glyphicon glyphicon-trash delete_phone"></span> @endif</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="phone[{{$i}}]" id="phone{{$i}}" value="{{$phones[$i]}}" class="form-control phone_input" placeholder="أدخل التليفون">
@@ -88,7 +88,7 @@
 			</div>
 		</div>
 		@endfor
-		<div class="form-group @if($errors->has('type')) has-error @endif">
+		<div class="form-group row @if($errors->has('type')) has-error @endif">
 			<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع العميل</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<label><input type="radio" name="type" value="0" id="" @if($org->type==0) checked @endif> عميل</label>
@@ -100,7 +100,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+		<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 			<button class="btn btn-primary w-100" id="save_btn">تعديل</button>
 		</div>
 		<input type="hidden" name="_method" value="PUT">

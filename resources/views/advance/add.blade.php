@@ -23,7 +23,7 @@
 					action="{{ route('addadvance') }}"
 					@endif
 					class="form-horizontal">
-				<div class="form-group @if($errors->has('employee_id')) has-error @endif ">
+				<div class="form-group row @if($errors->has('employee_id')) has-error @endif ">
 					<label for="type_employee" class="control-label col-sm-2 col-md-2 col-lg-2">الموظف</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="employee_id" id="employee_id" class="form-control">
@@ -43,7 +43,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('advance')) has-error @endif">
+				<div class="form-group row @if($errors->has('advance')) has-error @endif">
 					<label for="advance" class="control-label col-sm-2 col-md-2 col-lg-2">السلفة</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
@@ -57,7 +57,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">

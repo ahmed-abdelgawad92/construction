@@ -1,4 +1,4 @@
-@extends('layouts.master')
+ row@extends('layouts.master')
 @section('title','تعديل بيانات المقاول')
 @section('content')
 <div class="content">
@@ -34,7 +34,7 @@
 			</div>
 		@endif
 		<form class="form-horizontal" method="post" action="{{ route('updatecontractor',$contractor->id) }}">
-		<div class="form-group @if($errors->has('name')) has-error @endif">
+		<div class="form-group row @if($errors->has('name')) has-error @endif">
 			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المقاول</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="name" id="name" value="{{$contractor->name}}" class="form-control" placeholder="أدخل أسم المقاول">
@@ -45,7 +45,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('type')) has-error @endif">
+		<div class="form-group row @if($errors->has('type')) has-error @endif">
 			<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				@foreach($term_types as $type)
@@ -60,7 +60,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('address')) has-error @endif">
+		<div class="form-group row @if($errors->has('address')) has-error @endif">
 			<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">الشارع</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="address" id="address" value="{{$contractor->address}}" class="form-control" placeholder="أدخل الشارع">
@@ -71,7 +71,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('center')) has-error @endif">
+		<div class="form-group row @if($errors->has('center')) has-error @endif">
 			<label for="center" class="control-label col-sm-2 col-md-2 col-lg-2">المركز</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="center" id="center" value="{{$contractor->center}}" class="form-control" placeholder="أدخل المركز">
@@ -82,7 +82,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('city')) has-error @endif">
+		<div class="form-group row @if($errors->has('city')) has-error @endif">
 			<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">المدينة</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="city" id="city" value="{{$contractor->city}}" class="form-control" placeholder="أدخل المدينة">
@@ -93,7 +93,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group @if($errors->has('phone')) has-error @endif">
+		<div class="form-group row @if($errors->has('phone')) has-error @endif">
 			<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">التليفون</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<input type="text" name="phone" id="phone" value="{{$contractor->phone}}" class="form-control" placeholder="أدخل التليفون">
@@ -104,7 +104,7 @@
 				@endif
 			</div>
 		</div>
-		<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+		<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 			<button class="btn btn-primary form-control" id="save_btn">تعديل</button>
 		</div>
 		<input type="hidden" name="_method" value="PUT">

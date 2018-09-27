@@ -20,7 +20,7 @@ class NoteController extends Controller
     public function index($id)
     {
       $term= Term::where('id',$id)->where('deleted',0)->firstOrFail();
-      $notes = $term->notes()->where('notes.deleted',0)->get();
+      $notes = $term->notes()->where('notes.deleted',0)->orderBy('notes.created_at','desc')->get();
       $array = [
         'term'=>$term,
         'notes'=>$notes,
@@ -109,9 +109,11 @@ class NoteController extends Controller
     public function edit($id)
     {
         $note=Note::where('id',$id)->where('deleted',0)->firstOrFail();
+        $term = $note->term;
         $array=[
           'active'=>'term',
-          'note'=>$note
+          'note'=>$note,
+          'term'=>$term
         ];
         return view("note.edit",$array);
     }

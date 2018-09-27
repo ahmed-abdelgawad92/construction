@@ -21,7 +21,7 @@
 				</div>
 			@endif
 			<form method="post" action="{{ route('addexpense') }}" class="form-horizontal">
-				<div class="form-group @if($errors->has('project_id')) has-error @endif">
+				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
 					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المشروع</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="project_id" id="project_id" class="form-control">
@@ -41,7 +41,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('whom')) has-error @endif">
+				<div class="form-group row @if($errors->has('whom')) has-error @endif">
 					<label for="whom" class="control-label col-sm-2 col-md-2 col-lg-2">وصف الأكرامية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="whom" id="whom" value="{{old('whom')}}" class="form-control" placeholder="أدخل وصف هذه الأكرامية">
@@ -52,7 +52,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('expense')) has-error @endif">
+				<div class="form-group row @if($errors->has('expense')) has-error @endif">
 					<label for="expense" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة الأكرامية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
@@ -66,7 +66,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+ row@extends('layouts.master')
 @section('title','عقد بند')
 @section('content')
 <div class="content">
@@ -21,7 +21,7 @@
 			@endif
 			@if(count($contractors)>0)
 			<form method="post" action="{{route('termcontract',$term->id)}}" class="form-horizontal">
-				<div class="form-group @if($errors->has('contractor_id')) has-error @endif">
+				<div class="form-group row @if($errors->has('contractor_id')) has-error @endif">
 					<label for="contractor_id" class="control-label col-sm-2 col-md-2 col-lg-2">نص العقد</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="contractor_id" id="contractor_id" class="form-control">
@@ -37,7 +37,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('contractor_unit_price')) has-error @endif">
+				<div class="form-group row @if($errors->has('contractor_unit_price')) has-error @endif">
 					<label for="contractor_unit_price" class="control-label col-sm-2 col-md-2 col-lg-2">سعر الوحدة للمقاول</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="contractor_unit_price" id="contractor_unit_price" class="form-control" placeholder="أدخل سعر الوحدة للمقاول">
@@ -48,7 +48,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('contract_text')) has-error @endif">
+				<div class="form-group row @if($errors->has('contract_text')) has-error @endif">
 					<label for="contract_text" class="control-label col-sm-2 col-md-2 col-lg-2">نص العقد</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<textarea name="contract_text" id="contract_text" class="text form-control" placeholder="أدخل نص العقد"></textarea>
@@ -59,7 +59,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group @if($errors->has('started_at')) has-error @endif">
+				<div class="form-group row @if($errors->has('started_at')) has-error @endif">
 					<label for="started_at" class="control-label col-sm-2 col-md-2 col-lg-2">تاريخ بداية تنفيذ البند</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="started_at" id="started_at" value="{{old('started_at')}}" class="form-control" placeholder="أدخل تاريخ بداية تنفيذ البند">
@@ -70,7 +70,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="col-sm-2 col-md-2 col-lg-2 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
+				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>
 				<input type="hidden" name="_method" value="PUT">
