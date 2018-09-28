@@ -1,10 +1,51 @@
+
+'.source.php':
+  'redirect laravel':
+    'prefix':'reroute'
+    'body':'return redirect()->route("${1:route}",["id"=>${2:id}])->with("success","${3:msg}");'
+  'redirect back laravel':
+    'prefix':'reback'
+    'body':'return redirect()->back()->with("${1:success}","${2:msg}");'
+  'redirect back with error laravel':
+    'prefix':'reerror'
+    'body':'return redirect()->back()->withErrors($validator)->withInput();'
+  'request input':
+    'prefix':'req'
+    'body':'$${1:req}->input("${2:name}")$3'
+  'validator':
+    'prefix':'validator'
+    'body':'
+    $validator = Validator::make($req->all(),$rules,$error_messages);\n
+    if ($validator->fails()) {\n
+    \treturn redirect()->back()->withErrors($validator)->withInput();\n}'
+  'saved correctly':
+    'prefix':'saved'
+    'body':'//check if saved correctly\nif (!$saved) {\n\treturn redirect()->back()->with("${1:insert_error}","${2:msg}");\n}\n$3'
+  'create new log':
+    'prefix':'log'
+    'body':'$log=new Log;\n$log->table="${1:table}";\n$log->action="${2:create}";\n$log->record_id=${3:$id};\n$log->user_id=Auth::user()->id;\n$log->description=${4:$description};\n$log->save();$5'
 '.text.html.php.blade':
   'form-group':
     'prefix':'fg'
     'body':'<div class="form-group row @if($errors->has("${1:name}")) has-error @endif"> \n
             \t<label for="${1:name}" class="control-label col-sm-2 col-md-2 col-lg-2">${2:label}</label> \n
-            \t<div class="col-sm-8 col-md-8 col-lg-8" id="get_statement"> \n
-            \t\t<input type="text" name="${1:name}" id="${1:name}" class="form-control" placeholder="أدخل ${2:label}" value="{{old("${1:name}")}}"> \n
+            \t<div class="col-sm-10 col-md-10 col-lg-10"> \n
+            \t\t<input type="text" name="${1:name}" id="${1:name}" autocomplete="off" class="form-control" placeholder="أدخل ${2:label}" value="{{old("${1:name}")}}"> \n
+            \t\t@if($errors->has("${1:name}")) \n
+            \t\t\t@foreach($errors->get("${1:name}") as $error) \n
+            \t\t\t\t<span class="help-block">{{ $error }}</span> \n
+            \t\t\t@endforeach \n
+            \t\t@endif \n
+            \t</div>\n</div>'
+  'form-group-caption':
+    'prefix':'fg-cap'
+    'body':'<div class="form-group row @if($errors->has("${1:name}")) has-error @endif"> \n
+            \t<label for="${1:name}" class="control-label col-sm-2 col-md-2 col-lg-2">${2:label}</label> \n
+            \t<div class="col-sm-10 col-md-10 col-lg-10"> \n
+            \t\t<div class="input-group">\n
+            \t\t\t<input type="text" name="${1:name}" id="${1:name}" autocomplete="off" class="form-control" placeholder="أدخل ${2:label}" value="{{old("${1:name}")}}"> \n
+            \t\t\t<span class="input-group-addon" id="basic-addon1">${3:cap}</span>\n
+            \t\t</div>\n
             \t\t@if($errors->has("${1:name}")) \n
             \t\t\t@foreach($errors->get("${1:name}") as $error) \n
             \t\t\t\t<span class="help-block">{{ $error }}</span> \n
@@ -37,3 +78,9 @@
 				\t\t\t\t\t</div>\n
     		\t\t\t\t@endif\n${2:content}\n
         \t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n'
+  'button submit':
+    'prefix':'btn-sub'
+    'body':'
+    <div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">\n
+    \t<button class="btn btn-primary form-control" id="save_btn">حفظ</button>\n
+    </div>'
