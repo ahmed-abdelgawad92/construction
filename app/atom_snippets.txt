@@ -1,0 +1,39 @@
+'.text.html.php.blade':
+  'form-group':
+    'prefix':'fg'
+    'body':'<div class="form-group row @if($errors->has("${1:name}")) has-error @endif"> \n
+            \t<label for="${1:name}" class="control-label col-sm-2 col-md-2 col-lg-2">${2:label}</label> \n
+            \t<div class="col-sm-8 col-md-8 col-lg-8" id="get_statement"> \n
+            \t\t<input type="text" name="${1:name}" id="${1:name}" class="form-control" placeholder="أدخل ${2:label}" value="{{old("${1:name}")}}"> \n
+            \t\t@if($errors->has("${1:name}")) \n
+            \t\t\t@foreach($errors->get("${1:name}") as $error) \n
+            \t\t\t\t<span class="help-block">{{ $error }}</span> \n
+            \t\t\t@endforeach \n
+            \t\t@endif \n
+            \t</div>\n</div>'
+  'content':
+    'prefix':'content'
+    'body':'<div class="content">\n
+    	  \t<div class="row">\n
+    	  \t\t<div class="col-md-7 col-lg-8 col-sm-12">\n
+    	  \t\t\t<div class="panel panel-default">\n
+    		\t\t\t\t<div class="panel-heading">\n
+    		\t\t\t\t\t<h3>${1:title}</h3>\n
+    		\t\t\t\t</div>\n
+    		\t\t\t\t<div class="panel-body">\n
+    		\t\t\t\t@if(session("success"))\n
+    		\t\t\t\t\t<div class="alert alert-success">\n
+    		\t\t\t\t\t\t<strong>{{ session("success") }}</strong>\n
+    		\t\t\t\t\t</div>\n
+    		\t\t\t\t@endif\n
+    		\t\t\t\t@if(session("insert_error"))\n
+    		\t\t\t\t\t<div class="alert alert-danger">\n
+    		\t\t\t\t\t\t<strong>{{ session("insert_error") }}</strong>\n
+    		\t\t\t\t\t</div>\n
+    		\t\t\t\t@endif\n
+    		\t\t\t\t@if(session("info"))\n
+    	  \t\t\t\t\t<div class="alert alert-info">\n
+    		\t\t\t\t\t\t<strong>{{ session("info") }}</strong>\n
+				\t\t\t\t\t</div>\n
+    		\t\t\t\t@endif\n${2:content}\n
+        \t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>\n'

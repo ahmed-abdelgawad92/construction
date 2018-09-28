@@ -122,7 +122,7 @@
 					</div>
 				</div>
 				<div class="center mt-3">
-					<button class="btn btn-dark show_contract" data-contract="@if (!empty($contract->contract_text)) {!!nl2br($contract->contract_text)!!} @else لا يوجد نص للعقد @endif">أفتح العقد</button>
+					<button class="btn btn-dark show_contract" data-contract="@if (!empty($contract->contract_text)) {!!nl2br(htmlspecialchars($contract->contract_text))!!} @else لا يوجد نص للعقد @endif">أفتح العقد</button>
 					<a href="{{route('updatecontract',['id'=>$term->id])}}" class="btn btn-default">تعديل العقد</a>
 					<a href="{{route('endcontract',['id'=>$term->id])}}" class="btn btn-success">انهاءالعقد</a>
 				</div>

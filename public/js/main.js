@@ -441,7 +441,7 @@ $(document).ready(function() {
 	// Show Contract within term profile
 	$(".show_contract").click(function(){
 		$("body").css('overflow','hidden');
-		$("#contract_term").text($(this).attr("data-contract"));
+		$("#contract_term").html($(this).attr("data-contract"));
 		$('#float_container').fadeIn(200,function(){
 			$('#float_form_container').slideDown(100);
 			$('#show_contract').show();
@@ -487,6 +487,23 @@ $(document).ready(function() {
 			$("#delete_note a.btn-danger").attr('href',link);
 		});
 	});
+	/******************************************Contracts********************************************/
+	//show contractors to select them for a contract (Within Create Contract)
+	$("#show_contractor_details").click(function(){
+		$("body").css('overflow','hidden');
+		$("#float_form_container").css("overflow","auto");
+		$('#float_container').fadeIn(200,function(){
+			$('#float_form_container').slideDown(100);
+		});
+	});
+	$(".contractor_select").click(function(){
+		var id = $(this).attr("data-id");
+		var details = $(this).attr("data-name")+" - "+$(this).attr("data-city")+" - "+$(this).attr("data-phone")+" ( "+$(this).attr("data-type")+" ) ";
+		$("#show_contractor_details").val(details);
+		$("#contractor_id").val(id);
+		$("span.close").trigger("click");
+	});
+	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 
 });

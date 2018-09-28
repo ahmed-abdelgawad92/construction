@@ -1564,6 +1564,13 @@ select.form-control {
 .btn-enable:hover{
 	background-color: #969696a3;
 }
+.readonly{
+	cursor: pointer;
+	background-color: white !important;
+}
+.input-group .form-control{
+	z-index: 0;
+}
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{
   color: black !important;
@@ -1601,6 +1608,10 @@ span.delete_phone:hover{
 
 #float_container{
 	display: none;
+	overflow: auto;
+	direction: ltr !important;
+	padding: 40px 0;
+	box-sizing: border-box;
 	position: fixed;
 	background: rgba(0,0,0,0.5);
 	top: 0;
@@ -1752,4 +1763,38 @@ a:hover img {
 	opacity: 0.8;
 	transform: scale(0.95);
 	transition: .5 all;
+}
+
+
+/*------------------------------------Contracts------------------------------------*/
+.contractor_select{
+	padding: 30px 15px;
+	border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	cursor: pointer;
+}
+.contractor_select:nth-of-type(1){
+	border-top-left-radius: 8px !important;
+	border-top-right-radius: 8px !important;
+}
+.contractor_select:last-of-type{
+	border-bottom: 1px solid #ccc;
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+div.contractor_select:hover{
+	background-color: #d7ebff;
+}
+div.category{
+	background-color: #2a3f54;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	height: 5px;
+}
+h5.category{
+	background: #eee;
+	width: 50%;
+	margin: 0 auto;
+	text-align: center;
 }

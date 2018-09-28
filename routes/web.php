@@ -391,7 +391,7 @@ Route::group(['middleware' => 'auth'], function() {
 	Route::group(['prefix' => 'contract'], function() {
     //Create Contract
     Route::get('create/{id}',[
-      'uses'=>"ContractController@create",
+      'uses'=>"ContractController@createFromTerm",
       'as'=>'addcontract'
     ])->where('id','[0-9]+');
     Route::post('create/{id}',[

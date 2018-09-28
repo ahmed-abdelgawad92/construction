@@ -366,7 +366,7 @@
 <div class="col-lg-10 col-md-10 col-sm-9">
 	<!--______________________SEARCHBAR___________________________-->
 	<div class="row">
-		<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2">
+		<div class="col-lg-8 offset-lg-2 col-md-8 offset-sm-2 col-sm-8 offset-md-2">
 		<form method="get" action="">
 			<div class="form-group search">
 				<input type="text" name="search" placeholder="بحث" class="form-control search">
