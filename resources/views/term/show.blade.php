@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','بيانات البند')
+@section('title','بيانات البند '.$term->code)
 @section('content')
 @if($term->deleted==0)
 <div class="content">

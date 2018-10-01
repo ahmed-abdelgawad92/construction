@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','بيانات العميل')
+@section('title','بيانات العميل '.$org->name)
 @section('content')
 <div class="content">
 <div class="row">

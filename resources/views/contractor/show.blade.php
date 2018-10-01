@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','بيانات المقاول')
+@section('title','بيانات المقاول '.$contractor->name)
 @section('content')
 <div class="content">
 <div class="row">
