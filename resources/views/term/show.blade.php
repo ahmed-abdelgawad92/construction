@@ -123,8 +123,8 @@
 				</div>
 				<div class="center mt-3">
 					<button class="btn btn-dark show_contract" data-contract="@if (!empty($contract->contract_text)) {!!nl2br(htmlspecialchars($contract->contract_text))!!} @else لا يوجد نص للعقد @endif">أفتح العقد</button>
-					<a href="{{route('updatecontract',['id'=>$term->id])}}" class="btn btn-default">تعديل العقد</a>
-					<a href="{{route('endcontract',['id'=>$term->id])}}" class="btn btn-success">انهاءالعقد</a>
+					<a href="{{route('updatecontract',['id'=>$contract->id])}}" class="btn btn-default">تعديل العقد</a>
+					@if(empty($contract->ended_at)) <a href="{{route('endcontract',['id'=>$contract->id])}}" class="btn btn-success finish_contract">انهاءالعقد</a> @endif
 				</div>
 				</div>
 				</div>
@@ -170,7 +170,7 @@
 					</a>
 				</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-default">
 					مجموع الأنتاج بالبند
 				</a>
@@ -200,7 +200,7 @@
 					</p>
 				</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-default">
 					مجموع الأستهلاك بالبند
 				</a>
@@ -231,13 +231,13 @@
 			</div>
 			</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{ route('allnote',$term->id) }}" class="btn btn-warning">
 					جميع الملاحظات بالبند
 				</a>
 			</div>
 			@else
-				<div class="alert alert-warning">لا يوجد ملاحظات <a href="{{ route('addnote',$term->id) }}" class="btn btn-warning">أضافة ملاحظة</a></div>
+				<div class="alert alert-warning">لا يوجد ملاحظات <a href="#add_note" class="btn btn-warning open_float_div" >أضافة ملحوظة</a></div>
 			@endif
 		</div>
 	</div>
@@ -280,6 +280,11 @@
 			<h4>هل تريد فعلا حذف هذه الملحوظة؟</h4>
 			<button class="btn btn-default btn-close">لا</button>
 			<a href="" class="btn btn-danger">نعم</a>
+		</div>
+		<div class="float_form" id="finish_contract">
+			<h4>هل تريد فعلا أنهاء العقد؟</h4>
+			<button class="btn btn-default btn-close">لا</button>
+			<a href="" class="btn btn-success">نعم</a>
 		</div>
 	</div>
 	</div>

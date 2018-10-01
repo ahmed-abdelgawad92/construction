@@ -462,7 +462,7 @@
 					</div>
 				</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{ route("notstartedterms",['id'=>$project->id]) }}" class="btn btn-default">
 					جميع البنود التى لم تبدأ
 				</a>
@@ -494,7 +494,7 @@
 				</a>
 			</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{route('doneterms',['id'=>$project->id])}}" class="btn btn-default">
 					جميع البنود التى لم تبدأ
 				</a>
@@ -530,7 +530,7 @@
 				<a href="{{route('endterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">انهاء</a>
 			</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{route('startedterms',['id'=>$project->id])}}" class="btn btn-default">
 					جميع البنود التى بدأت
 				</a>
@@ -563,7 +563,7 @@
 				<a href="{{route('enableterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">تفعيل</a>
 			</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{route('disabledterms',['id'=>$project->id])}}" class="btn btn-default">
 					جميع البنود المعطلة
 				</a>
@@ -601,7 +601,7 @@
 				<a href="{{route('restoreterm',['id'=>$term->id])}}" class="btn btn-success my-2 mx-1 width-100">إسترجاع</a>
 			</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{route('deletedterms',['id'=>$project->id])}}" class="btn btn-default">
 					جميع البنود المحذوقة
 				</a>

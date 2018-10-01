@@ -462,7 +462,7 @@ class ProjectController extends Controller {
 				$project->approximate_price=$req->input('approximate_price');
 				$check=false;
 			}
-			if ($project->started_at!=$req->input('started_at')) {
+			if (date("Y-m-d",strtotime($project->started_at))!=$req->input('started_at')) {
 				$description.=" تغيير تاريخ بدء المشروع من ".$project->started_at." إلى ".$req->input('started_at')." .";
 				$project->started_at=$req->input('started_at');
 				$check=false;

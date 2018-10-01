@@ -1571,6 +1571,20 @@ select.form-control {
 .input-group .form-control{
 	z-index: 0;
 }
+.is-invalid{
+	border:1px solid #dc3545;
+	border-radius: 4px;
+}
+.input-group.is-invalid{
+	border:0;
+	color: #dc3545;
+}
+.glyphicon-trash{
+	cursor: pointer;
+}
+.checkbox_label{
+	margin-left: 10px;
+}
 /*---------------JQUERY OVERRIDE STYLE---------------*/
 select.ui-datepicker-year,select.ui-datepicker-month{
   color: black !important;

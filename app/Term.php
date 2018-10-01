@@ -1,6 +1,8 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Contractor;
+use App\Contract;
 
 class Term extends Model {
 	public $dates = ['created_at','updated_at','started_at'];
@@ -15,9 +17,15 @@ class Term extends Model {
 		return $this->hasManyThrough('App\Production','App\Contract');
 	}
 	//Define the many to many relationship with labor_supplier
-	public function contractors()
+	// public function contractors()
+	// {
+	// 	return $this->hasManyThrough('App\Contractor','App\Contract');
+	// }
+	//get all contracted contractor ids
+	public function getContractorsId()
 	{
-		return $this->hasManyThrough('App\Contractor','App\Contract');
+		$contractors = $this->contracts()->pluck("contracts.contractor_id")->toArray();
+		return $contractors;
 	}
 	//Define the one to many relationship with contracts
 	public function contracts()

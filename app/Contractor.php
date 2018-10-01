@@ -10,8 +10,8 @@ class Contractor extends Model {
 		return $this->belongsTo('App\User');
 	}
 	//Define the one to many relationship with terms
-	// public function terms()
-	// {
-	// 	return $this->hasMany('App\Term');
-	// }
+	public function contracts()
+	{
+		return $this->hasMany('App\Contract');
+	}
 }

@@ -201,7 +201,7 @@ $(document).ready(function() {
 			alert("عذراً لا يمكنك وضع اكثر من 10 أرقام!");
 			return false;
 		}
-		$('<div class="form-group" id="del_phone'+$(".phone_input").length+'"><label for="phone'+$(".phone_input").length+'" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون <span data-phone="'+$(".phone_input").length+'" class="glyphicon glyphicon-trash delete_phone"></span></label><div class="col-sm-8 col-md-8 col-lg-8"><input type="text" id="phone'+$(".phone_input").length+'" name="phone['+$(".phone_input").length+']" value="" class="form-control phone_input number" placeholder="أدخل التليفون"></div></div></div>').insertAfter("#phone_template");
+		$('<div class="form-group row" id="del_phone'+$(".phone_input").length+'"><label for="phone'+$(".phone_input").length+'" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون <span data-phone="'+$(".phone_input").length+'" class="glyphicon glyphicon-trash delete_phone"></span></label><div class="col-sm-8 col-md-8 col-lg-8"><input type="text" id="phone'+$(".phone_input").length+'" name="phone['+$(".phone_input").length+']" value="" class="form-control phone_input number" placeholder="أدخل التليفون"></div></div></div>').insertAfter("#phone_template");
 	});
 	//delete phone numbers input
 	$(document).on('click', 'span.delete_phone', function(e) {
@@ -241,7 +241,7 @@ $(document).ready(function() {
 		$(".phone_input").each(function(){
 			if(!$(this).val().trim().match(/^\+?[0-9]{8,}$/)){
 				check=false;
-				assignError($(this),'الهاتف يجب ان يتكون من ارقام و + فقط');
+				assignError($(this),'الهاتف يجب ان يتكون من ارقام و + فقط ولا يقل عن 8 أرقام');
 			}
 		});
 		if(check){
@@ -488,6 +488,17 @@ $(document).ready(function() {
 		});
 	});
 	/******************************************Contracts********************************************/
+	//delete note modal
+	$(".finish_contract").click(function(e){
+		e.preventDefault();
+		$("body").css('overflow','hidden');
+		var link = $(this).attr('href');
+		$('#float_container').fadeIn(200,function(){
+			$('#float_form_container').slideDown(100);
+			$("#finish_contract").show();
+			$("#finish_contract a.btn-success").attr('href',link);
+		});
+	});
 	//show contractors to select them for a contract (Within Create Contract)
 	$("#show_contractor_details").click(function(){
 		$("body").css('overflow','hidden');
@@ -503,7 +514,103 @@ $(document).ready(function() {
 		$("#contractor_id").val(id);
 		$("span.close").trigger("click");
 	});
-	/******************************************Productions********************************************/
+	//Validate creation of a contract
+	$("#add_contract").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check = true;
+		if ($("#contractor_id").length) {
+			if (!$("#contractor_id").val().trim() || isNaN($("#contractor_id").val().trim())) {
+				check=false;
+				assignError($("#show_contractor_details").parent(),'يجب أختيار المقاول');
+			}
+		}
+		if (!$("#unit_price").val().trim() || isNaN($("#unit_price").val().trim())) {
+			check=false;
+			assignError($("#unit_price").parent(),'يجب أدخال قيمة الوحدة للمقاول بالجنيه');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	/******************************************Contractors********************************************/
+	//add_extra_term_type within contractor form creation
+	$("#add_extra_term_type").click(function(e){
+		e.preventDefault();
+		var count = $(".term_type_input").length;
+		if (count>=10) {
+			alert("عذراً لا يمكنك وضع اكثر من 10 أنواع!");
+			return false;
+		}
+		console.log(count);
+		var term_type_input='<div class="form-group row" id="del_type'+count+'">\
+						<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول <span data-type="'+count+'" class="glyphicon glyphicon-trash delete_term_type"></span></label>\
+						<div class="col-sm-8 col-md-8 col-lg-8">\
+							<input type="text" name="contractor_type['+count+']" id="contractor_type'+count+'" value="" class="form-control term_type_input" placeholder="أضافة نوع مقاول جديد">\
+						</div>\
+					</div>';
+		$("#type_checkbox").after(term_type_input);
+	});
+	//delete term_type_input within creatio form
+	$(document).on("click","span.delete_term_type",function(e){
+		$("#del_type"+$(this).attr("data-type")).remove();
+	});
+	//validate contractor creation form
+	$("#add_contractor").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if(!$("#name").val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)) {
+			check=false;
+			assignError($("#name"),'أسم المقاول يجب أن يتكون من حروف و مسافات فقط');
+		}
+		if (!$("#name").val().trim()) {
+			check=false;
+			assignError($("#name"),'يجب أدخال أسم المقاول');
+		}
+		if ($("input[name='type[]']:checked").length < 1) {
+			if ($(".term_type_input").length) {
+				$(".term_type_input").each(function() {
+					if(!$(this).val().trim() || $(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+						check=false;
+						assignError($(this),'من فضلك أدخل قيمة نوع المقاول, يجب أن تتكون من حروف و مسافات فقط');
+					}
+				});
+			}else{
+				check=false;
+				assignError($("#type_checkbox_container"),'من فضلك أختار نوع المقاول');
+			}
+		}else{
+			if ($(".term_type_input").length) {
+				$(".term_type_input").each(function() {
+					if(!$(this).val().trim() || $(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+						check=false;
+						assignError($(this),'من فضلك أدخل قيمة نوع المقاول, يجب أن تتكون من حروف و مسافات فقط');
+					}
+				});
+			}
+		}
+		if (!$("#city").val().trim()) {
+			check=false;
+			assignError($("#city"),'يجب أدخال المدينة');
+		}
+		$(".phone_input").each(function(){
+			if(!$(this).val().trim().match(/^\+?[0-9]{8,}$/)){
+				check=false;
+				assignError($(this),'الهاتف يجب ان يتكون من ارقام و + فقط ولا يقل عن 8 أرقام');
+			}
+		});
+		if(check){
+			console.log("Ich bin da");
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
 	/******************************************Productions********************************************/
 
 });

@@ -372,7 +372,7 @@ class TermController extends Controller {
 				$term->num_phases=$req->input("num_phases")??1;
 				$check=true;
 			}
-			if($term->started_at!=$req->input("started_at")){
+			if(date("Y-m-d",strtotime($term->started_at))!=$req->input("started_at")){
 				$description.="تغيير تاريخ بداية البند من ".$term->started_at??'لم يحدد بعد '." الى ".$req->input("started_at")." , ";
 				$term->started_at=$req->input('started_at');
 				$check=true;

@@ -7,7 +7,7 @@
      <div class="col-10 offset-1">
        <div class="panel panel-default">
          <div class="panel-heading">
-           <h3>أنشاء عقد للبند <a href="{{route("showterm",['id'=>$term->id])}}">{{$term->code}}</a> بشروع <a href="{{route("showproject",['id'=>$term->project_id])}}">{{$term->project->name}}</a></h3>
+           <h3>أنشاء عقد للبند <a href="{{route("showterm",['id'=>$term->id])}}">{{$term->code}}</a> بمشروع <a href="{{route("showproject",['id'=>$term->project_id])}}">{{$term->project->name}}</a></h3>
          </div>
          <div class="panel-body">
          @if(session("success"))
@@ -25,7 +25,7 @@
              <strong>{{ session("info") }}</strong>
            </div>
          @endif
-         <form action="{{route("addcontract",['id'=>$term->id])}}" method="post">
+         <form action="{{route("addcontract",['id'=>$term->id])}}" method="post" id="add_contract">
            <div class="form-group row @if($errors->has("contractor_id")) has-error @endif">
               <label for="contractor_id" class="control-label col-sm-2 col-md-2 col-lg-2">المقاول</label>
               <div class="col-sm-10 col-md-10 col-lg-10">

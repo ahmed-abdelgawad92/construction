@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 
 use App\Contractor;
 use App\TermType;
+use App\Log;
+
 use Validator;
 use Auth;
+
 use Carbon\Carbon;
 
 class ContractorController extends Controller {
@@ -56,24 +59,27 @@ class ContractorController extends Controller {
 			//Validation Rules
 			$rules=[
 				'name'=>'required|regex:/^[\pL\s]+$/u',
-				'type'=>'required|exists:term_types,name',
-				'address'=>'regex:/^[\pL\pN\s]+$/u',
-				'center'=>'regex:/^[\pL\pN\s]+$/u',
+				'type'=>'required_without:contractor_type|exists:term_types,name',
+				'contractor_type.*'=>"sometimes|required|unique:term_types,name|regex:/^[\pL\s]+$/u",
+				'address'=>'nullable|regex:/^[\pL\pN\s]+$/u',
+				'center'=>'nullable|regex:/^[\pL\pN\s]+$/u',
 				'city'=>'required|regex:/^[\pL\pN\s]+$/u',
-				'phone'=>'required|numeric',
+				'phone.*'=>'required|numeric',
 			];
 			//Error Vaildation Messages
 			$error_messages=[
 				'name.required'=>'يجب أدخال أسم المقاول',
 				'name.regex'=>'أسم المقاول يجب أن يتكون من حروف و مسافات فقط',
-				'type.required'=>'يجب أدخال نوع المقاول',
+				'type.required_without'=>'يجب أدخال نوع المقاول',
 				'type.exists'=>'أنواع المقاول يجب أن تكون مسجلة بقاعدة البيانات فى أنواع البنود',
+				'contractor_type.*.required'=>'يجب أدخال نوع المقاول',
+				'contractor_type.*.unique'=>'هذا النوع موجود بالفعل بقاعدة البيانات , من فضلك اختاره من اعلى بدلاً من اضافته',
 				'address.regex'=>'الشارع يجب أن يتكون من حروف و أرقام و مسافات فقط',
 				'center.regex'=>'المركز يجب أن يتكون من حروف و أرقام و مسافات فقط',
 				'city.required'=>'يجب أدخال المدينة',
 				'city.regex'=>'المدينة يجب أن تتكون من حروف و أرقام و مسافات فقط',
-				'phone.required'=>'يجب أدخال التليفون',
-				'phone.numeric'=>'التليفون يجب أن يتكون من أرقام فقط'
+				'phone.*.required'=>'يجب أدخال التليفون',
+				'phone.*.numeric'=>'التليفون يجب أن يتكون من أرقام فقط'
 			];
 			//validate the request
 			$validator=Validator::make($req->all(),$rules,$error_messages);
@@ -87,12 +93,20 @@ class ContractorController extends Controller {
 			$contractor->address=$req->input('address');
 			$contractor->center=$req->input('center');
 			$contractor->city=$req->input('city');
-			$contractor->phone=$req->input('phone');
-			$contractor->type="";
-			foreach ($req->input('type') as $type) {
-				$contractor->type.=$type.",";
+			$contractor->phone=implode(",",$req->input('phone'));
+			$contractor->type=implode(",",array_merge($req->input("type"),$req->input('contractor_type')??[]));
+			foreach ($req->input('contractor_type')??[] as $type) {
+				$term_type = new TermType;
+				$term_type->name=$type;
+				$term_type->save();
+				$log=new Log;
+				$log->table="term_types";
+				$log->action="create";
+				$log->record_id=$term_type->id;
+				$log->user_id=Auth::user()->id;
+				$log->description="قام بأضافة نوع بند جديد";
+				$log->save();
 			}
-			$contractor->type=substr($contractor->type,0,-1);
 			$saved=$contractor->save();
 			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث خطأ خلال أضافة هذا المقاول , يرجى المحاولة فى وقت لاحق');
@@ -113,12 +127,11 @@ class ContractorController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$contractor=Contractor::findOrFail($id);
-			$terms=$contractor->terms()
+			$terms=$contractor->contracts()
 				->where('started_at','<=',Carbon::today())
 				->orderBy('started_at','desc')
 				->take(3)
 				->get();
-			$contractor->type=str_replace(",", " , ", $contractor->type);
 			$array=['active'=>'cont','contractor'=>$contractor,'terms'=>$terms];
 
 			return view('contractor.show',$array);

@@ -30,12 +30,15 @@ class ContractController extends Controller
     public function createFromTerm($id)
     {
         $term = Term::where("id",$id)->where('deleted',0)->firstOrfail();
+        $contractors = $term->getContractorsId();
         $termTypeContractors = Contractor::where("type","like","%".$term->type."%")
                                   ->where("deleted",0)
+                                  ->whereNotIn("id",$contractors)
                                   ->orderBy("name","asc")
                                   ->get();
         $ContractorsWithoutTermType = Contractor::where("type","not like","%".$term->type."%")
                                   ->where("deleted",0)
+                                  ->whereNotIn("id",$contractors)
                                   ->orderBy("name","asc")
                                   ->get();
         $array=[
@@ -57,14 +60,13 @@ class ContractController extends Controller
     {
         $rules=[
           'contractor_id'=>'required|exists:contractors,id',
-          'contract_text'=>'required',
+          'contract_text'=>'nullable',
           'unit_price'=>'required|numeric',
           'started_at'=>'nullable|date'
         ];
         $error_messages=[
           'contractor_id.required'=>'من فضلك أختار المقاول ',
           'contractor_id.exists'=>'المقاول الذى تم أختياره ’ لا يوجد له بيانات بقاعدة البيانات',
-          'contract_text.required'=>'يجب كتابة نص العقد',
           'unit_price.required'=>'يجب كتابة سعر الوحدة للمقاول',
           'unit_price.numeric'=>'سعر الوحدة يجب أن يتكون من أرقام فقط',
           'started_at.date'=>'تاريخ البداية يجب أن يكون تاريخ صحيح'
@@ -121,7 +123,12 @@ class ContractController extends Controller
      */
     public function edit($id)
     {
-        //
+      $contract = Contract::findOrFail($id);
+      $array=[
+        'active'=>'term',
+        'contract'=>$contract
+      ];
+      return view("contract.edit",$array);
     }
 
     /**
@@ -131,11 +138,86 @@ class ContractController extends Controller
      * @param  \App\Contract  $contract
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req, $id)
     {
-        //
+      $rules=[
+        'contract_text'=>'nullable',
+        'unit_price'=>'required|numeric',
+        'started_at'=>'nullable|date'
+      ];
+      $error_messages=[
+        'unit_price.required'=>'يجب كتابة سعر الوحدة للمقاول',
+        'unit_price.numeric'=>'سعر الوحدة يجب أن يتكون من أرقام فقط',
+        'started_at.date'=>'تاريخ البداية يجب أن يكون تاريخ صحيح'
+      ];
+      $validator = Validator::make($req->all(),$rules,$error_messages);
+      if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+      }
+      $check= false;
+      $description = "";
+      $contract = Contract::findOrFail($id);
+      if ($contract->contract_text!=$req->input("contract_text")) {
+        $check=true;
+        $description.="قام بتعديل نص العقد من '".$contract->text."' إلى '".$req->input("contract_text")."'. ";
+        $contract->contract_text=$req->input("contract_text");
+      }
+      if ($contract->unit_price!=$req->input("unit_price")) {
+        $check=true;
+        $description.="قام بتعديل سعر الوحدة من ".$contract->unit_price." جنيه إلى ".$req->input("unit_price")." جنيه . ";
+        $contract->unit_price=$req->input("unit_price");
+      }
+      if (date("Y-m-d",strtotime($contract->started_at))!=$req->input("started_at")) {
+        $check=true;
+        $date = (!empty($req->input("started_at"))) ? $req->input("started_at") : date("Y-m-d") ;
+        $description.="قام بتعديل تاريخ لبدء من ".date("d/m/Y",strtotime($contract->started_at))." إلى ".date("d/m/Y",strtotime($date))." .";
+        $contract->started_at=$date;
+      }
+      if ($check) {
+        $saved=$contract->save();
+        //check if saved correctly
+        if (!$saved) {
+          return redirect()->back()->with("insert_error","حدث عطل خلال تعديل هذ العقد, من فضلك حاول مرة اخرى");
+        }
+        $log=new Log;
+        $log->table="contracts";
+        $log->action="update";
+        $log->record_id=$contract->id;
+        $log->user_id=Auth::user()->id;
+        $log->description=$description;
+        $log->save();
+        return redirect()->route("showterm",['id'=>$contract->term_id])->with("success","تم تعديل العقد بنجاح");
+      }
+      return redirect()->back()->with("info","لا يوجد تغيير حتى يتم تعديله");
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Contract  $contract
+     * @return \Illuminate\Http\Response
+     */
+     public function endcontract($id)
+     {
+       $contract = Contract::findOrFail($id);
+       if (empty($contract->ended_at)) {
+         $contract->ended_at = date("Y-m-d");
+         $saved = $contract->save();
+         //check if saved correctly
+         if (!$saved) {
+           return redirect()->back()->with("insert_error","حدث عطل خلال انهاء العقد , منفضلك حاول مرة اخرى");
+         }
+         $log=new Log;
+         $log->table="contracts";
+         $log->action="update";
+         $log->record_id=$id;
+         $log->user_id=Auth::user()->id;
+         $log->description="قام بانهاء العقد";
+         $log->save();
+         return redirect()->back()->with("success","تم أنهاء العقد بنجاح");
+       }
+       return redirect()->back()->with("info","العقد بالفعل منتهي");
+     }
     /**
      * Remove the specified resource from storage.
      *
