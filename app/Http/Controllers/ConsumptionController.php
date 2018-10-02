@@ -3,6 +3,7 @@
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Consumption;
 use App\Term;
@@ -94,17 +95,21 @@ class ConsumptionController extends Controller {
 	public function store(Request $req,$id)
 	{
 		if(Auth::user()->type=='admin'){
+			$term=Term::findOrFail($id);
 			//validation rules
 			$rules=[
-				'type'=>'required|exists:store_types,name',
-				'amount'=>'required|numeric'
+				'type.*'=>'required|distinct|exists:store_types,name',
+				'amount.*'=>'required|numeric',
+				'type'=>'array|size:'.count($req->input("amount")),
+				'amount'=>'array|size:'.count($req->input("type"))
 			];
 			//error messages
 			$error_messages=[
-				'type.required'=>'يجب أختيار نوع الخام المستهلك',
-				'type.exists'=>'نوع الخام يجب أن يكون موجود بقاعدة البيانات',
-				'amount.required'=>'يجب أدخال الكمية المستهلكة',
-				'amount.numeric'=>'كمية الخام المستهلاك يحب أن تكون أرقام فقط'
+				'type.*.required'=>'يجب أختيار نوع الخام المستهلك',
+				'type.*.exists'=>'نوع الخام يجب أن يكون موجود بقاعدة البيانات',
+				'type.*.distinct'=>'نوع الخام مُكرر , من فضلك ضع الكمية كلها فى مُدخل واحد فقط',
+				'amount.*.required'=>'يجب أدخال الكمية المستهلكة',
+				'amount.*.numeric'=>'كمية الخام المستهلاك يحب أن تكون أرقام فقط'
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
@@ -112,28 +117,63 @@ class ConsumptionController extends Controller {
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 			//check if there is enough raw in the store
-			$project=Term::findOrFail($id)->project;
-			$store_amount=$project
-					->stores()
-					->where('stores.type',$req->input('type'))
-					->sum('stores.amount');
-			$consumed_amount=$project
-					->consumptions()
-					->where('consumptions.type',$req->input('type'))
-					->sum('consumptions.amount');
-			$store_amount-=$consumed_amount;
-			$type=StoreType::where('name',$req->input('type'))->first();
-			if($store_amount<$req->input('amount'))
-				return redirect()->back()->with('amount_error','لا يوجد كمية كافية بالمخازن من ال'.$req->input("type").' ,يوجد بالمخازن '.$store_amount.' '.$type->unit.' , من فضلك قم بتوريد خامات الى المخازن');
-			//save in db
-			$consumption=new Consumption;
-			$consumption->type=$req->input('type');
-			$consumption->amount=$req->input('amount');
-			$consumption->term_id=$id;
-			$saved=$consumption->save();
-			if(!$saved)
-				return redirect()->back()->with('insert_error','حدث عطل خلال أدخال هذا الأستهلاك , يرجى المحاولة فى وقت لاحق');
-			return redirect()->back()->with('success','تم أضافة الأستهلاك بنجاح , أدخل أستهلاك جديد');
+			$project=$term->project;
+			$check = true;
+			$store=[];
+			$returnError="";
+			$type=$req->input("type");
+			$amount=$req->input("amount");
+			for ($i=0;$i<count($type);$i++) {
+				$store_amount=$project
+				->stores()
+				->where('stores.type',$type[$i])
+				->where("stores.deleted",0)
+				->sum('stores.amount');
+				$consumed_amount=$project
+				->consumptions()
+				->where('consumptions.type',$type[$i])
+				->where("consumptions.deleted",0)
+				->sum('consumptions.amount');
+				$store_amount-=$consumed_amount;
+				$unit = StoreType::where("name",$type[$i])->first();
+				$store[]=[
+					"type"=>$type[$i],
+					"store_amount"=>($store_amount >= 0)? $store_amount : 0,
+					"consumed_amount"=>$amount[$i],
+					"unit"=>$unit->unit
+				];
+			}
+			foreach ($store as $key) {
+				if ($key['store_amount'] < $key['consumed_amount']) {
+					$check = false;
+					$returnError.='لا يوجد كمية كافية بالمخازن من ال'.$key['type'].' ,يوجد بالمخازن '.$key['store_amount'].' '.$key['unit'].' , من فضلك قم بتوريد خامات الى المخازن . ';
+				}
+			}
+			if ($check) {
+				try{
+					DB::beginTransaction();
+					foreach ($store as $key) {
+						$consumption=new Consumption;
+						$consumption->type=$key['type'];
+						$consumption->amount=$key['consumed_amount'];
+						$consumption->term_id=$id;
+						$consumption->save();
+						$log=new Log;
+						$log->table="consumptions";
+						$log->action="create";
+						$log->record_id=$consumption->id;
+						$log->user_id=Auth::user()->id;
+						$log->description="قام بأضافة أستهلاك للبند ".$term->code." بمشروع ".$project->name;
+						$log->save();
+					}
+					DB::commit();
+				}catch(Exception $e){
+					DB::rollBack();
+					return redirect()->back()->withInput()->with('insert_error','حدث عطل خلال أدخال هذا الأستهلاك , يرجى المحاولة فى وقت لاحق');
+				}
+				return redirect()->back()->with('success','تم أضافة الأستهلاك بنجاح , أدخل أستهلاك جديد');
+			}
+			return redirect()->back()->withInput()->with('amount_error',$returnError);
 
 		}
 		else
@@ -319,7 +359,7 @@ class ConsumptionController extends Controller {
 				$store_amount-=$consumed_amount;
 				$type=StoreType::where('name',$req->input('type'))->first();
 				if($store_amount<$req->input('amount'))
-					return redirect()->back()->with('amount_error','لا يوجد كمية كافية بالمخازن من ال'.$req->input("type").' ,يوجد بالمخازن '.$store_amount.' '.$type->unit.' , من فضلك قم بتوريد خامات الى المخازن');
+					return redirect()->back()->with('amount_error','لا يوجد كمية كافية بالمخازن من ال'.$req->input("type").' ,يوجد بالمخازن '.($store_amount> = 0)?$store_amount: "0" .' '.$type->unit.' , من فضلك قم بتوريد خامات الى المخازن');
 			}
 			//save in db
 			$consumption->type=$req->input('type');
@@ -327,7 +367,7 @@ class ConsumptionController extends Controller {
 			$saved=$consumption->save();
 			if(!$saved)
 				return redirect()->back()->with('insert_error','حدث عطل خلال أدخال هذا الأستهلاك , يرجى المحاولة فى وقت لاحق');
-			return redirect()->back()->with('success','تم أضافة الأستهلاك بنجاح , أدخل أستهلاك جديد');
+			return redirect()->back()->with('success','تم تعديل الأستهلاك بنجاح ');
 
 		}
 		else

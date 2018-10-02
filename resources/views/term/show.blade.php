@@ -156,16 +156,19 @@
 						@endfor
 					</h4>
 					<p>
-						<span class="label label-default">كمية الأنتاج</span>
-						 {{$production->amount}}
-						@if($production->note!=null)
+						<span class="label label-default">أسم المقاول</span>
+						{{$production->contractor()->name}}
 						<br>
-						<span class="label label-default">ملحوظة</span>
-						 {{$production->note}}
-						@endif
+						<span class="label label-default">كمية الأنتاج</span>
+						 {{$production->amount}} {{$term->unit}}
 						<br>
 						<span class="label label-default">تاريخ الأنتاج</span>
 						 {{date("d/m/Y",strtotime($production->created_at))}}
+						 @if($production->note!=null)
+							 <br>
+							 <span class="label label-default">ملحوظة</span>
+							 {{$production->note}}
+						 @endif
 					</p>
 					</a>
 				</div>
@@ -201,7 +204,7 @@
 				</div>
 			@endforeach
 			<div class="center">
-				<a href="{{ route('showtermproduction',$term->id) }}" class="btn btn-default">
+				<a href="{{ route('showtermconsumption',$term->id) }}" class="btn btn-default">
 					مجموع الأستهلاك بالبند
 				</a>
 			</div>

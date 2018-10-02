@@ -274,6 +274,7 @@ textarea.text{
   text-align: center;
   color: black;
   font-size: 25px;
+	box-sizing: border-box;
 }
 .progress{
   background: white;
@@ -1812,3 +1813,20 @@ h5.category{
 	margin: 0 auto;
 	text-align: center;
 }
+
+
+
+
+/*------------------------------------Consumption------------------------------------*/
+.amount_cons{
+	display: none;
+}
+.flex{
+	display: flex;
+	opacity: 1;
+}
+.none{
+	display: none !important;
+}
+
+/*------------------------------------Contracts------------------------------------*/

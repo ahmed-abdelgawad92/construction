@@ -1,4 +1,4 @@
- row@extends('layouts.master')
+@extends('layouts.master')
 @section('title','أضافة مورد')
 @section('content')
 <div class="content">
@@ -30,7 +30,6 @@
 				</ul>
 			</div>
 		@endif
-		@if(count($store_types)>0)
 		<form class="form-horizontal" method="post" action="{{ route('addsupplier') }}">
 		<div class="form-group row @if($errors->has('name')) has-error @endif">
 			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المورد</label>
@@ -43,19 +42,23 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group row @if($errors->has('type')) has-error @endif">
-			<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المورد</label>
+    @if (count($store_types)>0)
+		<div class="form-group row @if($errors->has('type')) has-error @endif" id="type_checkbox">
+			<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
+				<div class="input-group" id="type_checkbox_container">
 				<?php
 				if(old('type'))
 					$old_types=old('type');
 				?>
 				@foreach($store_types as $type)
-				<label @if($errors->has('type')) style="color: #a94442" @endif>
+				<label class="checkbox_label" @if($errors->has('type')) style="color: #a94442" @endif>
 				<input type="checkbox" @if(old('type')) @if(in_array($type->name,$old_types)) checked @endif @endif name="type[]" value="{{$type->name}}">
 				{{$type->name}}
 				</label>
 				@endforeach
+				<a href="#" id="add_extra_term_type">إضافة نوع مورد جديد؟</a>
+				</div>
 				@if($errors->has('type'))
 					@foreach($errors->get('type') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -63,6 +66,34 @@
 				@endif
 			</div>
 		</div>
+		@if(old('contractor_type')!==null)
+		@for($i=0; $i<count(old('contractor_type')); $i++)
+		<div class="form-group row @if($errors->has("contractor_type.$i")) has-error @endif" id="del_type{{$i}}">
+			<label for="contractor_type{{$i>0?$i:null}}" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول * <span data-type="{{$i}}" class="glyphicon glyphicon-trash delete_term_type"></span></label>
+			<div class="col-sm-8 col-md-8 col-lg-8">
+				<input type="text" name="contractor_type[{{$i}}]" id="contractor_type{{$i>0?$i:null}}" value="{{old("contractor_type.".$i)}}" class="form-control term_type_input" placeholder="أدخل نوع مقاول جديد">
+				@if($errors->has("contractor_type.$i"))
+					@foreach($errors->get("contractor_type.$i") as $error)
+						<span class="help-block">{{ $error }}</span>
+					@endforeach
+				@endif
+			</div>
+		</div>
+		@endfor
+		@endif
+		@else
+		<div class="form-group row @if($errors->has("contractor_type.$i")) has-error @endif" id="del_type{{$i}}">
+			<label for="contractor_type{{$i>0?$i:null}}" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول * <span data-type="{{$i}}" class="glyphicon glyphicon-trash delete_term_type"></span></label>
+			<div class="col-sm-8 col-md-8 col-lg-8">
+				<input type="text" name="contractor_type[{{$i}}]" id="contractor_type{{$i>0?$i:null}}" value="{{old("contractor_type.".$i)}}" class="form-control term_type_input" placeholder="أدخل نوع مقاول جديد">
+				@if($errors->has("contractor_type.$i"))
+					@foreach($errors->get("contractor_type.$i") as $error)
+						<span class="help-block">{{ $error }}</span>
+					@endforeach
+				@endif
+			</div>
+		</div>
+		@endif
 		<div class="form-group row @if($errors->has('address')) has-error @endif">
 			<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">الشارع</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
@@ -112,9 +143,6 @@
 		</div>
 		<input type="hidden" name="_token" value="{{csrf_token()}}">
 		</form>
-		@else
-		<div class="alert alert-warning">لا يوجد أنواع خامات , لا يمكن أضافة مورد لأن أنواع المورد معتمدة على أنواع الخامات لذا يجب أضافة أنواع الخامات أولا <a href="{{ route('addtermtype') }}" class="btn btn-warning">أضافة نوع خام</a> </div>
-		@endif
 		</div>
 	</div>
 </div>

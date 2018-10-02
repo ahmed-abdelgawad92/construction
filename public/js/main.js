@@ -52,21 +52,6 @@ $(document).ready(function() {
 	// 	$('.circle-div').height(width_circle);
 	// 	$('.circle-div').css('line-height',width_circle+"px");
 	// });
-
-	//show unit in adding consumption
-	if(!$('#amount_cons').hasClass('display')){
-		$('#amount_cons').hide();
-	}
-	var cons_type;
-	$('#type_consumption').change(function(){
-		if($(this).val()!=0){
-			cons_type=$(this).val();
-			$('#basic-addon1').text($('input[name="'+cons_type+'"]').val());
-			$('#amount_cons').stop().slideDown(1000);
-		}else{
-			$('#amount_cons').stop().slideUp(1000);
-		}
-	});
 	//show only supplier type based on supplier id
 	var supplier;
 	$('#supplier_id_choose').change(function(){
@@ -171,7 +156,18 @@ $(document).ready(function() {
 	$('#print').on('click',function(){
 		print();
 	});
+	//make circle width = height
 
+	$(".circle-div").each(function() {
+		var divWidth=$(this).width();
+		$(this).css("height",divWidth);
+	});
+	$(window).resize(function(){
+		$(".circle-div").each(function() {
+			var divWidth=$(this).width();
+			$(this).css("height",divWidth);
+		});
+	});
 
 /******************************************LOGIN********************************************/
 	$('#login_form').submit(function(e){
@@ -611,6 +607,59 @@ $(document).ready(function() {
 		$("#save_btn").removeClass('disabled');
 		return false;
 	});
+	/******************************************Consumption********************************************/
+	// add_new_consumption_input_group
+	var optionsConsumption =$("#type_consumption1").html();
+	$("#add_new_consumption_input_group").click(function(){
+		var count = $(".type_consumption").length +1;
+		if (count>10) {
+			alert("لا يمكن إدخال أكثر من 10 خامات فى المرة الواحدة");
+			return false;
+		}
+		var newConsumptionInput='<div class="form-group row" id="choose_raw_to_consume'+count+'">\
+			<label for="type_consumption'+count+'" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>\
+			<div class="col-sm-8 col-md-8 col-lg-8">\
+				<select id="type_consumption'+count+'" name="type[]" data-id="'+count+'" class="form-control type_consumption">\
+					'+optionsConsumption+'\
+				</select>\
+			</div>\
+			<div class="col-sm-2 col-lg-2 col-md-2">\
+				<button type="button" class="btn btn-danger delete_consumption_input_group" data-id="'+count+'">حذف</button>\
+			</div>\
+		</div>\
+		<div class="form-group row amount_cons" id="amount_cons'+count+'">\
+			<label for="amount'+count+'" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>\
+			<div class="col-sm-8 col-md-8 col-lg-8">\
+				<div class="input-group">\
+					<input type="text" name="amount[]" id="amount'+count+'" value="" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">\
+					<span class="input-group-addon" id="basic-addon'+count+'"></span>\
+				</div>\
+			</div>\
+		</div>';
+		$("#amount_cons1").after(newConsumptionInput);
+	});
+	//delete_new_consumption_input_group
+	$(document).on("click",".delete_consumption_input_group",function(){
+		var count = $(this).attr("data-id");
+		$("#choose_raw_to_consume"+count).remove();
+		$("#amount_cons"+count).remove();
+	});
+	$(document).on("change",'.type_consumption',function(){
+		var count=$(this).attr("data-id")?$(this).attr("data-id"):1;
+		cons_type=$(this).val();
+		var unit=$('input[name="'+cons_type+'"]').val();
+		$('#basic-addon'+count).html(unit);
+		console.log(unit);
+		if($(this).val()!=0){
+			$('#amount_cons'+count).css({opacity: 0, display: 'flex'}).animate({ opacity: 1 }, 300);
+		}else{
+			$('#amount_cons'+count).slideUp(300);
+		}
+	});
+
+	/******************************************Productions********************************************/
+	/******************************************Productions********************************************/
+	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 
 });
