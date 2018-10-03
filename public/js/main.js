@@ -543,7 +543,7 @@ $(document).ready(function() {
 		}
 		console.log(count);
 		var term_type_input='<div class="form-group row" id="del_type'+count+'">\
-						<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول <span data-type="'+count+'" class="glyphicon glyphicon-trash delete_term_type"></span></label>\
+						<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول * <span data-type="'+count+'" class="glyphicon glyphicon-trash delete_term_type"></span></label>\
 						<div class="col-sm-8 col-md-8 col-lg-8">\
 							<input type="text" name="contractor_type['+count+']" id="contractor_type'+count+'" value="" class="form-control term_type_input" placeholder="أضافة نوع مقاول جديد">\
 						</div>\
@@ -607,6 +607,25 @@ $(document).ready(function() {
 		$("#save_btn").removeClass('disabled');
 		return false;
 	});
+	/******************************************Suppliers********************************************/
+	//add_extra_term_type within contractor form creation
+	$("#add_extra_supplier_type").click(function(e){
+		e.preventDefault();
+		var count = $(".supplier_type_input").length;
+		if (count>=10) {
+			alert("عذراً لا يمكنك وضع اكثر من 10 أنواع!");
+			return false;
+		}
+		console.log(count);
+		var supplier_type_input='<div class="form-group row" id="del_type'+count+'">\
+						<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المورد * <span data-type="'+count+'" class="glyphicon glyphicon-trash delete_term_type"></span></label>\
+						<div class="col-sm-8 col-md-8 col-lg-8">\
+							<input type="text" name="supplier_type['+count+']" id="supplier_type'+count+'" value="" class="form-control input-right supplier_type_input" placeholder="أضافة نوع مورد جديد">\
+							<input type="text" name="supplier_type_unit['+count+']" id="supplier_type_unit'+count+'" value="" class="form-control input-left supplier_type_unit_input" placeholder="أدخل الوحدة">\
+						</div>\
+					</div>';
+		$("#type_checkbox").after(supplier_type_input);
+	});
 	/******************************************Consumption********************************************/
 	// add_new_consumption_input_group
 	var optionsConsumption =$("#type_consumption1").html();
@@ -657,7 +676,6 @@ $(document).ready(function() {
 		}
 	});
 
-	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/

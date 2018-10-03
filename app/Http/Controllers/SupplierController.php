@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Supplier;
 use App\StoreType;
-
+use App\Log;
 use Carbon\Carbon;
 use Validator;
 use Auth;
@@ -57,24 +57,31 @@ class SupplierController extends Controller {
 			//Validation Rules
 			$rules=[
 				'name'=>'required|regex:/^[\pL\s]+$/u',
-				'type'=>'required|exists:store_types,name',
-				'address'=>'regex:/^[\pL\pN\s]+$/u',
-				'center'=>'regex:/^[\pL\pN\s]+$/u',
+				'type'=>'required_without:supplier_type|exists:store_types,name',
+				'supplier_type.*'=>"sometimes|required|unique:store_types,name|regex:/^[\pL\s]+$/u",
+				'supplier_type_unit.*'=>"sometimes|required|regex:/^[\pL\pN\s]+$/u",
+				'address'=>'nullable|regex:/^[\pL\pN\s]+$/u',
+				'center'=>'nullable|regex:/^[\pL\pN\s]+$/u',
 				'city'=>'required|regex:/^[\pL\pN\s]+$/u',
-				'phone'=>'required|numeric',
+				'phone.*'=>'required|numeric',
 			];
 			//Error Vaildation Messages
 			$error_messages=[
 				'name.required'=>'يجب أدخال أسم المورد',
 				'name.regex'=>'أسم المورد يجب أن يتكون من حروف و مسافات فقط',
-				'type.required'=>'يجب أدخال نوع المورد',
+				'type.required_without'=>'يجب أدخال نوع المورد',
 				'type.exists'=>'أنواع المورد يجب أن تكون مسجلة بقاعدة البيانات فى أنواع البنود',
+				'supplier_type.*.required'=>'يجب أدخال نوع المورد',
+				'supplier_type.*.unique'=>'هذا النوع موجود بالفعل بقاعدة البيانات , من فضلك اختاره من اعلى بدلاً من اضافته',
+				'supplier_type.*.regex'=>'نوع المورد يجب أن يتكون من حروف و مسافات فقط',
+				'supplier_type_unit.*.required'=>'يجب أدخال الوحدة',
+				'supplier_type_unit.*.regex'=>'الوحدة يجب أن يتكون من  حروف و مسافات و ارقام فقط',
 				'address.regex'=>'الشارع يجب أن يتكون من حروف و أرقام و مسافات فقط',
 				'center.regex'=>'المركز يجب أن يتكون من حروف و أرقام و مسافات فقط',
 				'city.required'=>'يجب أدخال المدينة',
 				'city.regex'=>'المدينة يجب أن تتكون من حروف و أرقام و مسافات فقط',
-				'phone.required'=>'يجب أدخال التليفون',
-				'phone.numeric'=>'التليفون يجب أن يتكون من أرقام فقط'
+				'phone.*.required'=>'يجب أدخال التليفون',
+				'phone.*.numeric'=>'التليفون يجب أن يتكون من أرقام فقط'
 			];
 			//validate the request
 			$validator=Validator::make($req->all(),$rules,$error_messages);
@@ -82,20 +89,40 @@ class SupplierController extends Controller {
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 
+			//STORE CONTRACTOR IN DB
 			$supplier=new Supplier;
 			$supplier->name=$req->input('name');
 			$supplier->address=$req->input('address');
 			$supplier->center=$req->input('center');
 			$supplier->city=$req->input('city');
-			$supplier->phone=$req->input('phone');
-			$supplier->type="";
-			foreach ($req->input('type') as $type) {
-				$supplier->type.=$type.',';
+			$supplier->phone=implode(",",$req->input('phone'));
+			$supplier->type=implode(",",array_merge($req->input("type")??[],$req->input('supplier_type')??[]));
+
+			$units=$req->input("supplier_type_unit");
+			foreach ($req->input('supplier_type')??[] as $type) {
+				$store_type = new StoreType;
+				$store_type->name=$type;
+				$store_type->unit=array_shift($units);
+				$store_type->save();
+				$log=new Log;
+				$log->table="store_types";
+				$log->action="create";
+				$log->record_id=$store_type->id;
+				$log->user_id=Auth::user()->id;
+				$log->description="قام بأضافة نوع خام جديد";
+				$log->save();
 			}
-			$supplier->type=substr($supplier->type,0,-1);
 			$saved=$supplier->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا المورد, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="suppliers";
+			$log->action="create";
+			$log->record_id=$supplier->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام باضافة مورد جيد";
+			$log->save();
 			return redirect()->route('showsupplier',$supplier->id)->with('success','تم أضافة المورد بنجاح');
 		}else
 			abort('404');

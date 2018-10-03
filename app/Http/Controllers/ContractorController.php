@@ -94,7 +94,7 @@ class ContractorController extends Controller {
 			$contractor->center=$req->input('center');
 			$contractor->city=$req->input('city');
 			$contractor->phone=implode(",",$req->input('phone'));
-			$contractor->type=implode(",",array_merge($req->input("type"),$req->input('contractor_type')??[]));
+			$contractor->type=implode(",",array_merge($req->input("type")??[],$req->input('contractor_type')??[]));
 			foreach ($req->input('contractor_type')??[] as $type) {
 				$term_type = new TermType;
 				$term_type->name=$type;
@@ -111,6 +111,13 @@ class ContractorController extends Controller {
 			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث خطأ خلال أضافة هذا المقاول , يرجى المحاولة فى وقت لاحق');
 			}
+			$log=new Log;
+			$log->table="contractors";
+			$log->action="create";
+			$log->record_id=$contractor->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام باضافة مقاول جديد";
+			$log->save();
 			return redirect()->route('showcontractor',$contractor->id)->with('success','تم حفظ المقاول بنجاح');
 		}else{
 			abort('404');
