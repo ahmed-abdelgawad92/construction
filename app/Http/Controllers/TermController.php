@@ -548,6 +548,7 @@ class TermController extends Controller {
 			$log->record_id=$term->id;
 			$log->action="update";
 			$log->description= "قام ببدء البند يوم ".date("d/m/Y");
+			$log->user_id=Auth::user()->id;
 			$log->save();
 			return redirect()->back()->with("success",$msg);
 		}
@@ -576,6 +577,7 @@ class TermController extends Controller {
 			$log->record_id=$term->id;
 			$log->action="update";
 			$log->description= "قام بانهاء البند يوم ".date("d/m/Y");
+			$log->user_id=Auth::user()->id;
 			$log->save();
 			return redirect()->back()->with("success",$msg);
 		}
@@ -604,6 +606,7 @@ class TermController extends Controller {
 				$log->record_id=$term->id;
 				$log->action="update";
 				$log->description= "قام بتعطيل البند يوم ".date("d/m/Y");
+				$log->user_id=Auth::user()->id;
 				$log->save();
 				return redirect()->back()->with("success",$msg);
 			}
@@ -634,6 +637,7 @@ class TermController extends Controller {
 				$log->record_id=$term->id;
 				$log->action="update";
 				$log->description= "قام بتفعيل البند يوم ".date("d/m/Y");
+				$log->user_id=Auth::user()->id;
 				$log->save();
 				return redirect()->back()->with("success",$msg);
 			}
@@ -656,52 +660,6 @@ class TermController extends Controller {
 			$contractors=Contractor::where('type','like',"%".$term->type."%")->get();
 			$array=['active'=>'term','term'=>$term,'contractors'=>$contractors];
 			return view('term.contract_term',$array);
-		}
-		else
-			abort('404');
-	}
-	/*
-	*save the contract and the contractor id with the term
-	*Request
-	*$id of the term
-	*
-	*/
-	public function postTermContract(Request $req,$id)
-	{
-		if(Auth::user()->type=='admin')
-		{
-			//validation rules
-			$rules=[
-				'contractor_id'=>'required|exists:contractors,id',
-				'contractor_unit_price'=>'required|numeric',
-				'contract_text'=>'required',
-				'started_at'=>'date'
-			];
-			//Error Messages
-			$error_messages=[
-				'contractor_id.required'=>'يجب أختيار مقاول للتعاقد معه على هذا البند',
-				'contractor_id.exists'=>'المقاول يجب أن يكون موجود بقاعدة البيانات',
-				'contractor_unit_price.required'=>'يجب أدخال قيمة الوحدة المتعاقد عليها مع المقاول',
-				'contractor_unit_price.numeric'=>'قيمة الودة للمقاول يجب أن تتكون من أرقام فقط',
-				'contract_text.required'=>'يجب أدخال نص العقد',
-				'started_at.date'=>'يجب على تاريخ البدئ أن يكون تاريخ صحيح'
-			];
-			//validate
-			$validator=Validator::make($req->all(),$rules,$error_messages);
-			if($validator->fails()){
-				return redirect()->back()->withInput()->withErrors($validator);
-			}
-
-			$term=Term::findOrFail($id);
-			$term->contractor_id=$req->input('contractor_id');
-			$term->contractor_unit_price=$req->input('contractor_unit_price');
-			$term->contract_text=$req->input('contract_text');
-			$term->started_at=$req->input('started_at');
-			$saved=$term->save();
-			if(!$saved){
-				return redirect()->back()->withInput()->with('insert_error','حدث خطأ خلال عقد هذا البند يرجى المحاولة فى وقت لاحق');
-			}
-			return redirect()->route('showterm',$term->id)->with('success','تم عقد البند صاحب الكود '.$term->code.' بنجاح مع المقاول '.$term->contractor->name);
 		}
 		else
 			abort('404');

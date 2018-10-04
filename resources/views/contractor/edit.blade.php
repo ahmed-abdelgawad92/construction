@@ -1,4 +1,4 @@
- row@extends('layouts.master')
+@extends('layouts.master')
 @section('title','تعديل بيانات المقاول')
 @section('content')
 <div class="content">
@@ -33,7 +33,12 @@
 				</ul>
 			</div>
 		@endif
-		<form class="form-horizontal" method="post" action="{{ route('updatecontractor',$contractor->id) }}">
+		@if(session('info'))
+			<div class="alert alert-info">
+				<strong>{{ session('info') }}</strong>
+			</div>
+		@endif
+		<form class="form-horizontal" method="post" action="{{ route('updatecontractor',$contractor->id) }}" id="add_contractor">
 		<div class="form-group row @if($errors->has('name')) has-error @endif">
 			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المقاول</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
@@ -45,14 +50,17 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group row @if($errors->has('type')) has-error @endif">
+		<div class="form-group row @if($errors->has('type')) has-error @endif"  id="type_checkbox">
 			<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				@foreach($term_types as $type)
-				<label @if($errors->has('type')) style="color: #a94442" @endif>
-				<input type="checkbox" name="type[]" value="{{$type->name}}" @if(in_array($type->name,$contractor_types)) checked @endif > {{$type->name}}
-				</label>
-				@endforeach
+        <div class="input-group" id="type_checkbox_container">
+  				@foreach($term_types as $type)
+  				<label class="checkbox_label" @if($errors->has('type')) style="color: #a94442" @endif>
+  				<input type="checkbox" name="type[]" value="{{$type->name}}" @if(in_array($type->name,$contractor_types)) checked @endif > {{$type->name}}
+  				</label>
+  				@endforeach
+          <a href="#" id="add_extra_term_type">إضافة نوع مقاول جديد؟</a>
+        </div>
 				@if($errors->has('type'))
 					@foreach($errors->get('type') as $error)
 						<span class="help-block">{{ $error }}</span>
@@ -60,6 +68,21 @@
 				@endif
 			</div>
 		</div>
+    @if(old('contractor_type')!==null)
+    @for($i=0; $i<count(old('contractor_type')); $i++)
+    <div class="form-group row @if($errors->has("contractor_type.$i")) has-error @endif" id="del_type{{$i}}">
+      <label for="contractor_type{{$i>0?$i:null}}" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المقاول * <span data-type="{{$i}}" class="glyphicon glyphicon-trash delete_term_type"></span></label>
+      <div class="col-sm-8 col-md-8 col-lg-8">
+        <input type="text" name="contractor_type[{{$i}}]" id="contractor_type{{$i>0?$i:null}}" value="{{old("contractor_type.".$i)}}" class="form-control term_type_input" placeholder="أدخل نوع مقاول جديد">
+        @if($errors->has("contractor_type.$i"))
+          @foreach($errors->get("contractor_type.$i") as $error)
+            <span class="help-block">{{ $error }}</span>
+          @endforeach
+        @endif
+      </div>
+    </div>
+    @endfor
+    @endif
 		<div class="form-group row @if($errors->has('address')) has-error @endif">
 			<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">الشارع</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
@@ -93,17 +116,22 @@
 				@endif
 			</div>
 		</div>
-		<div class="form-group row @if($errors->has('phone')) has-error @endif">
-			<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">التليفون</label>
+    @php
+      $phones = explode(",",$contractor->phone);
+    @endphp
+    @for($i=0; $i<count($phones); $i++)
+		<div class="form-group row @if($errors->has("phone.$i")) has-error @endif" @if($i==0) id="phone_template" @else id="del_phone{{$i}}" @endif>
+			<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون * @if($i==0)<a href="#" id="add_another_phone"> أضافة رقم جديد؟</a>@else <span data-phone="{{$i}}" class="glyphicon glyphicon-trash delete_phone"></span> @endif</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
-				<input type="text" name="phone" id="phone" value="{{$contractor->phone}}" class="form-control" placeholder="أدخل التليفون">
-				@if($errors->has('phone'))
-					@foreach($errors->get('phone') as $error)
+				<input type="text" name="phone[{{$i}}]" id="phone{{$i>0?$i:null}}" value="{{$phones[$i]}}" class="form-control phone_input number" placeholder="أدخل التليفون">
+				@if($errors->has("phone.$i"))
+					@foreach($errors->get("phone.$i") as $error)
 						<span class="help-block">{{ $error }}</span>
 					@endforeach
 				@endif
 			</div>
 		</div>
+		@endfor
 		<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 			<button class="btn btn-primary form-control" id="save_btn">تعديل</button>
 		</div>

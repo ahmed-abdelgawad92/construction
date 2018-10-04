@@ -37,7 +37,7 @@
 					<div role="tabpanel" class="tab-pane active" id="profile">
 						<div class="table-responsive">
 						<table class="table table-striped">
-						<tr><th class="min100">نوع المورد </th><td>{{$supplier->type}}</td></tr>
+						<tr><th class="min100">نوع المورد </th><td>{{str_replace(","," , ",$supplier->type)}}</td></tr>
 						@if(!empty($supplier->address))
 						<tr><th class="min100">الشارع </th><td>{{$supplier->address}}</td></tr>
 						@endif
@@ -45,7 +45,7 @@
 						<tr><th class="min100">المركز </th><td>{{$supplier->center}}</td></tr>
 						@endif
 						<tr><th class="min100">المدينة </th><td>{{$supplier->city}}</td></tr>
-						<tr><th class="min100">التليفون </th><td>{{$supplier->phone}}</td></tr>
+						<tr><th class="min100">التليفون </th><td>{{str_replace(","," , ",$supplier->phone)}}</td></tr>
 						</table>
 						</div>
 					</div>
@@ -86,21 +86,17 @@
 		<div class="panel-body">
 			@if(count($stores)>0)
 			@foreach($stores as $store)
-				<div class="bordered-right border-navy" style="padding:0 5px 5px 0">
-					<a href="{{ route('showterm',$store->id) }}" class="whole">
+				<div class="bordered-right border-navy">
 					<h4>
+						<a href="{{ route('showterm',$store->id) }}" class="whole">
 						أسم المشروع : {{$store->project->name}}<br>
-						كود البند	: {{$store->code}}<br>
-					 	نوع البند	: {{$store->type}}
-					</h4>
-					<p>
-						<span class="label label-default">بيان الأعمال</span>
-						 {{$store->statement}}
-					</p>
+						الكمية	: {{$store->amount}} {{$store->unit}}<br>
+					 	نوع الخام	: {{$store->type}}
 					</a>
+					</h4>
 				</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{route('SuppliedStores',$supplier->id)}}"class="btn btn-default">
 					جميع الخامات الواردة
 				</a>

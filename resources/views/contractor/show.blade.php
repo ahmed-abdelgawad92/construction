@@ -29,10 +29,15 @@
 					</li>
 				</ul>
 				<div class="tab-content">
-					<div role="tabpanel" class="tab-pane active" id="profile">
+					<div role="tabpanel" class="tab-pane active pt-3" id="profile">
+						@if(session('success'))
+						<div class="alert alert-success">
+							{{session('success')}}
+						</div>
+						@endif
 						<div class="table-responsive">
 						<table class="table table-striped">
-						<tr><th class="min100">نوع المقاول </th><td>{{$contractor->type}}</td></tr>
+						<tr><th class="min100">نوع المقاول </th><td>{{str_replace(","," , ",$contractor->type)}}</td></tr>
 						@if(!empty($contractor->address))
 						<tr><th class="min100">الشارع </th><td>{{$contractor->address}}</td></tr>
 						@endif
@@ -40,11 +45,11 @@
 						<tr><th class="min100">المركز </th><td>{{$contractor->center}}</td></tr>
 						@endif
 						<tr><th class="min100">المدينة </th><td>{{$contractor->city}}</td></tr>
-						<tr><th class="min100">التليفون </th><td>{{$contractor->phone}}</td></tr>
+						<tr><th class="min100">التليفون </th><td>{{str_replace(","," , ",$contractor->phone)}}</td></tr>
 						</table>
 						</div>
 					</div>
-					<div role="tabpanel" class="tab-pane" id="notes">
+					<div role="tabpanel" class="tab-pane pt-3" id="notes">
 
 					</div>
 				</div>

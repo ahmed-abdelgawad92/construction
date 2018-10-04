@@ -91,24 +91,25 @@ class StoreController extends Controller {
 
 	/**
 	 * Show the form for creating a new resource.
-	 *
+	 *	$tid to redirect to the term consumption if the form is coming from adding a consumption within a term and there was no enough
+	 *  amount of raw in the store
 	 * @return Response
 	 */
 	public function create($cid=null,$pid=null,$tid=0)
 	{
 		if(Auth::user()->type=='admin'){
 			if($cid!=null && $cid!=0){
-				$supplier=Supplier::where('id',$cid)->firstOrFail();
+				$supplier=Supplier::where('id',$cid)->where("deleted",0)->firstOrFail();
 				$array['supplier']=$supplier;
 			}else{
-				$suppliers=Supplier::all();
+				$suppliers=Supplier::where("deleted",0)->get();
 				$array['suppliers']=$suppliers;
 			}
 			if($pid!=null && $pid!=0){
-				$project=Project::where('id',$pid)->where('done',0)->firstOrFail();
+				$project=Project::where('id',$pid)->where('done',0)->where("deleted",0)->firstOrFail();
 				$array['project']=$project;
 			}else{
-				$projects=Project::where('done',0)->get();
+				$projects=Project::where('done',0)->where("deleted",0)->get();
 				$array['projects']=$projects;
 			}
 			$store_types=StoreType::all();

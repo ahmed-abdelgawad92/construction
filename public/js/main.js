@@ -571,7 +571,7 @@ $(document).ready(function() {
 		if ($("input[name='type[]']:checked").length < 1) {
 			if ($(".term_type_input").length) {
 				$(".term_type_input").each(function() {
-					if(!$(this).val().trim() || $(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+					if(!$(this).val().trim() || !$(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
 						check=false;
 						assignError($(this),'من فضلك أدخل قيمة نوع المقاول, يجب أن تتكون من حروف و مسافات فقط');
 					}
@@ -583,7 +583,7 @@ $(document).ready(function() {
 		}else{
 			if ($(".term_type_input").length) {
 				$(".term_type_input").each(function() {
-					if(!$(this).val().trim() || $(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+					if(!$(this).val().trim() || !$(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
 						check=false;
 						assignError($(this),'من فضلك أدخل قيمة نوع المقاول, يجب أن تتكون من حروف و مسافات فقط');
 					}
@@ -620,11 +620,78 @@ $(document).ready(function() {
 		var supplier_type_input='<div class="form-group row" id="del_type'+count+'">\
 						<label for="type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع المورد * <span data-type="'+count+'" class="glyphicon glyphicon-trash delete_term_type"></span></label>\
 						<div class="col-sm-8 col-md-8 col-lg-8">\
-							<input type="text" name="supplier_type['+count+']" id="supplier_type'+count+'" value="" class="form-control input-right supplier_type_input" placeholder="أضافة نوع مورد جديد">\
-							<input type="text" name="supplier_type_unit['+count+']" id="supplier_type_unit'+count+'" value="" class="form-control input-left supplier_type_unit_input" placeholder="أدخل الوحدة">\
+							<div style="overflow:auto">\
+								<input type="text" name="supplier_type['+count+']" id="supplier_type'+count+'" value="" class="form-control input-right supplier_type_input" placeholder="أضافة نوع مورد جديد">\
+								<input type="text" name="supplier_type_unit['+count+']"id="supplier_type_unit'+count+'" value="" class="form-control input-left supplier_type_unit_input" placeholder="أدخل الوحدة">\
+							</div>\
 						</div>\
 					</div>';
 		$("#type_checkbox").after(supplier_type_input);
+	});
+	//validate contractor creation form
+	$("#add_supplier").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if(!$("#name").val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)) {
+			check=false;
+			assignError($("#name"),'أسم المورد يجب أن يتكون من حروف و مسافات فقط');
+		}
+		if (!$("#name").val().trim()) {
+			check=false;
+			assignError($("#name"),'يجب أدخال أسم المورد');
+		}
+		if ($("input[name='type[]']:checked").length < 1) {
+			if ($(".supplier_type_input").length) {
+				$(".supplier_type_unit_input").each(function() {
+					if(!$(this).val().trim() || !$(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+						check=false;
+						assignError($(this).parent(),'من فضلك أدخل قيمة الوحدة , يجب أن تتكون من حروف و مسافات فقط');
+					}
+				});
+				$(".supplier_type_input").each(function() {
+					if(!$(this).val().trim() || !$(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+						console.log($(this).val().trim());
+						check=false;
+						assignError($(this).parent(),'من فضلك أدخل قيمة نوع المورد , يجب أن تتكون من حروف و مسافات فقط');
+					}
+				});
+			}else{
+				check=false;
+				assignError($("#type_checkbox_container"),'من فضلك أختار نوع المورد');
+			}
+		}else{
+			if ($(".supplier_type_input").length) {
+				$(".supplier_type_unit_input").each(function() {
+					if(!$(this).val().trim() || !$(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+						check=false;
+						assignError($(this).parent(),'من فضلك أدخل قيمة الوحدة , يجب أن تتكون من حروف و مسافات فقط');
+					}
+				});
+				$(".supplier_type_input").each(function() {
+					if(!$(this).val().trim() || !$(this).val().trim().match(/^[a-zA-Z\u0600-\u06FF\s]+$/)){
+						check=false;
+						assignError($(this).parent(),'من فضلك أدخل قيمة نوع المورد , يجب أن تتكون من حروف و مسافات فقط');
+					}
+				});
+			}
+		}
+		if (!$("#city").val().trim()) {
+			check=false;
+			assignError($("#city"),'يجب أدخال المدينة');
+		}
+		$(".phone_input").each(function(){
+			if(!$(this).val().trim().match(/^\+?[0-9]{8,}$/)){
+				check=false;
+				assignError($(this),'الهاتف يجب ان يتكون من ارقام و + فقط ولا يقل عن 8 أرقام');
+			}
+		});
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
 	});
 	/******************************************Consumption********************************************/
 	// add_new_consumption_input_group
@@ -676,7 +743,25 @@ $(document).ready(function() {
 		}
 	});
 
-	/******************************************Productions********************************************/
+	/******************************************Stores********************************************/
+	var store_type_flag=true;
+	$("#add_new_store_type").click(function(e){
+		e.preventDefault();
+		if(store_type_flag){
+			$("#store_select_input").stop().animate({height:0},200).delay(200,function(){
+				$(this).addClass("hide");
+				$(this).val(0);
+				$("#new_store_type_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200);
+			});
+			store_type_flag=false;
+		}else{
+			$("#new_store_type_div").stop().animate({height:0},200).delay(200,function(){
+				$(this).addClass("hide");
+				$("#store_select_input").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200);
+			});
+			store_type_flag=true;
+		}
+	});
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 

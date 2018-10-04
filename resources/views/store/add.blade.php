@@ -37,11 +37,11 @@
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="project_id" id="project_id" class="form-control">
 							@if(isset($project))
-							<option value="{{$project->id}}">{{$project->name}}</option>
+							<option value="{{$project->id}}">{{$project->name}} - {{$project->city}} - {{$project->def_num}}</option>
 							@else
 							<option value="0">أختار مشروع</option>
 							@foreach($projects as $project)
-							<option value="{{$project->id}}" @if(old('project_id')==$project->id) selected @endif >{{$project->name}}</option>
+							<option value="{{$project->id}}" @if(old('project_id')==$project->id) selected @endif >{{$project->name}} - {{$project->city}} - {{$project->def_num}}</option>
 							@endforeach
 							@endif
 						</select>
@@ -52,30 +52,7 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if($errors->has('supplier_id')) has-error @endif">
-					<label for="supplier_id_choose" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد</label>
-					<div class="col-sm-8 col-md-8 col-lg-8">
-						<select  name="supplier_id" id="supplier_id_choose" class="form-control">
-						@if(isset($supplier))
-						<option value="{{$supplier->id}}">{{$supplier->name}}</option>
-						@else
-						<option value="0">أختار المورد</option>
-						@foreach($suppliers as $supplier)
-						<option value="{{$supplier->id}}"  @if(old('supplier_id')==$supplier->id) selected @endif >{{$supplier->name}}</option>
-						@endforeach
-						@endif
-						</select>
-						@foreach($suppliers as $supplier)
-						<input type="hidden" name="{{$supplier->id}}" value="{{$supplier->type}}">
-						@endforeach
-						@if($errors->has('supplier_id'))
-							@foreach($errors->get('supplier_id') as $error)
-								<span class="help-block">{{ $error }}</span>
-							@endforeach
-						@endif
-					</div>
-				</div>
-				<div class="form-group row @if($errors->has('type')) has-error @endif">
+				<div class="form-group row @if($errors->has('type')) has-error @endif" id="store_select_input">
 					<label for="type_supplier" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select id="type_supplier" name="type" class="form-control">
@@ -99,7 +76,24 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if($errors->has('amount')) has-error @endif">
+				<div class="row mb-3">
+					<div class="col-sm-2 col-md-2 col-lg-2"></div>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<a href="#" id="add_new_store_type">أضافة نوع خام جديد</a>
+					</div>
+				</div>
+				<div class="form-group row @if($errors->has("new_store_type")) has-error @else hide @endif" id="new_store_type_div">
+				 	<label for="new_store_type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع خام جديد *</label>
+				 	<div class="col-sm-8 col-md-8 col-lg-8">
+				 		<input type="text" name="new_store_type" id="new_store_type" autocomplete="off" class="form-control" placeholder="أدخل نوع خام جديد " value="{{old("new_store_type")}}">
+				 		@if($errors->has("new_store_type"))
+				 			@foreach($errors->get("new_store_type") as $error)
+				 				<span class="help-block">{{ $error }}</span>
+				 			@endforeach
+				 		@endif
+				 	</div>
+				</div>
+				<div class="form-group row @if($errors->has('amount')) has-error @else hide @endif" id="amount_div">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
@@ -108,6 +102,29 @@
 						</div>
 						@if($errors->has('amount'))
 							@foreach($errors->get('amount') as $error)
+								<span class="help-block">{{ $error }}</span>
+							@endforeach
+						@endif
+					</div>
+				</div>
+				<div class="form-group row @if($errors->has('supplier_id')) has-error @endif">
+					<label for="supplier_id_choose" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<select  name="supplier_id" id="supplier_id_choose" class="form-control">
+						@if(isset($supplier))
+						<option value="{{$supplier->id}}">{{$supplier->name}}</option>
+						@else
+						<option value="0">أختار المورد</option>
+						@foreach($suppliers as $supplier)
+						<option value="{{$supplier->id}}"  @if(old('supplier_id')==$supplier->id) selected @endif >{{$supplier->name}}</option>
+						@endforeach
+						@endif
+						</select>
+						@foreach($suppliers as $supplier)
+						<input type="hidden" name="{{$supplier->id}}" value="{{$supplier->type}}">
+						@endforeach
+						@if($errors->has('supplier_id'))
+							@foreach($errors->get('supplier_id') as $error)
 								<span class="help-block">{{ $error }}</span>
 							@endforeach
 						@endif

@@ -10,11 +10,6 @@
 		@if (count($errors) > 0)
 			<div class="alert alert-danger">
 				<strong>خطأ</strong>
-				<ul>
-					@foreach ($errors->all() as $key => $value)
-						<li>{{$key}} {{$value}}</li>
-					@endforeach
-				</ul>
 			</div>
 		@endif
 		@if(session('insert_error'))
@@ -35,7 +30,7 @@
 				</ul>
 			</div>
 		@endif
-		<form class="form-horizontal" method="post" action="{{ route('addsupplier') }}">
+		<form class="form-horizontal" method="post" action="{{ route('addsupplier') }}" id="add_supplier">
 		<div class="form-group row @if($errors->has('name')) has-error @endif">
 			<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المورد *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
