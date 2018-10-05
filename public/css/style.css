@@ -1782,23 +1782,23 @@ a:hover img {
 
 
 /*------------------------------------Contracts------------------------------------*/
-.contractor_select{
+.contractor_select,.supplier_select{
 	padding: 30px 15px;
 	border-top: 1px solid #ccc;
 	border-right: 1px solid #ccc;
 	border-left: 1px solid #ccc;
 	cursor: pointer;
 }
-.contractor_select:nth-of-type(1){
+.contractor_select:nth-of-type(1),.supplier_select:nth-of-type(1){
 	border-top-left-radius: 8px !important;
 	border-top-right-radius: 8px !important;
 }
-.contractor_select:last-of-type{
+.contractor_select:last-of-type,.supplier_select:last-of-type{
 	border-bottom: 1px solid #ccc;
 	border-bottom-right-radius: 8px;
 	border-bottom-left-radius: 8px;
 }
-div.contractor_select:hover{
+div.contractor_select:hover,div.supplier_select:hover{
 	background-color: #d7ebff;
 }
 div.category{

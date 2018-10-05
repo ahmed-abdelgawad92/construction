@@ -30,10 +30,10 @@
 					</ul>
 				</div>
 			@endif
-			@if(( (isset($projects)&&count($projects)>0) || isset($project)) && ((isset($suppliers)&&count($suppliers)>0)||isset($supplier)) && count($store_types)>0)
+			@if(( (isset($projects)&&count($projects)>0) || isset($project)) && ((isset($suppliers)&&count($suppliers)>0)||isset($supplier)))
 			<form method="post" action="{{ route('addstore') }}" class="form-horizontal">
 				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
-					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار مشروع</label>
+					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار مشروع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="project_id" id="project_id" class="form-control">
 							@if(isset($project))
@@ -52,8 +52,9 @@
 						@endif
 					</div>
 				</div>
+				@if(count($store_types)>0)
 				<div class="form-group row @if($errors->has('type')) has-error @endif" id="store_select_input">
-					<label for="type_supplier" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>
+					<label for="type_supplier" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select id="type_supplier" name="type" class="form-control">
 						<option value="0">أختار نوع الخام</option>
@@ -82,19 +83,28 @@
 						<a href="#" id="add_new_store_type">أضافة نوع خام جديد</a>
 					</div>
 				</div>
-				<div class="form-group row @if($errors->has("new_store_type")) has-error @else hide @endif" id="new_store_type_div">
+				@endif
+				<div class="form-group row @if($errors->has("new_store_type")||$errors->has("new_store_type_unit")) has-error @elseif(count($store_types)>0) hide @endif" id="new_store_type_div">
 				 	<label for="new_store_type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع خام جديد *</label>
 				 	<div class="col-sm-8 col-md-8 col-lg-8">
-				 		<input type="text" name="new_store_type" id="new_store_type" autocomplete="off" class="form-control" placeholder="أدخل نوع خام جديد " value="{{old("new_store_type")}}">
+						<div class="w-100">
+							<input type="text" @if(count($store_types)<1) name="new_store_type" @endif id="new_store_type" autocomplete="off" class="form-control input-right" placeholder="أدخل نوع خام جديد " value="{{old("new_store_type")}}">
+							<input type="text" name="new_store_type_unit" id="new_store_type_unit" autocomplete="off" class="form-control input-left" placeholder="أدخل الوحدة" value="{{old("new_store_type_unit")}}">
+						</div>
 				 		@if($errors->has("new_store_type"))
 				 			@foreach($errors->get("new_store_type") as $error)
+				 				<span class="help-block">{{ $error }}</span>
+				 			@endforeach
+				 		@endif
+				 		@if($errors->has("new_store_type_unit"))
+				 			@foreach($errors->get("new_store_type_unit") as $error)
 				 				<span class="help-block">{{ $error }}</span>
 				 			@endforeach
 				 		@endif
 				 	</div>
 				</div>
 				<div class="form-group row @if($errors->has('amount')) has-error @else hide @endif" id="amount_div">
-					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
+					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
 							<input type="text" name="amount" id="amount" value="{{old('amount')}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
@@ -107,33 +117,28 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if($errors->has('supplier_id')) has-error @endif">
-					<label for="supplier_id_choose" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد</label>
-					<div class="col-sm-8 col-md-8 col-lg-8">
-						<select  name="supplier_id" id="supplier_id_choose" class="form-control">
-						@if(isset($supplier))
-						<option value="{{$supplier->id}}">{{$supplier->name}}</option>
-						@else
-						<option value="0">أختار المورد</option>
-						@foreach($suppliers as $supplier)
-						<option value="{{$supplier->id}}"  @if(old('supplier_id')==$supplier->id) selected @endif >{{$supplier->name}}</option>
-						@endforeach
-						@endif
-						</select>
-						@foreach($suppliers as $supplier)
-						<input type="hidden" name="{{$supplier->id}}" value="{{$supplier->type}}">
-						@endforeach
-						@if($errors->has('supplier_id'))
-							@foreach($errors->get('supplier_id') as $error)
-								<span class="help-block">{{ $error }}</span>
-							@endforeach
-						@endif
-					</div>
+				<div class="form-group row @if($errors->has("supplier_id")) has-error @endif">
+					 <label for="supplier_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد *</label>
+					 <div class="col-sm-8 col-md-8 col-lg-8">
+						 <div class="input-group">
+							 <input type="text" name="supplier_details" id="show_supplier_details" autocomplete="off" class="form-control readonly" readonly  placeholder="أختار المقاول المورد" value="{{old("supplier_details")}}">
+							 <input type="hidden" name="supplier_id" id="supplier_id" value="{{old("supplier_id")}}">
+							 <span class="input-group-addon" id="basic-addon1">أختار</span>
+						 </div>
+						 @if($errors->has("supplier_id"))
+							 @foreach($errors->get("supplier_id") as $error)
+								 <span class="help-block">{{ $error }}</span>
+							 @endforeach
+						 @endif
+					 </div>
 				</div>
 				<div class="form-group row @if($errors->has('value')) has-error @endif">
-					<label for="value" class="control-label col-sm-2 col-md-2 col-lg-2">القيمة</label>
+					<label for="value" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة الوحدة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="value" id="value" class="form-control" placeholder="أدخل القيمة" value="{{old('value')}}">
+						<div class="input-group">
+							<input type="text" name="value" id="value" class="form-control" placeholder="أدخل قيمة الوحدة" value="{{old('value')}}">
+							<span class="input-group-addon" id="basic-addon1">جنيه</span>
+						</div>
 						@if($errors->has('value'))
 							@foreach($errors->get('value') as $error)
 								<span class="help-block">{{ $error }}</span>
@@ -142,9 +147,12 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('amount_paid')) has-error @endif">
-					<label for="amount_paid" class="control-label col-sm-2 col-md-2 col-lg-2">المبلغ المدفوع</label>
+					<label for="amount_paid" class="control-label col-sm-2 col-md-2 col-lg-2">المبلغ المدفوع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="amount_paid" id="amount_paid" class="form-control" placeholder="أدخل المبلغ المدفوع" value="{{old('amount_paid')}}">
+						<div class="input-group">
+							<input type="text" name="amount_paid" id="amount_paid" class="form-control" placeholder="أدخل المبلغ المدفوع" value="{{old('amount_paid')}}">
+							<span class="input-group-addon" id="basic-addon1">جنيه</span>
+						</div>
 						@if($errors->has('amount_paid'))
 							@foreach($errors->get('amount_paid') as $error)
 								<span class="help-block">{{ $error }}</span>
@@ -179,6 +187,34 @@
 				</div>
 			</div>
 			@endif
+		</div>
+	</div>
+</div>
+<div id="float_container">
+	<div id="float_form_container">
+		<span class="close">&times;</span>
+		<h3 class="center">أختار المورد</h3>
+		<div id="supplier_container">
+	    <div class="category">
+	      <h5 class="category">جميع أنواع الموردين</h5>
+	    </div>
+	    <div>
+	    @foreach ($suppliers as $supplier)
+	    <div class="supplier_select" data-id="{{$supplier->id}}" data-name="{{$supplier->name}}" data-type="{{str_replace(","," , ",$supplier->type)}}" data-phone="{{str_replace(","," , ",$supplier->phone)}}" data-city="{{$supplier->city}}">
+	      <div class="row">
+	        <div class="col-2">
+	          <img src="{{asset("images/contractor.png")}}" class="w-100" alt="">
+	        </div>
+	        <div class="col-10">
+	          <h4>{{$supplier->name}}</h4>
+	          {{str_replace(","," , ",$supplier->phone)}}&nbsp;&nbsp;&nbsp;&nbsp;
+	          {{$supplier->city}}&nbsp;&nbsp;&nbsp;&nbsp;
+	          ({{str_replace(","," , ",$supplier->type)}})
+	        </div>
+	      </div>
+	    </div>
+	    @endforeach
+	    </div>
 		</div>
 	</div>
 </div>

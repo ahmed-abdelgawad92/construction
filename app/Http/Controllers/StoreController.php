@@ -95,6 +95,25 @@ class StoreController extends Controller {
 	 *  amount of raw in the store
 	 * @return Response
 	 */
+	 public function getSuppliers($type=null)
+	 {
+		 $specificSuppliers=null;
+		 if ($type===null) {
+			 $suppliers = Supplier::where("deleted",0)->orderBy("name")->get();
+			 $state="ALL";
+		 }else{
+			 $specificSuppliers = Supplier::where("type","like","%".$type."%")->where("deleted",0)->orderBy("name")->get();
+			 $suppliers = Supplier::where("type","not like","%".$type."%")->where("deleted",0)->orderBy("name")->get();
+			 $state="SPEC";
+		 }
+		 return json_encode(['state'=>$state,'suppliers'=>$suppliers,'specificSuppliers'=>$specificSuppliers]);
+	 }
+	/**
+	 * Show the form for creating a new resource.
+	 *	$tid to redirect to the term consumption if the form is coming from adding a consumption within a term and there was no enough
+	 *  amount of raw in the store
+	 * @return Response
+	 */
 	public function create($cid=null,$pid=null,$tid=0)
 	{
 		if(Auth::user()->type=='admin'){
@@ -112,7 +131,7 @@ class StoreController extends Controller {
 				$projects=Project::where('done',0)->where("deleted",0)->get();
 				$array['projects']=$projects;
 			}
-			$store_types=StoreType::all();
+			$store_types=StoreType::where("deleted",0)->get();
 			$array['active']='store';
 			$array['store_types']=$store_types;
 			$array['tid']=$tid;
@@ -129,11 +148,14 @@ class StoreController extends Controller {
 	 */
 	public function store(Request $req)
 	{
+		// dd($req->all());
 		if(Auth::user()->type=='admin'){
 			$rules=[
 				'project_id'=>'required|exists:projects,id',
 				'supplier_id'=>'required|exists:suppliers,id',
-				'type'=>'required|exists:store_types,name',
+				'type'=>'required_without:new_store_type|exists:store_types,name',
+				'new_store_type'=>'required_without:type|unique:store_types,name',
+				'new_store_type_unit'=>'required_without:type',
 				'amount'=>'required|numeric',
 				'value'=>'required|numeric',
 				'amount_paid'=>'required|numeric'
@@ -141,10 +163,13 @@ class StoreController extends Controller {
 			$error_messages=[
 				'project_id.required'=>'يجب أختيار مشروع',
 				'project_id.exists'=>'المشروع يجب أن يكون موجود بقاعدة البيانات',
-				'supplier_id.required'=>'يجب أختيار مقاول',
-				'supplier_id.exists'=>'المقاول يجب أن يكون موجود بقاعدة البيانات',
-				'type.required'=>'يجب أدخال نوع الخام',
+				'supplier_id.required'=>'يجب أختيار مقاول المورد',
+				'supplier_id.exists'=>'المقاول المورد يجب أن يكون موجود بقاعدة البيانات',
+				'type.required_without'=>'يجب أدخال نوع الخام',
 				'type.exists'=>'نوع الخام يجب أن يكون موجود بقاعدة البيانات',
+				'new_store_type.required_without'=>'يجب أدخال نوع الخام',
+				'new_store_type.unique'=>'نوع الخام موجود بقاعدة البيانات',
+				'new_store_type_unit.required_without'=>'يجب أدخال الوحدة',
 				'amount.required'=>'يجب أدخال الكمية',
 				'amount.numeric'=>'الكمية يجب أن تتكون من أرقام فقط',
 				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط',

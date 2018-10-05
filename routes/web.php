@@ -549,7 +549,11 @@ Route::group(['middleware' => 'auth'], function() {
 			'uses'=>'StoreController@show',
 			'as'=>'showstore'
 		]);
-
+    //get all supplier of specific type
+    Route::get("get_suppliers/{type?}",[
+      'uses'=>'StoreController@getSuppliers',
+      'as'=>'get_suppliers_ajax'
+    ]);
 		//Add Store Type
 	    Route::get('type',[
 	    	'uses'=>'StoreTypeController@create',

@@ -52,27 +52,7 @@ $(document).ready(function() {
 	// 	$('.circle-div').height(width_circle);
 	// 	$('.circle-div').css('line-height',width_circle+"px");
 	// });
-	//show only supplier type based on supplier id
-	var supplier;
-	$('#supplier_id_choose').change(function(){
-		if($(this).val()!=0){
-			supplier=$(this).val();
-			supplier_type=$('input[name="'+supplier+'"]').val().split(',');
-			$('#type_supplier').html('<option val="0">أختار نوع الخام</option>');
-			for(i=0;i<supplier_type.length;i++){
-				$('#type_supplier').append('<option val="'+supplier_type[i]+'">'+supplier_type[i]+'</option>');
-			}
-		}else{
-			$('#type_supplier').html('<option val="0">أختار نوع الخام</option>');
-			$('input[name="store_type[]"]').each(function(){
-				$('#type_supplier').append('<option val="'+$(this).val()+'">'+$(this).val()+'</option>');
-			});
-		}
-	});
-	//change amount unit
-	$('#type_supplier').change(function(){
-		$('#basic-addon1').text($('input[name="'+$(this).val()+'"]').val());
-	});
+
 
 	//icon change opacity
 	$('.icon').mouseover(function(){
@@ -750,18 +730,70 @@ $(document).ready(function() {
 		if(store_type_flag){
 			$("#store_select_input").stop().animate({height:0},200).delay(200,function(){
 				$(this).addClass("hide");
-				$(this).val(0);
-				$("#new_store_type_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200);
+				$("#new_store_type").attr("name","new_store_type");
+				$("#type_supplier").attr("name","");
+				$("#type_supplier").val('0');
+				$("#new_store_type_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
+					$(this).css("height","auto");
+				});
+				$("#new_store_type").focus();
 			});
+			$(this).text("أختار نوع خام");
 			store_type_flag=false;
 		}else{
 			$("#new_store_type_div").stop().animate({height:0},200).delay(200,function(){
 				$(this).addClass("hide");
-				$("#store_select_input").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200);
+				$("#new_store_type").val('');
+				$("#new_store_type").attr("name",'');
+				$("#type_supplier").attr("name",'type');
+				$("#store_select_input").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
+					$(this).css("height","auto");
+				});
+				$("#type_supplier").focus();
 			});
+			$(this).text("أضافة نوع خام جديد");
 			store_type_flag=true;
 		}
 	});
+	//show suppliers to select them to buy raw (Within Create store)
+	$("#show_supplier_details").click(function(){
+		$("body").css('overflow','hidden');
+		$("#float_form_container").css("overflow","auto");
+		$('#float_container').fadeIn(200,function(){
+			$('#float_form_container').slideDown(100);
+		});
+	});
+	$("#float_form_container").on("click",".supplier_select",function(){
+			var id = $(this).attr("data-id");
+			var details = $(this).attr("data-name")+" - "+$(this).attr("data-city")+" - "+$(this).attr("data-phone")+" ( "+$(this).attr("data-type")+" ) ";
+			$("#show_supplier_details").val(details);
+			$("#supplier_id").val(id);
+			$("span.close").trigger("click");
+	});
+
+	//get the suppliers at the beginging who have a chosen supplier type
+	$("#type_supplier").change(function(){
+		var type= $(this).val().trim();
+		getSuppliers(type);
+		$('#basic-addon1').text($('input[name="'+$(this).val()+'"]').val());
+		if($("#amount_div").hasClass("hide")){
+			$("#amount_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
+				$("#amount").focus();
+			});
+		}
+	});
+	$("#new_store_type").blur(function(){
+		getSuppliers();
+	});
+	$("#new_store_type_unit").blur(function(){
+		$('#basic-addon1').text($(this).val());
+		if($("#amount_div").hasClass("hide")){
+			$("#amount_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
+				$("#amount").focus();
+			});
+		}
+	});
+
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 
