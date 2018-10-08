@@ -724,37 +724,6 @@ $(document).ready(function() {
 	});
 
 	/******************************************Stores********************************************/
-	var store_type_flag=true;
-	$("#add_new_store_type").click(function(e){
-		e.preventDefault();
-		if(store_type_flag){
-			$("#store_select_input").stop().animate({height:0},200).delay(200,function(){
-				$(this).addClass("hide");
-				$("#new_store_type").attr("name","new_store_type");
-				$("#type_supplier").attr("name","");
-				$("#type_supplier").val('0');
-				$("#new_store_type_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
-					$(this).css("height","auto");
-				});
-				$("#new_store_type").focus();
-			});
-			$(this).text("أختار نوع خام");
-			store_type_flag=false;
-		}else{
-			$("#new_store_type_div").stop().animate({height:0},200).delay(200,function(){
-				$(this).addClass("hide");
-				$("#new_store_type").val('');
-				$("#new_store_type").attr("name",'');
-				$("#type_supplier").attr("name",'type');
-				$("#store_select_input").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
-					$(this).css("height","auto");
-				});
-				$("#type_supplier").focus();
-			});
-			$(this).text("أضافة نوع خام جديد");
-			store_type_flag=true;
-		}
-	});
 	//show suppliers to select them to buy raw (Within Create store)
 	$("#show_supplier_details").click(function(){
 		$("body").css('overflow','hidden');
@@ -770,28 +739,69 @@ $(document).ready(function() {
 			$("#supplier_id").val(id);
 			$("span.close").trigger("click");
 	});
+	//show type options on click or focus
+	$("#type_supplier").on("click focus",function(e){
+		$("#type_options").slideDown(200);
+		e.stopPropagation();
+	});
+	$(document).click(function(){
+		$("#type_options").slideUp(200);
+	});
+	//move between options with arrow keys
+	$("#type_supplier").keydown(function(e){
+		e.stopPropagation();
+    if (e.keyCode == 38 || e.keyCode == 40) {
+      $("#type_options .select_option:visible:first").focus();
+    }
+  });
+	$("#type_options .select_option").keydown(function(e){
+		e.stopPropagation();
+    if (e.keyCode == 38) {
+      $("#type_options .select_option:focus").prevAll(".select_option:visible:first").focus();
+    }else if (e.keyCode == 40) {
+			$("#type_options .select_option:focus").nextAll(".select_option:visible:first").focus();
+    }else if(e.keyCode== 13){
+			$(this).trigger("click");
+		}
+  });
 
 	//get the suppliers at the beginging who have a chosen supplier type
-	$("#type_supplier").change(function(){
-		var type= $(this).val().trim();
+	$(".select_option").click(function(){
+		var type= $(this).text().trim();
+		$("#type_supplier").val(type);
+		$("#type_options").slideUp(200);
 		getSuppliers(type);
-		$('#basic-addon1').text($('input[name="'+$(this).val()+'"]').val());
+		$('#basic-addon1').text($('input[name="'+type+'"]').val());
 		if($("#amount_div").hasClass("hide")){
 			$("#amount_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
 				$("#amount").focus();
 			});
 		}
 	});
-	$("#new_store_type").blur(function(){
-		getSuppliers();
+	//display type hints to the user during typing
+	$("#type_supplier").keyup(function(){
+		$(".select_option").css("display","none").removeAttr("tabindex");
+		var children = $("#type_options").find("div.select_option:contains("+$(this).val().trim()+")");
+		var count = 0;
+		children.each(function() {
+			$(this).css("display","block");
+			$(this).attr("tabindex",count++);
+		});
 	});
-	$("#new_store_type_unit").blur(function(){
-		$('#basic-addon1').text($(this).val());
-		if($("#amount_div").hasClass("hide")){
-			$("#amount_div").removeClass("hide").css({height:0}).stop().animate({height:"40px"},200,function(){
-				$("#amount").focus();
+	$("#type_supplier").blur(function(){
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		setTimeout(function(){
+			var type_string =$(this).val().trim();
+			console.log(type_string);
+			var children = $("div.select_option").filter(function(){
+				if($(this).text().trim() == type_string)
+				return $(this);
 			});
-		}
+			if(children.length<1){
+				assignError($(this),"نوع الخام هذا لا يوجد بقاعدة البيانات , من فضلك ضع علام شرطة - و أدخل بعدها الوحدة لهذ النوع. <br> مثال : أسمنت - كجم")
+			}
+		},300);
 	});
 
 	/******************************************Productions********************************************/

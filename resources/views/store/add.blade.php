@@ -10,6 +10,9 @@
 			@if (count($errors) > 0)
 				<div class="alert alert-danger">
 					<strong>خطأ</strong>
+					@foreach ($errors->all() as $value)
+					<br>	{{$value}}
+					@endforeach
 				</div>
 			@endif
 			@if(session('insert_error'))
@@ -52,20 +55,18 @@
 						@endif
 					</div>
 				</div>
-				@if(count($store_types)>0)
 				<div class="form-group row @if($errors->has('type')) has-error @endif" id="store_select_input">
 					<label for="type_supplier" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<select id="type_supplier" name="type" class="form-control">
-						<option value="0">أختار نوع الخام</option>
+						<input type="text" id="type_supplier" name="type" autocomplete="off" class="form-control" value="{{old("type")}}" placeholder="أدخل نوع الخام"/>
+						<div role="listbox" class="select_container" id="type_options">
+						@php
+							$count= 0;
+						@endphp
 						@foreach($store_types as $type)
-						@if(old('type')==$type->name)
-						<option value="{{$type->name}}" selected>{{$type->name}}</option>
-						@else
-						<option value="{{$type->name}}">{{$type->name}}</option>
-						@endif
+							<div role="option" tabindex="{{$count++}}" class="select_option">{{$type->name}}</div>
 						@endforeach
-						</select>
+						</div>
 						@foreach($store_types as $type)
 						<input type="hidden" name="store_type[]" value="{{$type->name}}">
 						<input type="hidden" name="{{$type->name}}" value="{{$type->unit}}">
@@ -76,32 +77,6 @@
 							@endforeach
 						@endif
 					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-sm-2 col-md-2 col-lg-2"></div>
-					<div class="col-sm-8 col-md-8 col-lg-8">
-						<a href="#" id="add_new_store_type">أضافة نوع خام جديد</a>
-					</div>
-				</div>
-				@endif
-				<div class="form-group row @if($errors->has("new_store_type")||$errors->has("new_store_type_unit")) has-error @elseif(count($store_types)>0) hide @endif" id="new_store_type_div">
-				 	<label for="new_store_type" class="control-label col-sm-2 col-md-2 col-lg-2">نوع خام جديد *</label>
-				 	<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="w-100">
-							<input type="text" @if(count($store_types)<1) name="new_store_type" @endif id="new_store_type" autocomplete="off" class="form-control input-right" placeholder="أدخل نوع خام جديد " value="{{old("new_store_type")}}">
-							<input type="text" name="new_store_type_unit" id="new_store_type_unit" autocomplete="off" class="form-control input-left" placeholder="أدخل الوحدة" value="{{old("new_store_type_unit")}}">
-						</div>
-				 		@if($errors->has("new_store_type"))
-				 			@foreach($errors->get("new_store_type") as $error)
-				 				<span class="help-block">{{ $error }}</span>
-				 			@endforeach
-				 		@endif
-				 		@if($errors->has("new_store_type_unit"))
-				 			@foreach($errors->get("new_store_type_unit") as $error)
-				 				<span class="help-block">{{ $error }}</span>
-				 			@endforeach
-				 		@endif
-				 	</div>
 				</div>
 				<div class="form-group row @if($errors->has('amount')) has-error @else hide @endif" id="amount_div">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>

@@ -55,7 +55,7 @@
 <div class="container-fluid">
 @if(Auth::check())
 <div class="row">
-<div class="col-lg-2 col-md-2 col-sm-3">
+<div class="col-lg-2 col-md-2">
 	<button type="button" class="btn btn-default" aria-label="Left Align" id="side-bar-icon">
 	  <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 	</button>
@@ -363,7 +363,7 @@
 	@endif
 	<!--______________________END SIDEBAR___________________________-->
 </div>
-<div class="col-lg-10 col-md-10 col-sm-9">
+<div class="col-lg-10 col-md-10 col-sm-12">
 	<!--______________________SEARCHBAR___________________________-->
 	<div class="row">
 		<div class="col-lg-8 offset-lg-2 col-md-8 offset-sm-2 col-sm-8 offset-md-2">
