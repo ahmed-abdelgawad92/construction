@@ -153,9 +153,7 @@ class StoreController extends Controller {
 			$rules=[
 				'project_id'=>'required|exists:projects,id',
 				'supplier_id'=>'required|exists:suppliers,id',
-				'type'=>'required|exists:store_types,name',
-				'new_store_type'=>'nullable|unique:store_types,name',
-				'new_store_type_unit'=>'nullable',
+				'type'=>'required|regex:/^$/u',
 				'amount'=>'required|numeric',
 				'value'=>'required|numeric',
 				'amount_paid'=>'required|numeric'

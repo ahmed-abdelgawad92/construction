@@ -762,6 +762,7 @@ $(document).ready(function() {
 			$("#type_options .select_option:focus").nextAll(".select_option:visible:first").focus();
     }else if(e.keyCode== 13){
 			$(this).trigger("click");
+			$("#type_supplier").trigger("blur");
 		}
   });
 
@@ -791,15 +792,22 @@ $(document).ready(function() {
 	$("#type_supplier").blur(function(){
 		$(".is-invalid").removeClass('is-invalid');
 		$('.invalid-feedback').remove();
+		var type_supplier = $(this);
 		setTimeout(function(){
-			var type_string =$(this).val().trim();
+			var type_string =type_supplier.val().trim();
 			console.log(type_string);
 			var children = $("div.select_option").filter(function(){
-				if($(this).text().trim() == type_string)
-				return $(this);
+				if($(this).text().trim() == type_string){
+					return $(this);
+				}
 			});
+			console.log(children.length);
 			if(children.length<1){
-				assignError($(this),"نوع الخام هذا لا يوجد بقاعدة البيانات , من فضلك ضع علام شرطة - و أدخل بعدها الوحدة لهذ النوع. <br> مثال : أسمنت - كجم")
+				if(type_string.length==0){
+					assignError(type_supplier,"من فضل أدخل نوع الخام");
+				}else if(!type_string.match(/^[0-9A-Za-z\u0600-\u06FF\s]+(-[0-9A-Za-z\u0600-\u06FF\s]+)$/)){
+					assignError(type_supplier,"نوع الخام هذا لا يوجد بقاعدة البيانات , من فضلك ضع علامة شرطة - و أدخل بعدها الوحدة لهذ النوع. <br> مثال : أسمنت - كجم");
+				}
 			}
 		},300);
 	});

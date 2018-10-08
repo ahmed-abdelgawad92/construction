@@ -10,9 +10,6 @@
 			@if (count($errors) > 0)
 				<div class="alert alert-danger">
 					<strong>خطأ</strong>
-					@foreach ($errors->all() as $value)
-					<br>	{{$value}}
-					@endforeach
 				</div>
 			@endif
 			@if(session('insert_error'))
@@ -65,12 +62,10 @@
 						@endphp
 						@foreach($store_types as $type)
 							<div role="option" tabindex="{{$count++}}" class="select_option">{{$type->name}}</div>
+							<input type="hidden" name="store_type[]" value="{{$type->name}}">
+							<input type="hidden" name="{{$type->name}}" value="{{$type->unit}}">
 						@endforeach
 						</div>
-						@foreach($store_types as $type)
-						<input type="hidden" name="store_type[]" value="{{$type->name}}">
-						<input type="hidden" name="{{$type->name}}" value="{{$type->unit}}">
-						@endforeach
 						@if($errors->has('type'))
 							@foreach($errors->get('type') as $error)
 								<span class="help-block">{{ $error }}</span>
@@ -78,12 +73,12 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if($errors->has('amount')) has-error @else hide @endif" id="amount_div">
+				<div class="form-group row @if($errors->has('amount')) has-error @elseif(count($errors) > 0) @else hide @endif" id="amount_div">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
 							<input type="text" name="amount" id="amount" value="{{old('amount')}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
-							<span class="input-group-addon" id="basic-addon1"></span>
+							<span class="input-group-addon" id="basic-addon1">@if(old("type")){{$store_types->where("name",old("type"))->first()->unit}}@else لا يوجد@endif</span>
 						</div>
 						@if($errors->has('amount'))
 							@foreach($errors->get('amount') as $error)
