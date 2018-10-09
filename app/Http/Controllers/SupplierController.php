@@ -10,6 +10,7 @@ use App\Log;
 use Carbon\Carbon;
 use Validator;
 use Auth;
+use Illuminate\Support\Facades\DB;
 
 class SupplierController extends Controller {
 
@@ -139,17 +140,51 @@ class SupplierController extends Controller {
 		//
 		if(Auth::user()->type=="admin"){
 			$supplier=Supplier::findOrFail($id);
-			$stores= $supplier->stores()->orderBy('created_at','desc')->take(3)->get();
+			$stores= $supplier->stores()->where("stores.deleted",0)->orderBy('created_at','desc')->take(3)->get();
+			$allRawsReport= DB::select("
+					select count(*) as count , sum(amount*value) as value , sum(amount_paid) as paid
+					from stores where supplier_id=? and deleted=0
+			",[$id]);
+			$lastTenRawsReport= DB::select("
+					select  sum(st.amount*st.value) as value , sum(st.amount_paid) as paid
+					from (select amount , value, amount_paid from stores where supplier_id=? and deleted=0 order by created_at desc limit 10) as st
+			",[$id]);
+			$raws= DB::select("
+					select  sum(amount*value) as value , sum(amount_paid) as paid, type, sum(amount) as amount, unit from stores
+					where supplier_id=? and deleted=0
+					group by type
+			",[$id]);
+			// dd($raws);
 			$array=[
 				'active'=>'sup',
 				'supplier'=>$supplier,
-				'stores'=>$stores
+				'stores'=>$stores,
+				'allRaws'=>$allRawsReport,
+				'lastTenRaws'=>$lastTenRawsReport,
+				'raws'=>$raws
 			];
 			return view('supplier.show',$array);
 		}else
 			abort('404');
 	}
 
+	/**
+	 * Show all supplied raws by a supplier.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	 public function getAllStores($id)
+	 {
+		 $supplier = Supplier::findOrFail($id);
+		 $stores = $supplier->stores()->where("deleted",0)->orderBy("created_at","desc")->paginate(30);
+		 $array=[
+			 "active"=>"sup",
+			 "supplier"=>$supplier,
+			 "stores"=>$stores
+		 ];
+		 return view("supplier.stores",$array);
+	 }
 	/**
 	 * Show the form for editing the specified resource.
 	 *

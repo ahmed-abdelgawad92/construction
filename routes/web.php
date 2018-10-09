@@ -527,6 +527,11 @@ Route::group(['middleware' => 'auth'], function() {
 			'uses'=>'StoreController@store',
 			'as'=>'addstore'
 		]);
+    //delete store
+		Route::get('delete/{id}',[
+			'uses'=>'StoreController@destroy',
+			'as'=>'deletestore'
+		]);
 
 		//all stores for a project
 		Route::get('all/project/{id}',[
@@ -553,6 +558,11 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get("get_suppliers/{type?}",[
       'uses'=>'StoreController@getSuppliers',
       'as'=>'get_suppliers_ajax'
+    ]);
+    //Add Payment To a Store
+    Route::put('add/payment/{id}',[
+      'uses'=>'StoreController@addPayment',
+      'as'=>'addPaymentToStore'
     ]);
 		//Add Store Type
 	    Route::get('type',[

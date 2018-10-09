@@ -8,6 +8,7 @@ use App\Store;
 use App\Project;
 use App\Supplier;
 use App\StoreType;
+use App\Log;
 
 use Auth;
 use DB;
@@ -153,7 +154,7 @@ class StoreController extends Controller {
 			$rules=[
 				'project_id'=>'required|exists:projects,id',
 				'supplier_id'=>'required|exists:suppliers,id',
-				'type'=>'required|regex:/^$/u',
+				'type'=>'regex:/^[\pL\pN]+[\pL\pN\s]+(-[\pL\pN\s]+)?$/u',
 				'amount'=>'required|numeric',
 				'value'=>'required|numeric',
 				'amount_paid'=>'required|numeric'
@@ -163,11 +164,7 @@ class StoreController extends Controller {
 				'project_id.exists'=>'المشروع يجب أن يكون موجود بقاعدة البيانات',
 				'supplier_id.required'=>'يجب أختيار مقاول المورد',
 				'supplier_id.exists'=>'المقاول المورد يجب أن يكون موجود بقاعدة البيانات',
-				'type.required'=>'يجب أدخال نوع الخام',
-				'type.exists'=>'نوع الخام يجب أن يكون موجود بقاعدة البيانات',
-				'new_store_type.required'=>'يجب أدخال نوع الخام',
-				'new_store_type.unique'=>'نوع الخام موجود بقاعدة البيانات',
-				'new_store_type_unit.required'=>'يجب أدخال الوحدة',
+				'type.regex'=>'يجب أدخال نوع الخام. نوع الخام يجب أن يتكون من حروف و أرقام ومسافات فقط , فى حالة أضافة نوع جديد يجب وضع شرطة "-" ومن بعدها قيمة الوحدة .',
 				'amount.required'=>'يجب أدخال الكمية',
 				'amount.numeric'=>'الكمية يجب أن تتكون من أرقام فقط',
 				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط',
@@ -176,11 +173,43 @@ class StoreController extends Controller {
 				'amount_paid.required'=>'يجب أدخال المبلغ المدفوع'
 			];
 			$validator=Validator::make($req->all(),$rules,$error_messages);
+			$store=new Store;
+			$typeWithUnit=explode("-",$req->input("type"));
+			if(strpos($req->input("type"),"-")!==false){
+				$checkIfExists = StoreType::where("name",trim($typeWithUnit[0]))->count();
+				if($checkIfExists<1){
+					$store_type = new StoreType;
+					$store_type->name = trim($typeWithUnit[0]);
+					$store_type->unit = trim($typeWithUnit[1]);
+					$store_type->save();
+					$log=new Log;
+					$log->table="store_types";
+					$log->action="create";
+					$log->record_id=$store_type->id;
+					$log->user_id=Auth::user()->id;
+					$log->description="قام بأضافة نوع خام جديد";
+					$log->save();
+					$store->type= trim($typeWithUnit[0]);
+					$store->unit= trim($typeWithUnit[1]);
+				}else{
+					$store->type= trim($typeWithUnit[0]);
+					$store->unit= trim($typeWithUnit[1]);
+				}
+			}else{
+				$checkIfExists = StoreType::where("name",$req->input("type"))->first();
+				if ($checkIfExists) {
+					$store->type = $req->input("type");
+					$store->unit = $checkIfExists->unit;
+				}else {
+					$validator->after(function($validator){
+						 $validator->errors()->add('type', 'نوع الخام غير موجود بقاعدة البيانات , فى حالة أضافة نوع خام جديد , أدخل شرطة "-" و من بعدها قيمة الوحدة.');
+					});
+				}
+			}
 			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
-			$store=new Store;
-			$store->type=$req->input('type');
+
 			$store->value=$req->input('value');
 			$store->amount=$req->input('amount');
 			$store->amount_paid=$req->input('amount_paid');
@@ -188,12 +217,19 @@ class StoreController extends Controller {
 			$store->supplier_id=$req->input('supplier_id');
 			$saved=$store->save();
 			if(!$saved){
-				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه الكمية من الخامو يرجى المحاولة فى وقت لاحق');
+				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه الكمية من الخام و يرجى المحاولة فى وقت لاحق');
 			}
+			$log=new Log;
+			$log->table="stores";
+			$log->action="create";
+			$log->record_id=$store->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة ".$store->amount." ".$store->unit." من ".$store->type." إلى مشروع ".$store->project->name;
+			$log->save();
 			if($req->input('tid')!=null&&$req->input('tid')!=0){
 				return redirect()->route('addconsumption',['id'=>$req->input('tid')])->with('success','تم شراء الخام بنجاح و تم التخزين');
 			}
-			return redirect()->back()->with('success','تم شراء الخام بنجاح و تم التخزين');
+			return redirect()->route("showproject",['id'=>$store->project_id])->with('success','تم شراء الخام بنجاح و تم التخزين');
 		}
 		else
 			abort('404');
@@ -281,6 +317,16 @@ class StoreController extends Controller {
 			abort('404');
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	 public function addPayment(Request $req, $id)
+	 {
+		 
+	 }
 	/**
 	 * Remove the specified resource from storage.
 	 *

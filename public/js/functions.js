@@ -87,3 +87,14 @@ function getSuppliers(type=null) {
     }
   });
 }
+
+//adjustCircles
+function adjustCircles(){
+  //make circle width = height
+  setTimeout(function(){
+    $(".circle-div").each(function() {
+      var divWidth=$(this).width();
+      $(this).css("height",divWidth);
+    });
+  },10);
+}

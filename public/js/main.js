@@ -137,11 +137,12 @@ $(document).ready(function() {
 		print();
 	});
 	//make circle width = height
-
-	$(".circle-div").each(function() {
-		var divWidth=$(this).width();
-		$(this).css("height",divWidth);
-	});
+	setTimeout(function(){
+		$(".circle-div").each(function() {
+			var divWidth=$(this).width();
+			$(this).css("height",divWidth);
+		});
+	},1000);
 	$(window).resize(function(){
 		$(".circle-div").each(function() {
 			var divWidth=$(this).width();
@@ -806,12 +807,42 @@ $(document).ready(function() {
 				if(type_string.length==0){
 					assignError(type_supplier,"من فضل أدخل نوع الخام");
 				}else if(!type_string.match(/^[0-9A-Za-z\u0600-\u06FF\s]+(-[0-9A-Za-z\u0600-\u06FF\s]+)$/)){
-					assignError(type_supplier,"نوع الخام هذا لا يوجد بقاعدة البيانات , من فضلك ضع علامة شرطة - و أدخل بعدها الوحدة لهذ النوع. <br> مثال : أسمنت - كجم");
+					assignError(type_supplier,"فى حالة عدم وجود نوع الخام فى الأختيارات يجب فعل الأتى <br>نوع الخام هذا لا يوجد بقاعدة البيانات , من فضلك ضع علامة شرطة - و أدخل بعدها الوحدة لهذ النوع. <br> مثال : أسمنت - كجم");
 				}
 			}
 		},300);
 	});
-
+	//add_payment_to_store
+	var maxStorePayment;
+	$("a.add_payment_to_store").click(function(e){
+		e.preventDefault();
+		$("body").css('overflow','hidden');
+		var link = $(this).attr('href');
+		$('#float_container').fadeIn(200,function(){
+			$('#float_form_container').slideDown(100);
+			$("#add_payment_to_store").attr('action',link);
+			$("#add_payment_to_store").show();
+		});
+		maxStorePayment = parseFloat($(this).attr("data-allowed-amount"));
+	});
+	$("#add_payment_to_store").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		if(!$("#payment").val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			assignError($("#payment"),"المبلغ المدفوع يجب أن يتكون من أرقام فقط");
+			$("#save_btn").removeClass('disabled');
+			return false;
+		}
+		console.log($("#payment").val().trim());
+		console.log(maxStorePayment);
+		if (parseFloat($("#payment").val().trim()) > maxStorePayment) {
+			assignError($("#payment"),"المبلغ المدفوع يجب أن لا يكون أعلى من المبلغ المتبقى , و هو "+maxStorePayment+" جنيه");
+			$("#save_btn").removeClass('disabled');
+			return false;
+		}
+		this.submit();
+	});
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 

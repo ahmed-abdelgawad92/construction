@@ -78,7 +78,7 @@
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
 							<input type="text" name="amount" id="amount" value="{{old('amount')}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
-							<span class="input-group-addon" id="basic-addon1">@if(old("type")){{$store_types->where("name",old("type"))->first()->unit}}@else لا يوجد@endif</span>
+							<span class="input-group-addon" id="basic-addon1">@if(old("type")){{$store_types->where("name",old("type"))->first()->unit ?? " لا يوجد"}}@else لا يوجد @endif</span>
 						</div>
 						@if($errors->has('amount'))
 							@foreach($errors->get('amount') as $error)
@@ -87,26 +87,44 @@
 						@endif
 					</div>
 				</div>
+				@if (isset($supplier))
 				<div class="form-group row @if($errors->has("supplier_id")) has-error @endif">
-					 <label for="supplier_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد *</label>
-					 <div class="col-sm-8 col-md-8 col-lg-8">
-						 <div class="input-group">
-							 <input type="text" name="supplier_details" id="show_supplier_details" autocomplete="off" class="form-control readonly" readonly  placeholder="أختار المقاول المورد" value="{{old("supplier_details")}}">
-							 <input type="hidden" name="supplier_id" id="supplier_id" value="{{old("supplier_id")}}">
-							 <span class="input-group-addon" id="basic-addon1">أختار</span>
-						 </div>
-						 @if($errors->has("supplier_id"))
-							 @foreach($errors->get("supplier_id") as $error)
-								 <span class="help-block">{{ $error }}</span>
-							 @endforeach
-						 @endif
-					 </div>
+					<label for="supplier_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد *</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<div class="input-group">
+							<input type="text"  autocomplete="off" class="form-control readonly" readonly  placeholder="أختار المقاول المورد" value="{{$supplier->name}} - {{$supplier->city}} - {{str_replace(","," , ",$supplier->phone)}} ({{str_replace(","," , ",$supplier->type)}})">
+							<input type="hidden" name="supplier_id" id="supplier_id" value="{{$supplier->id}}">
+							<span class="input-group-addon" id="basic-addon1">أختار</span>
+						</div>
+						@if($errors->has("supplier_id"))
+							@foreach($errors->get("supplier_id") as $error)
+								<span class="help-block">{{ $error }}</span>
+							@endforeach
+						@endif
+					</div>
 				</div>
+				@else
+				<div class="form-group row @if($errors->has("supplier_id")) has-error @endif">
+					<label for="supplier_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد *</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<div class="input-group">
+							<input type="text" name="supplier_details" id="show_supplier_details" autocomplete="off" class="form-control readonly" readonly  placeholder="أختار المقاول المورد" value="{{old("supplier_details")}}">
+							<input type="hidden" name="supplier_id" id="supplier_id" value="{{old("supplier_id")}}">
+							<span class="input-group-addon" id="basic-addon1">أختار</span>
+						</div>
+						@if($errors->has("supplier_id"))
+							@foreach($errors->get("supplier_id") as $error)
+								<span class="help-block">{{ $error }}</span>
+							@endforeach
+						@endif
+					</div>
+				</div>
+				@endif
 				<div class="form-group row @if($errors->has('value')) has-error @endif">
 					<label for="value" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة الوحدة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
-							<input type="text" name="value" id="value" class="form-control" placeholder="أدخل قيمة الوحدة" value="{{old('value')}}">
+							<input type="text" name="value" id="value" class="form-control" autocomplete="off" placeholder="أدخل قيمة الوحدة" value="{{old('value')}}">
 							<span class="input-group-addon" id="basic-addon1">جنيه</span>
 						</div>
 						@if($errors->has('value'))
@@ -120,7 +138,7 @@
 					<label for="amount_paid" class="control-label col-sm-2 col-md-2 col-lg-2">المبلغ المدفوع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<div class="input-group">
-							<input type="text" name="amount_paid" id="amount_paid" class="form-control" placeholder="أدخل المبلغ المدفوع" value="{{old('amount_paid')}}">
+							<input type="text" name="amount_paid" id="amount_paid" autocomplete="off" class="form-control" placeholder="أدخل المبلغ المدفوع" value="{{old('amount_paid')}}">
 							<span class="input-group-addon" id="basic-addon1">جنيه</span>
 						</div>
 						@if($errors->has('amount_paid'))
@@ -163,6 +181,7 @@
 <div id="float_container">
 	<div id="float_form_container">
 		<span class="close">&times;</span>
+		@if(isset($suppliers))
 		<h3 class="center">أختار المورد</h3>
 		<div id="supplier_container">
 	    <div class="category">
@@ -186,6 +205,7 @@
 	    @endforeach
 	    </div>
 		</div>
+	@endif
 	</div>
 </div>
 @endsection
