@@ -148,6 +148,22 @@
 						@endif
 					</div>
 				</div>
+				@if((isset($project)&&$project->loan!=null)||isset($projects))
+				<div class="form-group row @if($errors->has('payment_type')) has-error @endif">
+					<label for="payment_type" class="control-label col-sm-2 col-md-2 col-lg-2">طريقة الدفع</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<label><input type="radio" name="payment_type" id="payment_type" value="0" @if(!old("paymen_type")||old("paymen_type")==0) checked @endif> صندوق</label>
+						<label><input type="radio" name="payment_type" id="payment_type" value="1" @if(old("paymen_type")==1) checked @endif> قرض</label>
+						@if($errors->has('payment_type'))
+							@foreach($errors->get('payment_type') as $error)
+								<span class="help-block">{{ $error }}</span>
+							@endforeach
+						@endif
+					</div>
+				</div>
+				@else
+				<input type="hidden" name="paymen_type" value="0">
+				@endif
 				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>
 				</div>

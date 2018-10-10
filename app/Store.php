@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Payment;
 
 class Store extends Model {
 
@@ -13,5 +14,11 @@ class Store extends Model {
 	public function supplier()
 	{
 		return $this->belongsTo('App\Supplier');
+	}
+	//store payment
+	public function payments()
+	{
+		$payments = Payment::where("table_name","stores")->where("table_id",$this->id)->where("deleted",0)->get();
+		return $payments;
 	}
 }

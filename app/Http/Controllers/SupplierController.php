@@ -154,6 +154,12 @@ class SupplierController extends Controller {
 					where supplier_id=? and deleted=0
 					group by type
 			",[$id]);
+			$payments = DB::select("
+					select p.payment_amount , p.created_at, s.type, projects.name, p.type as payment_type, s.project_id  from payments as p
+					join stores as s on p.table_name='stores' and s.id=p.table_id and s.supplier_id=?
+					join projects where s.project_id=projects.id
+					order by p.created_at desc limit 3
+			",[$id]);
 			// dd($raws);
 			$array=[
 				'active'=>'sup',
@@ -161,7 +167,8 @@ class SupplierController extends Controller {
 				'stores'=>$stores,
 				'allRaws'=>$allRawsReport,
 				'lastTenRaws'=>$lastTenRawsReport,
-				'raws'=>$raws
+				'raws'=>$raws,
+				'payments'=>$payments
 			];
 			return view('supplier.show',$array);
 		}else

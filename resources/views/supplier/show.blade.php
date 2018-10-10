@@ -9,6 +9,11 @@
 			<h3>المورد {{$supplier->name}}</h3>
 		</div>
 		<div class="panel-body">
+			@if(session('insert_error'))
+			<div class="alert alert-danger">
+				{{session('insert_error')}}
+			</div>
+			@endif
 			@if(session('success'))
 			<div class="alert alert-success">
 				{{session('success')}}
@@ -68,6 +73,7 @@
 								</div>
 							</div>
 						</div>
+						@if($lastTenRaws[0]->value!=$allRaws[0]->value)
 						<div class="jumbotron">
 							<h2 style="border-bottom: 1px solid #000; padding-bottom: 5px;">أجمالى حساب أخر عشر واردات فقط</h2>
 							<br><br>
@@ -92,6 +98,7 @@
 								</div>
 							</div>
 						</div>
+						@endif
 						<table class="table table-bordered">
 							<thead>
 								<th>#</th>
@@ -109,10 +116,10 @@
 									<tr>
 										<th>{{$count++}}</th>
 										<th>{{$raw->type}}</th>
-										<th>{{$raw->amount." ".$raw->unit}}</th>
-										<th>{{$raw->value}} جنيه</th>
-										<th>{{$raw->paid}} جنيه</th>
-										<th>{{$raw->value-$raw->paid}} جنيه</th>
+										<th>{{number_format($raw->amount)." ".$raw->unit}}</th>
+										<th>{{number_format($raw->value)}} جنيه</th>
+										<th>{{number_format($raw->paid)}} جنيه</th>
+										<th>{{number_format($raw->value-$raw->paid)}} جنيه</th>
 									</tr>
 								@endforeach
 							</tbody>
@@ -170,6 +177,29 @@
 			</div>
 			@else
 				<div class="alert alert-warning">لا يوجد خامات واردة من هذا المورد</div>
+			@endif
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading navy-heading">
+			<h3>المبالغ المدفوعة</h3>
+		</div>
+		<div class="panel-body">
+			@if(count($payments)>0)
+			@foreach($payments as $payment)
+				<div class="bordered-right border-navy">
+					<h4 class="pr-3"><span class="label label-default">المبلغ المدفوع</span>  {{number_format($payment->payment_amount)}} جنيه <span class="label label-default">نوع الدفع</span>  @if($payment->payment_type) قرض @else صندوق @endif</h4>
+					<h4 class="pr-3"><span class="label label-default">تاريخ الدفع</span>  {{date("d/m/Y",strtotime($payment->created_at))}} <span class="label label-default">نوع الخام</span>  {{$payment->type}} </h4>
+					<h4 class="pr-3"><span class="label label-default">أسم المشروع</span>  <a href="{{route("showproject",['id'=>$payment->project_id])}}">{{$payment->name}}</a></h4>
+				</div>
+			@endforeach
+			<div class="center">
+				<a href="{{route('SuppliedStores',$supplier->id)}}"class="btn btn-default">
+					جميع المبالغ المدفوعة
+				</a>
+			</div>
+			@else
+				<div class="alert alert-warning">لا يوجد مبالغ مدفوعة إلى هذا المورد حتى الان</div>
 			@endif
 		</div>
 	</div>

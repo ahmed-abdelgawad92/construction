@@ -3,15 +3,15 @@
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 use App\Store;
 use App\Project;
 use App\Supplier;
 use App\StoreType;
 use App\Log;
+use App\Payment;
 
 use Auth;
-use DB;
 use Validator;
 
 class StoreController extends Controller {
@@ -157,7 +157,8 @@ class StoreController extends Controller {
 				'type'=>'regex:/^[\pL\pN]+[\pL\pN\s]+(-[\pL\pN\s]+)?$/u',
 				'amount'=>'required|numeric',
 				'value'=>'required|numeric',
-				'amount_paid'=>'required|numeric'
+				'amount_paid'=>'required|numeric',
+				'payment_type'=>'nullable|in:0,1'
 			];
 			$error_messages=[
 				'project_id.required'=>'يجب أختيار مشروع',
@@ -170,7 +171,8 @@ class StoreController extends Controller {
 				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط',
 				'value.required'=>'يجب أدخال القيمة',
 				'amount_paid.numeric'=>'المبلغ المدفوع يجب أن يتكون من أرقام فقط',
-				'amount_paid.required'=>'يجب أدخال المبلغ المدفوع'
+				'amount_paid.required'=>'يجب أدخال المبلغ المدفوع',
+				'payment_type.in'=>'من فضلك أختار أذا كان الدفع من القرض أو الصندوق'
 			];
 			$validator=Validator::make($req->all(),$rules,$error_messages);
 			$store=new Store;
@@ -209,23 +211,26 @@ class StoreController extends Controller {
 			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
-
-			$store->value=$req->input('value');
-			$store->amount=$req->input('amount');
-			$store->amount_paid=$req->input('amount_paid');
-			$store->project_id=$req->input('project_id');
-			$store->supplier_id=$req->input('supplier_id');
-			$saved=$store->save();
-			if(!$saved){
+			try{
+				DB::beginTransaction();
+				$store->value=$req->input('value');
+				$store->amount=$req->input('amount');
+				$store->amount_paid=$req->input('amount_paid');
+				$store->project_id=$req->input('project_id');
+				$store->supplier_id=$req->input('supplier_id');
+				$saved=$store->save();
+				$log=new Log;
+				$log->table="stores";
+				$log->action="create";
+				$log->record_id=$store->id;
+				$log->user_id=Auth::user()->id;
+				$log->description="قام بأضافة ".$store->amount." ".$store->unit." من ".$store->type." إلى مشروع ".$store->project->name;
+				$log->save();
+				DB::commit();
+			}catch(Exception $e){
+				DB::rollBack();
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه الكمية من الخام و يرجى المحاولة فى وقت لاحق');
 			}
-			$log=new Log;
-			$log->table="stores";
-			$log->action="create";
-			$log->record_id=$store->id;
-			$log->user_id=Auth::user()->id;
-			$log->description="قام بأضافة ".$store->amount." ".$store->unit." من ".$store->type." إلى مشروع ".$store->project->name;
-			$log->save();
 			if($req->input('tid')!=null&&$req->input('tid')!=0){
 				return redirect()->route('addconsumption',['id'=>$req->input('tid')])->with('success','تم شراء الخام بنجاح و تم التخزين');
 			}
@@ -277,41 +282,46 @@ class StoreController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$rules=[
-				'project_id'=>'required|exists:projects,id',
-				'supplier_id'=>'required|exists:suppliers,id',
-				'type'=>'required|exists:store_types,name',
 				'amount'=>'required|numeric',
-				'value'=>'numeric',
-				'amount_paid'=>'numeric'
+				'value'=>'numeric'
 			];
 			$error_messages=[
-				'project_id.required'=>'يجب أختيار مشروع',
-				'project_id.exists'=>'المشروع يجب أن يكون موجود بقاعدة البيانات',
-				'supplier_id.required'=>'يجب أختيار مقاول',
-				'supplier_id.exists'=>'المقاول يجب أن يكون موجود بقاعدة البيانات',
-				'type.required'=>'يجب أدخال نوع الخام',
-				'type.exists'=>'نوع الخام يجب أن يكون موجود بقاعدة البيانات',
 				'amount.required'=>'يجب أدخال الكمية',
 				'amount.numeric'=>'الكمية يجب أن تتكون من أرقام فقط',
-				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط',
-				'amount_paid.numeric'=>'المبلغ المدفوع يجب أن يتكون من أرقام فقط'
+				'value.numeric'=>'القيمة يجب أن تتكون من أرقام فقط'
 			];
 			$validator=Validator::make($req->all(),$rules,$error_messages);
 			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
 			$store=Store::findOrFail($id);
-			$store->type=$req->input('type');
-			$store->value=$req->input('value');
-			$store->amount=$req->input('amount');
-			$store->amount_paid=$req->input('amount_paid');
-			$store->project_id=$req->input('project_id');
-			$store->supplier_id=$req->input('supplier_id');
-			$saved=$store->save();
-			if(!$saved){
-				return redirect()->back()->with('update_error','حدث عطل خلال أضافة هذه الكمية من الخامو يرجى المحاولة فى وقت لاحق');
+			$description ="";
+			$check=false;
+			if($store->value!=$req->input("value")){
+				$check=true;
+				$description = "قام بتغيير قيمة الوحدة من '".$store->value."' جنيه إلى '".$req->input("value")."' جنيه . ";
+				$store->value=$req->input('value');
 			}
-			return redirect()->back()->with('success','تم شراء الخام بنجاح و تم التخزين');
+			if($store->amount!=$req->input("amount")){
+				$check=true;
+				$description .= "قام بتغيير الكمية من '".$store->amount."' جنيه إلى '".$req->input("amount")."' جنيه . ";
+				$store->amount=$req->input('amount');
+			}
+			if($check){
+				$saved=$store->save();
+				if(!$saved){
+					return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذه الكمية من الخام و يرجى المحاولة فى وقت لاحق');
+				}
+				$log=new Log;
+				$log->table="stores";
+				$log->action="update";
+				$log->record_id=$id;
+				$log->user_id=Auth::user()->id;
+				$log->description=$description;
+				$log->save();
+				return redirect()->back()->with('success','تم تعديل الخام المورد بنجاح');
+			}
+			return redirect()->back()->with('info','لا يوجد تعديل حتى يتم حفظه!');
 		}
 		else
 			abort('404');
@@ -325,7 +335,52 @@ class StoreController extends Controller {
 	 */
 	 public function addPayment(Request $req, $id)
 	 {
-		 
+		 //rules
+		 $rules=[
+			 'payment'=>"required|numeric",
+			 'payment_type'=>"required|in:0,1"
+		 ];
+		 //error_messages
+		 $error_messages=[
+			 'payment.required'=>'يجب أدخال المبلغ المراد دفعه',
+			 'payment.numeric'=>'المبلغ يجب أن يتكون من أرقام فقط',
+			 'payment_type.required'=>'من فضلك أختار نوع الدفع',
+			 'payment_type.in'=>'من فضلك أختار أذا كان الدفع من القرض أو الصندوق'
+		 ];
+		 $validator = Validator::make($req->all(),$rules,$error_messages);
+		  if ($validator->fails()) {
+		  	return redirect()->back()->withErrors($validator)->withInput();
+		 }
+		 // store the payments
+		 $store = Store::findOrFail($id);
+		 $paid = $store->amount_paid;
+		 $price = $store->amount * $store->value;
+		 if($paid<$price){
+			 try{
+				 DB::beginTransaction();
+				 $store->amount_paid += $req->input("payment");
+				 $saved=$store->save();
+				 $log=new Log;
+				 $log->table="stores";
+				 $log->action="update";
+				 $log->record_id=$id;
+				 $log->user_id=Auth::user()->id;
+				 $log->description="قام بدفع مبلغ ".$req->input("payment")." جنيه ";
+				 $log->save();
+				 // ADD Payment to Payment Table
+				 $payment = new Payment;
+				 $payment->type = $req->input("payment_type");
+				 $payment->payment_amount = $req->input("payment");
+				 $payment->table_name = "stores";
+				 $payment->table_id = $id;
+				 $payment->save();
+				 DB::commit();
+			 }catch(Exception $e){
+				 DB::rollBack();
+				 return redirect()->back()->with("insert_error","حدث عطل خلال دفع هذا المبلغ , من فضلك حاول المحاولة مرة أخرى.");
+			 }
+			 return redirect()->back()->with("success","تم دفع المبلغ بنجاح !");
+		 }
 	 }
 	/**
 	 * Remove the specified resource from storage.
@@ -337,9 +392,19 @@ class StoreController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$store=Store::findOrFail($id);
-			$deleted=$store->delete();
-			if(!$deleted){
-				return redirect()->back()->with('delete_error','حدث عطل خلال حذف كمية الخام , يرجى المحاولة فى وقت لاحق');
+			$store->deleted=1;
+			$payments = $store->payments();
+			try{
+				DB::beginTransaction();
+				$store->save();
+				foreach ($payments as $payment) {
+					$payment->deleted=1;
+					$payment->save();
+				}
+				DB::commit();
+			}catch(Exception $e){
+				DB::rollBack();
+				return redirect()->back()->with('insert_error','حدث عطل خلال حذف كمية الخام , يرجى المحاولة فى وقت لاحق');
 			}
 			return redirect()->back()->with('success','تم حذف كمية الخام بنجاح');
 		}

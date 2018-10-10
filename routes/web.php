@@ -527,6 +527,15 @@ Route::group(['middleware' => 'auth'], function() {
 			'uses'=>'StoreController@store',
 			'as'=>'addstore'
 		]);
+    //update store
+		Route::get('edit/{id}',[
+			'uses'=>'StoreController@edit',
+			'as'=>'updatestore'
+		]);
+		Route::put('edit/{id}',[
+			'uses'=>'StoreController@update',
+			'as'=>'updatestore'
+		]);
     //delete store
 		Route::get('delete/{id}',[
 			'uses'=>'StoreController@destroy',

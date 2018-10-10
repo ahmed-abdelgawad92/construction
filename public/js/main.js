@@ -822,6 +822,7 @@ $(document).ready(function() {
 			$('#float_form_container').slideDown(100);
 			$("#add_payment_to_store").attr('action',link);
 			$("#add_payment_to_store").show();
+			$("#payment").focus();
 		});
 		maxStorePayment = parseFloat($(this).attr("data-allowed-amount"));
 	});
