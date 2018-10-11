@@ -29,19 +29,19 @@
 				<div class="row">
 					<div class="col-sm-6 col-md-4 col-lg-4 col-xs-6" style="margin-bottom: 10px;">
 						<div class="circle-div">
-							{{$total_production}}  {{$term->unit}}
+							{{Str::number_format($total_production)}}  {{$term->unit}}
 						</div>
 						<p style="text-align: center; margin-top: 8px;">أجمالى الأنتاج</p>
 					</div>
 					<div class="col-sm-6 col-md-4 col-lg-4 col-xs-6" style="margin-bottom: 10px;">
 						<div class="circle-div">
-							{{$remain_amount}} {{$term->unit}}
+							{{Str::number_format($remain_amount)}} {{$term->unit}}
 						</div>
 						<p style="text-align: center; margin-top: 8px;">الكمية الباقية</p>
 					</div>
 					<div class="col-sm-6 col-md-4 col-lg-4 col-xs-6" style="margin-bottom: 10px;">
 						<div class="circle-div">
-							{{round($avg_rate,2)}}
+							{{Str::number_format($avg_rate)}}
 						</div>
 						<p style="text-align: center; margin-top: 8px;">متوسط تقييم الأنتاج</p>
 					</div>
@@ -49,7 +49,7 @@
 				<h3 style="text-align: center;">النسبة المئوية لما تم أنتاجه من البند</h3>
 				<div class="progress" style="margin-top: 15px">
 					<div class="progress-bar" role="progressbar" aria-valuenow="{{$productionPercent}}" aria-valuemin="{{$productionPercent}}" aria-valuemax="100" style="width: {{$productionPercent}}%; min-width: 2em;">
-					    {{$productionPercent}}%
+					    {{round($productionPercent,2)+0}}%
 					</div>
 				</div>
 				@if($productionPercent>=80)
@@ -78,7 +78,7 @@
 						@foreach($productions as $production)
 						<tr>
 						<td>{{$count++}}</td>
-						<td>{{$production->amount}}</td>
+						<td>{{Str::number_format($production->amount)}}</td>
 						<td style="color: #337ab7;">
 							<?php $stars=10-$production->rate; ?>
 							@while($production->rate!=0)
@@ -90,7 +90,7 @@
 							<?php $stars--; ?>
 							@endwhile
 						</td>
-						<td>{{$production->created_at->format('Y-m-d')}}</td>
+						<td>{{$production->created_at->format('d/m/Y')}}</td>
 						<td style="width: 100px !important">
 							@if(empty($production->note))
 							لا يوجد ملحوظة

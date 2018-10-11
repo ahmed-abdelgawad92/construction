@@ -30,18 +30,16 @@ class StoreController extends Controller {
 					->groupBy('type')
 					->get();
 			$stores=Store::where('project_id',$id)
-					->selectRaw('type, sum(amount) as amount ,sum(amount_paid) as amount_paid')
+					->selectRaw('type, sum(amount) as amount ,sum(amount_paid) as amount_paid, sum(amount*value) as total_price, stores.unit as unit')
 					->groupBy('type')
 					->get();
 			$projects=Project::where('done','=',0)->orderBy('name')->get();
-			$store_types=StoreType::all();
 			$array=[
 				'active'=>'store',
 				'stores'=>$stores,
 				'project'=>$project,
 				'consumptions'=>$consumptions,
-				'projects'=>$projects,
-				'store_types'=>$store_types
+				'projects'=>$projects
 			];
 			return view('store.all',$array);
 		}
@@ -226,6 +224,13 @@ class StoreController extends Controller {
 				$log->user_id=Auth::user()->id;
 				$log->description="قام بأضافة ".$store->amount." ".$store->unit." من ".$store->type." إلى مشروع ".$store->project->name;
 				$log->save();
+				// ADD Payment to Payment Table
+				$payment = new Payment;
+				$payment->type = $req->input("payment_type");
+				$payment->payment_amount = $req->input("amount_paid");
+				$payment->table_name = "stores";
+				$payment->table_id = $store->id;
+				$payment->save();
 				DB::commit();
 			}catch(Exception $e){
 				DB::rollBack();
@@ -246,13 +251,34 @@ class StoreController extends Controller {
 	 * @param  int  $type
 	 * @return Response
 	 */
-	public function show($type)
+	public function show($id, $type)
 	{
-		if(Auth::user()->type=='admin'){
-			$store=Store::where('type',$type)->firstOrFail();
-		}
-		else
-			abort('404');
+		$project = Project::where("id",$id)->where("deleted",0)->firstOrFail();
+		$stores = $project->stores()->where("type",$type)->paginate(30);
+		$array=[
+			'project'=>$project,
+			'active'=>'store',
+			'stores'=>$stores,
+			'type'=>$type
+		];
+		return view("project.stores",$array);
+	}
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $type
+	 * @return Response
+	 */
+	public function getAllPayment($id)
+	{
+		$store = Store::where("id",$id)->where("deleted",0)->firstOrFail();
+		$payments = $store->payments();
+		$array=[
+			'store'=>$store,
+			'active'=>'store',
+			'payments'=>$payments
+		];
+		return view("store.all_payments",$array);
 	}
 
 	/**

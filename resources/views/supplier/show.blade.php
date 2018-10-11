@@ -55,19 +55,19 @@
 							<div class="row">
 								<div class="col-sm-12 col-md-10 col-lg-6 col-xl-4 offset-md-1 offset-lg-0" style="margin-bottom: 10px;">
 									<div class="circle-div">
-										{{ number_format(round($allRaws[0]->value,2)) }} جنيه
+										{{ Str::number_format(round($allRaws[0]->value,2)) }} جنيه
 									</div>
 									<p style="text-align: center; margin-top: 8px;">سعر جملة الواردات</p>
 								</div>
 								<div class="col-sm-12 col-md-10 col-lg-6 col-xl-4 offset-md-1 offset-lg-0" style="margin-bottom: 10px;">
 									<div class="circle-div">
-										{{number_format(round($allRaws[0]->paid,2))}} جنيه
+										{{Str::number_format(round($allRaws[0]->paid,2))}} جنيه
 									</div>
 									<p style="text-align: center; margin-top: 8px;">أجمالى المدفوع</p>
 								</div>
 								<div class="col-sm-12 col-md-10 col-lg-6 col-xl-4 offset-md-1 offset-lg-0" style="margin-bottom: 10px;">
 									<div class="circle-div">
-										{{ number_format(round($allRaws[0]->value - $allRaws[0]->paid,2)) }} جنيه
+										{{ Str::number_format(round($allRaws[0]->value - $allRaws[0]->paid,2)) }} جنيه
 									</div>
 									<p style="text-align: center; margin-top: 8px;">أجمالى المبلغ الباقى للمورد</p>
 								</div>
@@ -80,19 +80,19 @@
 							<div class="row">
 								<div class="col-sm-12 col-md-10 col-lg-6 col-xl-4 offset-md-1 offset-lg-0" style="margin-bottom: 10px;">
 									<div class="circle-div">
-										{{ number_format(round($lastTenRaws[0]->value,2)) }} جنيه
+										{{ Str::number_format(round($lastTenRaws[0]->value,2)) }} جنيه
 									</div>
 									<p style="text-align: center; margin-top: 8px;">سعر جملة الواردات</p>
 								</div>
 								<div class="col-sm-12 col-md-10 col-lg-6 col-xl-4 offset-md-1 offset-lg-0" style="margin-bottom: 10px;">
 									<div class="circle-div">
-										{{number_format(round($lastTenRaws[0]->paid,2))}} جنيه
+										{{Str::number_format(round($lastTenRaws[0]->paid,2))}} جنيه
 									</div>
 									<p style="text-align: center; margin-top: 8px;">أجمالى المدفوع</p>
 								</div>
 								<div class="col-sm-12 col-md-10 col-lg-6 col-xl-4 offset-md-1 offset-lg-0" style="margin-bottom: 10px;">
 									<div class="circle-div">
-										{{ number_format(round($lastTenRaws[0]->value - $lastTenRaws[0]->paid,2)) }} جنيه
+										{{ Str::number_format(round($lastTenRaws[0]->value - $lastTenRaws[0]->paid,2)) }} جنيه
 									</div>
 									<p style="text-align: center; margin-top: 8px;">أجمالى المبلغ الباقى للمورد</p>
 								</div>
@@ -116,10 +116,10 @@
 									<tr>
 										<th>{{$count++}}</th>
 										<th>{{$raw->type}}</th>
-										<th>{{number_format($raw->amount)." ".$raw->unit}}</th>
-										<th>{{number_format($raw->value)}} جنيه</th>
-										<th>{{number_format($raw->paid)}} جنيه</th>
-										<th>{{number_format($raw->value-$raw->paid)}} جنيه</th>
+										<th>{{Str::number_format($raw->amount)." ".$raw->unit}}</th>
+										<th>{{Str::number_format($raw->value)}} جنيه</th>
+										<th>{{Str::number_format($raw->paid)}} جنيه</th>
+										<th>{{Str::number_format($raw->value-$raw->paid)}} جنيه</th>
 									</tr>
 								@endforeach
 							</tbody>
@@ -164,7 +164,7 @@
 					<a href="{{ route('showproject',$store->project->id) }}" class="whole" title="أفتح المشروع">
 					<h4>
 						أسم المشروع : {{$store->project->name}}<br>
-						الكمية	: {{$store->amount}} {{$store->unit}}<br>
+						الكمية	: {{Str::number_format($store->amount)}} {{$store->unit}}<br>
 					 	نوع الخام	: {{$store->type}}
 					</h4>
 					</a>
@@ -188,13 +188,13 @@
 			@if(count($payments)>0)
 			@foreach($payments as $payment)
 				<div class="bordered-right border-navy">
-					<h4 class="pr-3"><span class="label label-default">المبلغ المدفوع</span>  {{number_format($payment->payment_amount)}} جنيه <span class="label label-default">نوع الدفع</span>  @if($payment->payment_type) قرض @else صندوق @endif</h4>
+					<h4 class="pr-3"><span class="label label-default">المبلغ المدفوع</span>  {{Str::number_format($payment->payment_amount)}} جنيه <span class="label label-default">نوع الدفع</span>  @if($payment->payment_type) قرض @else صندوق @endif</h4>
 					<h4 class="pr-3"><span class="label label-default">تاريخ الدفع</span>  {{date("d/m/Y",strtotime($payment->created_at))}} <span class="label label-default">نوع الخام</span>  {{$payment->type}} </h4>
 					<h4 class="pr-3"><span class="label label-default">أسم المشروع</span>  <a href="{{route("showproject",['id'=>$payment->project_id])}}">{{$payment->name}}</a></h4>
 				</div>
 			@endforeach
 			<div class="center">
-				<a href="{{route('SuppliedStores',$supplier->id)}}"class="btn btn-default">
+				<a href="{{route('allsupplierPayments',$supplier->id)}}"class="btn btn-default">
 					جميع المبالغ المدفوعة
 				</a>
 			</div>

@@ -512,6 +512,11 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'uses'=>'SupplierController@getAllStores',
 	    	'as'=>'SuppliedStores'
 	    ])->where('id','[0-9]+');
+	    //ALL Paymets to a Supplier
+	    Route::get('{id}/all/payments',[
+	    	'uses'=>'SupplierController@getAllPayment',
+	    	'as'=>'allsupplierPayments'
+	    ])->where('id','[0-9]+');
 	});
 
 
@@ -559,7 +564,7 @@ Route::group(['middleware' => 'auth'], function() {
 		]);
 
 		//show store
-		Route::get('show/{type}',[
+		Route::get('{id}/show/{type}',[
 			'uses'=>'StoreController@show',
 			'as'=>'showstore'
 		]);
@@ -573,6 +578,11 @@ Route::group(['middleware' => 'auth'], function() {
       'uses'=>'StoreController@addPayment',
       'as'=>'addPaymentToStore'
     ]);
+    //ALL Paymets of a store
+    Route::get('{id}/all/payments',[
+      'uses'=>'StoreController@getAllPayment',
+      'as'=>'allstorePayments'
+    ])->where('id','[0-9]+');
 		//Add Store Type
 	    Route::get('type',[
 	    	'uses'=>'StoreTypeController@create',

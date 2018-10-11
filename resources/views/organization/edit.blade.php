@@ -73,7 +73,7 @@
 			</div>
 		</div>
 		@php
-		$phones=explode(';',$org->phone);
+		$phones=explode(',',$org->phone);
 		@endphp
 		@for($i=0;$i<count($phones);$i++)
 		<div class="form-group row @if($errors->has('phone.'.$i)) has-error @endif" @if($i==0) id="phone_template" @else id="del_phone{{$i}}" @endif>

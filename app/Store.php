@@ -18,7 +18,7 @@ class Store extends Model {
 	//store payment
 	public function payments()
 	{
-		$payments = Payment::where("table_name","stores")->where("table_id",$this->id)->where("deleted",0)->get();
+		$payments = Payment::where("table_name","stores")->where("table_id",$this->id)->where("deleted",0)->paginate(30);
 		return $payments;
 	}
 }

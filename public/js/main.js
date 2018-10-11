@@ -142,7 +142,7 @@ $(document).ready(function() {
 			var divWidth=$(this).width();
 			$(this).css("height",divWidth);
 		});
-	},1000);
+	},1);
 	$(window).resize(function(){
 		$(".circle-div").each(function() {
 			var divWidth=$(this).width();

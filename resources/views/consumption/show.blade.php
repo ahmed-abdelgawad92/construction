@@ -33,7 +33,7 @@
 					</div>
 					<div class="col-sm-12 col-md-4 col-lg-4 col-xs-12" style="margin-bottom: 10px;">
 						<div class="circle-div">
-							{{ $total_amount }}
+							{{ Str::number_format($total_amount) }}
 						</div>
 						<p style="text-align: center; margin-top: 8px;">أجمالى الأستهلاك</p>
 					</div>
@@ -69,13 +69,13 @@
 							<th><a href="{{ route('showterm',$consumption->term_id) }}">{{$consumption->term->code}}</a></th>
 							@endif
 							<th>{{$consumption->type}}</th>
-							<th>{{$consumption->amount}}</th>
+							<th>{{Str::number_format($consumption->amount)}}</th>
 							@foreach($store_types as $type)
 							@if($type->name==$consumption->type)
 							<th>{{$type->unit}}</th>
 							@endif
 							@endforeach
-							<th>{{$consumption->created_at->format('Y-m-d')}}</th>
+							<th>{{$consumption->created_at->format('d/m/Y')}}</th>
 							@if(Route::current()->getName()=='showtermconsumedraw')
 							<th><a href="{{ route('updateconsumption',$consumption->id) }}" class="btn btn-default btn-block">تعديل</a></th>
 							<th>
@@ -94,7 +94,7 @@
 												<button class="btn btn-danger">نعم</button>
 											</div>
 										</div>
-									</div>					
+									</div>
 								</div>
 								<input type="hidden" name="_token" value="{{csrf_token()}}">
 								</form>
@@ -111,7 +111,7 @@
 			@else
 			<div class="alert alert-warning">
 				@if(Route::current()->getName()=='showtermconsumedraw')
-				لا يوجد أستهلاك لل{{$type}} فى هذا البند	
+				لا يوجد أستهلاك لل{{$type}} فى هذا البند
 				@elseif(Route::current()->getName()=='showprojectconsumedraw')
 				لا يوجد أستهلاك لل{{$type}} فى هذا المشروع
 				@endif

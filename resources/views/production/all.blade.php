@@ -54,9 +54,9 @@
 								{{$production->code}}
 							</a>
 						</td>
-						<td>{{$production->amount}}</td>
-						<td>{{ $production->total_amount-$production->amount }}</td>
-						<td>{{ $production->total_amount }}</td>
+						<td>{{Str::number_format($production->amount)}}</td>
+						<td>{{ Str::number_format($production->total_amount-$production->amount) }}</td>
+						<td>{{ Str::number_format($production->total_amount) }}</td>
 						<td>{{($production->amount/$production->total_amount) * 100}}%</td>
 						<td style="color: #337ab7;">
 							@for($i=$production->rate;$i>0;$i--)

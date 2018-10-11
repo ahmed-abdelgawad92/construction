@@ -10,6 +10,7 @@ use App\Term;
 use App\Project;
 use App\Store;
 use App\StoreType;
+use App\Log;
 
 use Auth;
 use Validator;
@@ -359,7 +360,7 @@ class ConsumptionController extends Controller {
 				$store_amount-=$consumed_amount;
 				$type=StoreType::where('name',$req->input('type'))->first();
 				if($store_amount<$req->input('amount'))
-					return redirect()->back()->with('amount_error','لا يوجد كمية كافية بالمخازن من ال'.$req->input("type").' ,يوجد بالمخازن '.($store_amount> = 0)?$store_amount: "0" .' '.$type->unit.' , من فضلك قم بتوريد خامات الى المخازن');
+					return redirect()->back()->with('amount_error','لا يوجد كمية كافية بالمخازن من ال'.$req->input("type").' ,يوجد بالمخازن '.($store_amount>= 0)?$store_amount: "0" .' '.$type->unit.' , من فضلك قم بتوريد خامات الى المخازن');
 			}
 			//save in db
 			$consumption->type=$req->input('type');

@@ -96,7 +96,7 @@ class OrganizationController extends Controller {
 		$org->address=$req->input('address');
 		$org->center=$req->input('center');
 		$org->city=$req->input('city');
-		$org->phone=implode(';',$req->input('phone'));
+		$org->phone=implode(',',$req->input('phone'));
 		$org->type=$req->input('type');
 
 		$saved=$org->save();
@@ -200,9 +200,9 @@ class OrganizationController extends Controller {
 			$org->city=$req->input('city');
 			$check=false;
 		}
-		if ($org->phone!=implode(";",$req->input('phone'))) {
-			$description.="تغيير ارقام التليفون من ".$org->phone." إلى ".implode(";",$req->input('phone'))." . ";
-			$org->phone=implode(";",$req->input('phone'));
+		if ($org->phone!=implode(",",$req->input('phone'))) {
+			$description.="تغيير ارقام التليفون من '".$org->phone."' إلى '".implode(",",$req->input('phone'))."' . ";
+			$org->phone=implode(",",$req->input('phone'));
 			$check=false;
 		}
 		if ($org->type!=$req->input('type')) {

@@ -31,8 +31,8 @@
 						<td><a href="{{route('showterm',$term->id)}}">{{ $term->code }}</a></td>
 						<td>{{ $term->statement }}</td>
 						<td>{{ $term->unit }}</td>
-						<td>{{ $term->amount }}</td>
-						<td>{{ $term->contractor_unit_price }}</td>
+						<td>{{ Str::number_format($term->amount) }}</td>
+						<td>{{ Str::number_format($term->contractor_unit_price) }}</td>
 						<td>
 							<button type="button" data-toggle="modal" data-target="#con{{$term->id}}" class="btn btn-primary btn-block">
 							أفتح العقد

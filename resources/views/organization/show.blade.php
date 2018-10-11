@@ -19,7 +19,7 @@
 			<p>المركز : {{$org->center}}</p>
 			<p>المدينة : {{$org->city}}</p>
 			@php
-				$phones = explode(";",$org->phone);
+				$phones = explode(",",$org->phone);
 			@endphp
 			@foreach ($phones as $phone)
 			<p>التليفون : {{$phone}}</p>

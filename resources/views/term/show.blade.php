@@ -46,15 +46,15 @@
 			</div>
 			<div class="row mb-1">
 				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الكمية </h4></div>
-				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->amount}}</h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{Str::number_format($term->amount)}}</h4></div>
 			</div>
 			<div class="row mb-1">
 				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الفئة </h4></div>
-				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->value}}</h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{Str::number_format($term->value)}}</h4></div>
 			</div>
 			<div class="row mb-3">
 				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الجملة</h4></div>
-				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->amount*$term->value}}</div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{Str::number_format($term->amount*$term->value)}}</div>
 			</div>
 			<a href="{{route('addcontract',$term->id)}}" class="float btn btn-dark">عقد البند</a>
 			<a href="{{route('addproduction',$term->id)}}" class="float btn btn-primary">أضافة أنتاج</a>

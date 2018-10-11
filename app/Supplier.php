@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Payment;
 
 class Supplier extends Model {
 
@@ -9,5 +10,19 @@ class Supplier extends Model {
 	{
 		return $this->hasMany('App\Store');
 	}
-
+	//get all payments of a supplier
+	public function payments()
+	{
+		$payments = Payment::where("table_name","stores")->join("stores",function($join){
+				$join->on("stores.id","=","payments.table_id")->whereIn("table_id",$this->store_ids());
+			})
+			->select("stores.type as raw_type","stores.amount as amount","stores.unit as unit","payments.payment_amount as payment_amount","payments.created_at as created_at","payments.table_id as table_id","stores.created_at as store_created_at","payments.type as type")
+			->orderBy("created_at","desc")->paginate(30);
+		return $payments;
+	}
+	// get all stores ids
+	public function store_ids()
+	{
+		return $this->stores()->where("stores.deleted",0)->pluck("stores.id")->toArray();
+	}
 }

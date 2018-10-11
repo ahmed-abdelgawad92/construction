@@ -184,13 +184,35 @@ class SupplierController extends Controller {
 	 public function getAllStores($id)
 	 {
 		 $supplier = Supplier::findOrFail($id);
-		 $stores = $supplier->stores()->where("deleted",0)->orderBy("created_at","desc")->paginate(30);
+		 $stores = $supplier->stores()->where("stores.deleted",0)->orderBy("stores.created_at","desc")->paginate(30);
 		 $array=[
 			 "active"=>"sup",
 			 "supplier"=>$supplier,
 			 "stores"=>$stores
 		 ];
 		 return view("supplier.stores",$array);
+	 }
+	/**
+	 * Show all Payments to a supplier.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	 public function getAllPayment($id)
+	 {
+		 $supplier = Supplier::findOrFail($id);
+		 $payments= $supplier->payments();
+		 $allRaws= DB::select("
+				 select count(*) as count , sum(amount*value) as value , sum(amount_paid) as paid
+				 from stores where supplier_id=? and deleted=0
+		 ",[$id]);
+		 $array=[
+			 "active"=>"sup",
+			 "supplier"=>$supplier,
+			 "allRaws"=>array_pop($allRaws),
+			 "payments"=>$payments
+		 ];
+		 return view("supplier.all_payments",$array);
 	 }
 	/**
 	 * Show the form for editing the specified resource.

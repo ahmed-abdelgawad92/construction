@@ -35,7 +35,7 @@
 			@endif
 			<ul class="nav nav-tabs">
 				<li class="active" id="main_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#main" href="#">الرئيسية</a></li>
-				<li id="production_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#production" href="#">تقرير الانتاج</a></li>
+				<li id="production_nav_item" role="presentation" onclick="adjustCircles()"><a class="navigate_to_div" data-nav-path="#production" href="#">تقرير الانتاج</a></li>
 				<li id="supplier_nav_item" role="presentation"><a class="navigate_to_div" data-nav-path="#supplier" href="#">الموردين</a></li>
 				<li class="dropdown" id="raw_nav_item" role="presentation">
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">مخازن <span class="caret"></span></a>
@@ -139,7 +139,7 @@
 						</tr>
 						<tr>
 							<th>السعر الكلى التقريبى للمشروع</th>
-							<td>{{number_format($project->approximate_price)}} جنيه</td>
+							<td>{{Str::number_format($project->approximate_price)}} جنيه</td>
 						</tr>
 						@if ($org->type==1)
 						<tr>
@@ -150,13 +150,13 @@
 						@if (!empty($project->cash_box))
 						<tr>
 							<th>الصندوق</th>
-							<td>{{number_format($project->cash_box)}} جنيه</td>
+							<td>{{Str::number_format($project->cash_box)}} جنيه</td>
 						</tr>
 						@endif
 						@if (!empty($project->loan))
 						<tr>
 							<th>قيمة القرض</th>
-							<td>جنيه {{number_format($project->loan)}}</td>
+							<td>جنيه {{Str::number_format($project->loan)}}</td>
 						</tr>
 						<tr>
 							<th>نسبة الفائدة</th>
@@ -205,9 +205,9 @@
 										<td>{{++$count}}</td>
 										<td><a href="#">{{$stock->store_type}}</a></td>
 										<td>{{$stock->unit}}</td>
-										<td>{{$stock->store_amount??0}}</td>
-										<td>{{$stock->consumed_amount??0}}</td>
-										<td>{{($stock->store_amount-$stock->consumed_amount > 0)? $stock->store_amount-$stock->consumed_amount: 0}}</td>
+										<td>{{Str::number_format($stock->store_amount)}}</td>
+										<td>{{Str::number_format($stock->consumed_amount)}}</td>
+										<td>{{Str::number_format($stock->store_amount-$stock->consumed_amount)}}</td>
 									</tr>
 									@endforeach
 								</tbody>
@@ -304,16 +304,10 @@
 									<tr>
 										<td>{{++$count}}</td>
 										<td><a href="{{route('showterm',['id'=>$production->term_id])}}">{{$production->code}}</a></td>
-										<td>{{$production->amount??0}} {{$production->unit}}</td>
-										<td>
-											@if (($production->term_amount - $production->amount)>0)
-											{{($production->term_amount - $production->amount)}}
-											@else
-											0
-											@endif
-											{{$production->unit}}</td>
-										<td>{{$production->term_amount}} {{$production->unit}}</td>
-										<td>{{($production->amount/$production->term_amount)*100}} %</td>
+										<td>{{Str::number_format($production->amount)}} {{$production->unit}}</td>
+										<td>{{Str::number_format($production->term_amount - $production->amount)}} {{$production->unit}}</td>
+										<td>{{Str::number_format($production->term_amount)}} {{$production->unit}}</td>
+										<td>{{round(($production->amount/$production->term_amount)*100,2)}} %</td>
 										<td>{{round($production->rate,2)}}</td>
 									</tr>
 									@endforeach
@@ -349,13 +343,13 @@
 									@foreach ($suppliers as $supplier)
 									<tr>
 										<td>{{++$count}}</td>
-										<td><a href="#">{{$supplier->name}}</a></td>
+										<td><a href="{{route("showsupplier",['id'=>$supplier->sup_id])}}">{{$supplier->name}}</a></td>
 										<td>{{$supplier->type}}</td>
-										<td>{{$supplier->amount}}</td>
-										<td>{{$supplier->unit_price}}</td>
-										<td>{{$supplier->total_price}}</td>
-										<td>{{$supplier->paid}}</td>
-										<td>{{$supplier->total_price-$supplier->paid}}</td>
+										<td>{{Str::number_format($supplier->amount)}}</td>
+										<td>{{Str::number_format($supplier->unit_price)}}</td>
+										<td>{{Str::number_format($supplier->total_price)}}</td>
+										<td>{{Str::number_format($supplier->paid)}}</td>
+										<td>{{Str::number_format($supplier->total_price-$supplier->paid)}}</td>
 										<td>{{date('d/m/Y',strtotime($supplier->created_at))}}</td>
 									</tr>
 									@endforeach

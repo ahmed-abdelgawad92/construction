@@ -54,7 +54,7 @@
 					<td>{{$org->address}}</td>
 					<td>{{$org->center}}</td>
 					<td>{{$org->city}}</td>
-					<td>{{$org->phone}}</td>
+					<td>{{str_replace(","," , ",$org->phone)}}</td>
 					@if($org->type==0)
 					<td>عميل</td>
 					@elseif($org->type==1)

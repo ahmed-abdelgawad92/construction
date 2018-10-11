@@ -90,9 +90,9 @@
 						@endif
 						<td>{{$term->statement}}</td>
 						<td>{{$term->unit}}</td>
-						<td>{{$term->amount}}</td>
-						<td>{{$term->value}}</td>
-						<td>{{$term->value*$term->amount}}</td>
+						<td>{{Str::number_format($term->amount)}}</td>
+						<td>{{Str::number_format($term->value)}}</td>
+						<td>{{Str::number_format($term->value*$term->amount)}}</td>
 						<td>
 							@if ($term->deleted == 0)
 								<a href="{{route('updateterm',['id'=>$term->id])}}" class="btn btn-default block">تعديل</a>
@@ -134,8 +134,8 @@
 				@endforeach
 				</tbody>
 			</table>
-			{{ $terms->links() }}
 			</div>
+			{!! $terms->links() !!}
 			@else
 			<div class="alert alert-warning">
 				<p>لا يوجد بنود</p>

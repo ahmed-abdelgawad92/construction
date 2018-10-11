@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('title','جميع واردات المخازن')
+@section('title','جميع واردات المخازن من ال'.$type)
 @section('content')
 <div class="content">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>جميع واردات المخازن من المورد <a href="{{ route('showsupplier',$supplier->id) }}">{{$supplier->name}}</a></h3>
+			<h3>جميع واردات المخازن من ال{{$type}} بمشروع  <a href="{{ route('showproject',$project->id) }}">{{$project->name}}</a></h3>
 		</div>
 		<div class="panel-body">
 			@if(session('insert_error'))
@@ -29,7 +29,7 @@
 							<th>أجمالى المدفوع</th>
 							<th>أجمالى الباقى</th>
 							<th>أجمالى القيمة</th>
-							<th>تابع لمشروع</th>
+							<th>المقاول المورد</th>
 							<th>تاريخ التوريد</th>
 							<th>أمر</th>
 						</tr>
@@ -39,13 +39,13 @@
 					@foreach($stores as $store)
 						<tr>
 							<th>{{$count++}}</th>
-							<th><a href="{{route("allstorePayments",['id'=>$store->id])}}" title="جميع المبالغ المدفوعة لهذه الكمية بالتفاصيل">{{$store->type}}</a></th>
+							<th><a href="{{route("allstorePayments",['id'=>$store->id])}}" data-toggle="tooltip" data-placement="top" title="جميع المبالغ المدفوعة لهذه الكمية بالتفاصيل">{{$store->type}}</a></th>
 							<th>{{Str::number_format(max($store->amount,0))}} {{$store->unit}}</th>
 							<th>{{Str::number_format(max($store->value,0))}} جنيه</th>
 							<th>{{Str::number_format(max($store->amount_paid,0))}} جنيه</th>
 							<th>{{Str::number_format(max(($store->amount*$store->value)-$store->amount_paid,0))}} جنيه</th>
 							<th>{{Str::number_format(max($store->amount*$store->value,0))}} جنيه</th>
-							<th><a href="{{ route('showproject',$store->project->id) }}">{{$store->project->name}}</a></th>
+							<th><a href="{{ route('showsupplier',$store->supplier_id) }}">{{$store->supplier->name}}</a></th>
 							<th>{{date("d/m/Y",strtotime($store->created_at))}}</th>
 							<th>
 								@if(($store->amount*$store->value)>$store->amount_paid)
