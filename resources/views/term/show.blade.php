@@ -90,7 +90,7 @@
 				<div class="card mt-2">
 				<div class="row">
 					<div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
-						<a href="#"><img src="{{asset('images/contractor.png')}}" class="w-100 contractor-img" alt=""></a>
+						<a href="{{route("showcontractor",['id'=>$contract->contractor_id])}}"><img src="{{asset('images/contractor.png')}}" class="w-100 contractor-img" alt=""></a>
 					</div>
 					<div class="col-xs-8 col-sm-8 col-md-9 col-lg-8">
 							<div class="mb-2">

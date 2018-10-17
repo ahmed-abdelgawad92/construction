@@ -43,6 +43,9 @@ a.no-underline{
 .width-100{
   width: 100px;
 }
+.width-50{
+	width: 50px;
+}
 .w-100{
 	width: 100%;
 }
@@ -286,13 +289,26 @@ textarea.text{
     position:relative;
 }
 .half:after {
-    content:'';
-    position:absolute;
-    z-index:1;
-    background:white;
-    width: 50%;
-    height: 100%;
-    right: 53%;
+	content: '\e006';
+		position: absolute;
+		z-index: 8;
+		color: #fff;
+		top: 0;
+		left: 0;
+}
+.half:before {
+  position: relative;
+  z-index: 9;
+  width: 49%;
+  display: block;
+  overflow: hidden;
+}
+.overflow-hidden{
+	overflow: hidden;
+}
+.badge{
+	padding: 10px 5px;
+	box-sizing: border-box;
 }
 a.list-hover{
   display: block;
@@ -1734,6 +1750,9 @@ table.borderless tr td:first-of-type{
 }
 .contractor-img:hover{
 	background: #ccc;
+}
+.glyphicon-star.empty{
+	color: white !important;
 }
 .glyphicon-star,.glyphicon-star-empty{
 	top: 5px;

@@ -465,6 +465,11 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'uses'=>'ContractorController@getAllTerms',
 	    	'as'=>'ContractedTerms'
 	    ])->where('id','[0-9]+');
+	    //ALL Productions
+	    Route::get('{id}/all/productions',[
+	    	'uses'=>'ContractorController@getAllProductions',
+	    	'as'=>'contractorproductions'
+	    ])->where('id','[0-9]+');
 	});
 
 

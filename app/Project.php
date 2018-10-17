@@ -108,7 +108,6 @@ class Project extends Model {
 		and terms.deleted=0
 		group by terms.id
 		",[$this->id]);
-
 		return $productions;
 	}
 	//get summary production per project

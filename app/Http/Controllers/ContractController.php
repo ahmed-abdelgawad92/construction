@@ -81,7 +81,7 @@ class ContractController extends Controller
         }
         $checkContract = Contract::where("term_id",$term->id)->where("contractor_id",$req->input("contractor_id"))->where("deleted",0)->count();
         if ($checkContract>0) {
-          return redirect()->back()->with("insert_error","هذا المقاول لديه بالفعل عقد مع هذا البند , تفضل بتعديل العقد من خلال صفحة البند اذا كنت ترغب اذا كنت ترغب")->withInput();
+          return redirect()->back()->with("insert_error","هذا المقاول لديه بالفعل عقد مع هذا البند , تفضل بتعديل العقد من خلال صفحة البند اذا كنت ترغب.")->withInput();
         }
         $contract = new Contract;
         $contract->term_id=$term->id;

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Contractor;
 use App\TermType;
@@ -134,12 +135,15 @@ class ContractorController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$contractor=Contractor::findOrFail($id);
-			$terms=$contractor->contracts()
-				->where('started_at','<=',Carbon::today())
-				->orderBy('started_at','desc')
+			$contracts=$contractor->contracts()
+				->where('deleted',0)
+				->orderBy('created_at','desc')
 				->take(3)
 				->get();
-			$array=['active'=>'cont','contractor'=>$contractor,'terms'=>$terms];
+			$rate = $contractor->rate();
+			$productionNotes= $contractor->productionNotes();
+			$productions = $contractor->productions()->where('productions.deleted',0)->orderBy('productions.created_at','desc')->take(3)->get();
+			$array=['active'=>'cont','rate'=>$rate,'contractor'=>$contractor,'contracts'=>$contracts,'productionNotes'=>$productionNotes,'productions'=>$productions];
 
 			return view('contractor.show',$array);
 		}
@@ -329,9 +333,29 @@ class ContractorController extends Controller {
 		if(Auth::user()->type=='admin')
 		{
 			$contractor=Contractor::findOrFail($id);
-			$terms=$contractor->terms;
+			$terms=$contractor->terms();
 			$array=['active'=>'cont','contractor'=>$contractor,'terms'=>$terms];
 			return view('contractor.terms',$array);
+		}
+		else
+			abort('404');
+	}
+	/**
+	 * Get All Productions
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function getAllProductions($id)
+	{
+		if(Auth::user()->type=='admin')
+		{
+			$contractor=Contractor::findOrFail($id);
+			$productions=$contractor->productions()->where("productions.deleted",0)->get();
+			$avg_rate=$contractor->rate()[0]->rate;
+			// dd($avg_rate);
+			$array=['active'=>'cont','contractor'=>$contractor,'productions'=>$productions,'avg_rate'=>$avg_rate];
+			return view('contractor.all_production',$array);
 		}
 		else
 			abort('404');

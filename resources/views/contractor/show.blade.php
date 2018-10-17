@@ -6,13 +6,30 @@
 	<div class="col-md-8 col-lg-8 col-sm-8 col-sm-offset-2 col-md-offset-0 col-lg-offset-0">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>المقاول {{$contractor->name}} <span class="badge left">تقييم <br>
-			<span class="glyphicon glyphicon-star star"></span>
-			<span class="glyphicon glyphicon-star star"></span>
-			<span class="glyphicon glyphicon-star star"></span>
-			<span class="glyphicon glyphicon-star star"></span>
-			<span class="glyphicon glyphicon-star star"></span>
-			10</span></h3>
+			<h3 class="overflow-hidden">
+				<img src="{{asset("images/contractor.png")}}" class="width-50 ml-3" alt="">
+				المقاول {{$contractor->name}}
+			@if($rate[0]->length>0)
+				@php
+					$rate_avg = ($rate[0]->rate/2)+0;
+				@endphp
+				<div class="badge left"><h5 class="center">تقييم {{$rate_avg}}/5</h5>
+				@for ($i=0; $i < 5; $i++)
+					@if ($i<=$rate_avg)
+						@if ($rate_avg - $i < 1)
+						<span class="glyphicon glyphicon-star half"></span>
+						@else
+						<span class="glyphicon glyphicon-star"></span>
+						@endif
+					@else
+						<span class="glyphicon glyphicon-star empty"></span>
+					@endif
+				@endfor
+			</div>
+			@else
+				<span class="badge left">لا يوجد تقييم</span>
+			@endif
+			</h3>
 		</div>
 		<div class="panel-body">
 			<div>
@@ -50,13 +67,21 @@
 						</div>
 					</div>
 					<div role="tabpanel" class="tab-pane pt-3" id="notes">
-
+						@if (count($productionNotes)>0)
+						@foreach ($productionNotes as $productionNote)
+							<div class="bordered-right border-navy">
+								<a href="" class="whole">
+									<h4 id="callout-progress-csp">{{date("d/m/Y",strtotime($productionNote->date))}}</h4>
+									<p>{!!nl2br(htmlspecialchars($productionNote->note))!!}</p>
+								</a>
+							</div>
+						@endforeach
+						@else
+							<div class="alert alert-warning">لا يوجد ملحوظات</div>
+						@endif
 					</div>
 				</div>
 			</div>
-			@if(!$contractor->user)
-			<a href="{{ url('user/add',$contractor->id) }}" class="m-top btn btn-primary float">أنشاء حساب</a>
-			@endif
 			<a href="" class="m-top btn btn-primary float">أضافة معاملة مالية</a>
 			<a href="" class="m-top btn btn-primary float">عقد بند</a>
 			<a href="{{ route('updatecontractor',$contractor->id) }}" class="m-top btn btn-default float">تعديل</a>
@@ -81,31 +106,28 @@
 			</form>
 		</div>
 	</div>
-	</div>
-	<div class="col-md-4 col-lg-4 col-sm-4">
-	@if(isset($terms))
 	<div class="panel panel-default">
 		<div class="panel-heading navy-heading">
 			<h3>البنود المتعاقد عليها</h3>
 		</div>
 		<div class="panel-body">
-			@if(count($terms)>0)
-			@foreach($terms as $term)
-				<div class="bordered-right border-navy" style="padding:0 5px 5px 0">
-					<a href="{{ route('showterm',$term->id) }}" class="whole">
+			@if(count($contracts)>0)
+			@foreach($contracts as $contract)
+				<div class="bordered-right border-navy">
+					<a href="{{ route('showterm',$contract->term_id) }}" class="whole">
 					<h4>
-						أسم المشروع : {{$term->project->name}}<br>
-						كود البند	: {{$term->code}}<br>
-					 	نوع البند	: {{$term->type}}
+						أسم المشروع : {{$contract->term->project->name}}<br>
+						كود البند	: {{$contract->term->code}}<br>
+					 	نوع البند	: {{$contract->term->type}}
 					</h4>
 					<p>
 						<span class="label label-default">بيان الأعمال</span>
-						 {{$term->statement}}
+						 {{$contract->term->statement}}
 					</p>
 					</a>
 				</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center mt-3">
 				<a href="{{route('ContractedTerms',$contractor->id)}}"class="btn btn-default">
 					جميع البنود المتعاقد عليها
 				</a>
@@ -115,7 +137,102 @@
 			@endif
 		</div>
 	</div>
-	@endif
+	</div>
+	<div class="col-md-4 col-lg-4 col-sm-4">
+	<div class="panel panel-default">
+		<div class="panel-heading navy-heading">
+			<h3>اخر ثلاث أنتاجات</h3>
+		</div>
+		<div class="panel-body">
+			@if(count($productions)>0)
+			@foreach($productions as $production)
+				<div class="bordered-right border-navy whole" title="أذهب إلى صفحة البند">
+					<a href="{{route('showterm',['id'=>$production->term()->id])}}" class="no-underline">
+					<h4>تقييم
+						@for ($i=0; $i < 10; $i++)
+							@if ($i<$production->rate)
+							<span class="glyphicon glyphicon-star"></span>
+							@else
+							<span class="glyphicon glyphicon-star-empty"></span>
+							@endif
+						@endfor
+					</h4>
+					<p>
+						<span class="label label-default">أسم المشروع</span>
+						{{$production->term()->project->name}}
+						<br>
+						<span class="label label-default">كود البند</span>
+						{{$production->term()->code}}
+						<br>
+						<span class="label label-default">كمية الأنتاج</span>
+						 {{$production->amount}} {{$production->term()->unit}}
+						<br>
+						<span class="label label-default">تاريخ الأنتاج</span>
+						 {{date("d/m/Y",strtotime($production->created_at))}}
+						 @if($production->note!=null)
+							 <br>
+							 <span class="label label-default">ملحوظة</span>
+							 {{$production->note}}
+						 @endif
+					</p>
+					</a>
+				</div>
+			@endforeach
+			<div class="center">
+				<a href="{{route("contractorproductions",['id'=>$contractor->id])}}" class="btn btn-default">
+					جميع الأنتاج الذي قام به المقاول
+				</a>
+			</div>
+			@else
+				<div class="alert alert-warning">لا يوجد أنتاج حتى آلان لهذا المقاول</div>
+			@endif
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading navy-heading">
+			<h3>اخر ثلاث عقود</h3>
+		</div>
+		<div class="panel-body">
+			@if(count($contracts)>0)
+			@foreach($contracts as $contract)
+				<div class="bordered-right border-navy whole" title="أذهب إلى صفحة البند">
+					<a href="{{route('showterm',['id'=>$contract->term->id])}}" class="no-underline">
+					<p>
+						<span class="label label-default">أسم المشروع</span>
+						{{$contract->term->project->name}}
+						<br>
+						<span class="label label-default">كود البند</span>
+						{{$contract->term->code}}
+						<br>
+						<span class="label label-default">نوع البند</span>
+						 {{$contract->amount}} {{$contract->term->unit}}
+						<br>
+						<span class="label label-default">تاريخ  بداية العقد</span>
+						 {{date("d/m/Y",strtotime($contract->started_at))}}
+						 @if($contract->ended_at!=null)
+							 <br>
+							 <span class="label label-default">تاريخ نهاية العقد</span>
+							 {{date("d/m/Y",strtotime($contract->ended_at))}}
+						 @endif
+						 @if($contract->contract_text!=null)
+							 <br>
+							 <span class="label label-default">نص العقد</span>
+							 {!!nl2br(htmlspecialchars($contract->contract_text))!!}
+						 @endif
+					</p>
+					</a>
+				</div>
+			@endforeach
+			<div class="center">
+				<a href="{{route('ContractedTerms',$contractor->id)}}" class="btn btn-default">
+					جميع البنود المتعاقد عليها
+				</a>
+			</div>
+			@else
+				<div class="alert alert-warning">لا يوجد بنود متعاقد عليها مع هذا المقاول</div>
+			@endif
+		</div>
+	</div>
 	</div>
 </div>
 </div>

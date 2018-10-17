@@ -16,7 +16,6 @@
 						<th>نوع البند</th>
 						<th>كود البند</th>
 						<th>بيان الأعمال</th>
-						<th>الوحدة</th>
 						<th>الكمية</th>
 						<th>قيمة الوحدة للمقاول</th>
 						<th>أظهار العقد</th>
@@ -30,9 +29,8 @@
 						<td>{{ $term->type }}</td>
 						<td><a href="{{route('showterm',$term->id)}}">{{ $term->code }}</a></td>
 						<td>{{ $term->statement }}</td>
-						<td>{{ $term->unit }}</td>
-						<td>{{ Str::number_format($term->amount) }}</td>
-						<td>{{ Str::number_format($term->contractor_unit_price) }}</td>
+						<td style="white-space:nowrap;">{{ Str::number_format($term->amount) }} {{ $term->unit }}</td>
+						<td>{{ Str::number_format($term->contractor_unit_price($contractor->id)) }} جنيه</td>
 						<td>
 							<button type="button" data-toggle="modal" data-target="#con{{$term->id}}" class="btn btn-primary btn-block">
 							أفتح العقد
@@ -44,7 +42,7 @@
 											<h4 class="modal-title" id="con-title">نص العقد</h4>
 										</div>
 										<div class="modal-body">
-											<p>{{ $term->contract_text }}</p>
+											<p>{{ $term->contract($contractor->id)->contract_text??' لا يوجد نص لهذا العقد  '}}</p>
 										</div>
 										<div class="modal-footer">
 									        <button type="button" class="btn btn-default" data-dismiss="modal">أغلق

@@ -32,6 +32,11 @@ class Term extends Model {
 	{
 		return $this->hasMany('App\Contract');
 	}
+	//get contract of a contractor
+	public function contract($contractor_id)
+	{
+		return $this->contracts()->where('contractor_id',$contractor_id)->where("deleted",0)->first();
+	}
 	//Define the one to many relationship with consumption
 	public function consumptions()
 	{
@@ -47,5 +52,11 @@ class Term extends Model {
 	{
 		return $this->hasMany('App\Note');
 	}
-
+	//get contractor_unit_price
+	public function contractor_unit_price($id)
+	{
+		$price = $this->contracts()->where('contractor_id',$id)->where("deleted",0)->first();
+		return $price->unit_price;
+		dd($price);
+	}
 }
