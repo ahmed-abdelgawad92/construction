@@ -31,16 +31,16 @@
 		</div>
 	@endif
 	@if (count($orgs)>0)
-	<form class="form-horizontal" method="post" action="{{ route('addproject') }}" id="add_project">
+	<form method="post" action="{{ route('addproject') }}" id="add_project">
 		<div class="form-group row @if($errors->has('organization_id')) has-error @endif">
-			<label for="organization_id" class="control-label col-sm-2 col-md-2 col-lg-2">تابع للعميل *</label>
+			<label for="organization_id" class="col-sm-2 col-md-2 col-lg-2 control-label">تابع للعميل *</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">
 				<select class="form-control" name="organization_id" id="organization_id">
 					@if(count($orgs)==1)
 						<option value="{{$orgs[0]->id}}">{{$orgs[0]->name}}</option>
 					@else
 						@foreach($orgs as $org)
-						<option value="{{$org->id}}">{{$org->name}}</option>
+							<option value="{{$org->id}}">{{$org->name}}</option>
 						@endforeach
 					@endif
 				</select>

@@ -47,7 +47,10 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
-
+        'graph' => [
+    			'driver'=>'local',
+    			'root'=> storage_path().'/graph'
+    		],
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

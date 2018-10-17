@@ -27,6 +27,10 @@ pre{
 	direction : ltr !important;
 	text-align:left !important;
 }
+label{
+	display: block;
+	padding-top: 8px;
+}
 .form-control{
 	font-size: 2rem;
 	height: 40px !important;
@@ -408,10 +412,17 @@ footer{
 	}
 }
 /*-----------------------CHANGE BOOTSTRAP INTO ARABIC-----------------------*/
+.col-form-label {
+	padding-top: calc(.375rem + 1px);
+	padding-bottom: calc(.375rem + 1px);
+	margin-bottom: 0;
+	font-size: inherit;
+	line-height: 1.5;
+}
 .row {
-  display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+	display: -webkit-box;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 	flex-direction: row;

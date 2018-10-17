@@ -50,7 +50,7 @@
 					<ul class="dropdown-menu">
 						<li><a href="">تعيين موظف منتدب</a></li>
 						<li><a href="" class="navigate_to_div" data-nav-path="#employee">الموظفين الحاليين</a></li>
-						<li><a href="">جميع الموظفين الذين عملوا بالمشروع</a></li>
+						<li><a href="{{route("allemployee",['id'=>$project->id])}}">جميع الموظفين الذين عملوا بالمشروع</a></li>
 					</ul>
 				</li>
 				<li class="dropdown" role="presentation">
