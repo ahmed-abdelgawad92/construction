@@ -3,10 +3,12 @@
 @section('content')
 <div class="content">
 	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3>جميع رسومات مشروع <a href="{{ route('showproject',$project->id) }}">{{$project->name}}</a></h3>
+		<div class="panel-heading overflow-hidden" >
+			<h3>جميع رسومات مشروع <a href="{{ route('showproject',$project->id) }}">{{$project->name}}</a>
+				<a href="{{ route('addgraphs',$project->id) }}" class="btn btn-primary left">أضافة رسم</a>
+			</h3>
 		</div>
-		<div class="panel-body">
+		<div class="panel-body" style="padding: 15px 15px 80px 15px;">
 			<h3 style="border:1px solid #eee; border-right: 8px solid #2a3f54; padding: 10px; border-radius: 4px;">جميع الرسومات الأنشائية</h3>
 			<div class="row">
 			<?php $count=0; ?>
@@ -35,7 +37,7 @@
 				لا يوجد رسومات أنشائية بهذا المشروع <a href="{{ route('addgraphs',$project->id) }}" class="btn btn-warning">أضافة رسم</a>
 			</div>
 			@endif
-			<h3 style="border:1px solid #eee; border-right: 8px solid #2a3f54; padding: 10px; border-radius: 4px;">جميع الرسومات المعمارية</h3>
+			<h3 style="margin-top:70px; border:1px solid #eee; border-right: 8px solid #2a3f54; padding: 10px; border-radius: 4px;">جميع الرسومات المعمارية</h3>
 			<div class="row">
 			<?php $count=0; ?>
 			@foreach($graphs as $graph)
@@ -43,7 +45,7 @@
 			<?php $count++; ?>
 			<div class="col-md-3 col-lg-3 col-xs-6 col-sm-3">
 				<a href="{{ route('showgraph',$graph->id) }}">
-				<img title="{{$graph->name}}" src="{{ asset('images/pdf.png') }}" class="img-responsive icon">
+				<img title="{{$graph->name}}" src="{{ asset('images/pdf.png') }}" style="width: 100%" class="img-responsive icon">
 				</a>
 				<p class="icon-name">{{$graph->name}}</p>
 			</div>

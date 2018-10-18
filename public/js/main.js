@@ -128,6 +128,7 @@ $(document).ready(function() {
 	//select file
 	$('.file').change(function(e){
 		$("#file_name").val($(this).val().split("\\").pop());
+		$("#file_name").removeClass("drag");
 	});
 
 	$('#info').popover();
@@ -239,6 +240,22 @@ $(document).ready(function() {
 		var path=$(this).attr('data-nav-path');
 		$(path+'_nav_item').addClass('active');
 		$(path).removeClass('hide').addClass('show');
+	});
+	//validate non organization payments
+	$("#add_non_organization_payment").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if (!$("#non_organization_payment").val().trim() || !$('#non_organization_payment').val().trim().match(/^[0-9]+(\.[0-9]+)?$/) || $('#non_organization_payment').val().trim()>100) {
+			check=false;
+			assignError($('#non_organization_payment'),'النسبة يجب أن تتكون من أرقام فقط , ولا يمكن أن تكون أكثر من 100%');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
 	});
 	//Validation of Project Creation
 	$("#add_project").submit(function(e){
@@ -423,6 +440,22 @@ $(document).ready(function() {
 			$('#float_form_container').slideDown(100);
 			$('#show_contract').show();
 		});
+	});
+	//validate adding new or old term types
+	$("#add_term_type").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if (!$("#type").val().trim() || !$('#type').val().trim().match(/^[A-Za-z\u0600-\u06FF\s]+$/)) {
+			check=false;
+			assignError($('#type'),'من فضلك أدخل نوع البند , نوع البند يجب أن يتكون من حروف ومسافات فقط');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
 	});
 
 
@@ -675,6 +708,30 @@ $(document).ready(function() {
 		return false;
 	});
 	/******************************************Consumption********************************************/
+	//validation of consumption insertion
+	$("#add_consumption").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		$(".type_consumption").each(function() {
+			if (!$(this).val().trim() || !$(this).val().trim().match(/^[A-Za-z\u0600-\u06FF\s]+?$/)) {
+				check=false;
+				assignError($(this),'من فضلك أختار نوع الخام المستهلك');
+			}
+		});
+		$(".amount").each(function() {
+			if (!$(this).val().trim() || !$(this).val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+				check=false;
+				assignError($(this).parent(".amount_group"),'من فضلك أدخل كمية الخام المستهلكة, يجب أن تتكون من أرقام فقط');
+			}
+		});
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
 	// add_new_consumption_input_group
 	var optionsConsumption =$("#type_consumption1").html();
 	$("#add_new_consumption_input_group").click(function(){
@@ -684,7 +741,7 @@ $(document).ready(function() {
 			return false;
 		}
 		var newConsumptionInput='<div class="form-group row" id="choose_raw_to_consume'+count+'">\
-			<label for="type_consumption'+count+'" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>\
+			<label for="type_consumption'+count+'" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام *</label>\
 			<div class="col-sm-8 col-md-8 col-lg-8">\
 				<select id="type_consumption'+count+'" name="type[]" data-id="'+count+'" class="form-control type_consumption">\
 					'+optionsConsumption+'\
@@ -695,10 +752,10 @@ $(document).ready(function() {
 			</div>\
 		</div>\
 		<div class="form-group row amount_cons" id="amount_cons'+count+'">\
-			<label for="amount'+count+'" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>\
+			<label for="amount'+count+'" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>\
 			<div class="col-sm-8 col-md-8 col-lg-8">\
-				<div class="input-group">\
-					<input type="text" name="amount[]" id="amount'+count+'" value="" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">\
+				<div class="input-group amount_group">\
+					<input type="text" name="amount[]" id="amount'+count+'" value="" class="form-control amount" placeholder="أدخل الكمية" aria-describedby="basic-addon1">\
 					<span class="input-group-addon" id="basic-addon'+count+'"></span>\
 				</div>\
 			</div>\
@@ -844,6 +901,193 @@ $(document).ready(function() {
 		}
 		this.submit();
 	});
+	//validation of store insertion
+	$("#add_store").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if($('#project_id').length){
+			if (!$("#project_id").val().trim() || !$('#project_id').val().trim().match(/^[0-9]+?$/)) {
+				check=false;
+				assignError($('#project_id'),'من فضلك أختار المشروع');
+			}
+		}
+		if($('#type_supplier').length){
+			if (!$("#type_supplier").val().trim()) {
+				check=false;
+				assignError($('#type_supplier'),'من فضلك أدخل نوع الخام');
+			}
+		}
+		if (!$("#amount").val().trim() || !$('#amount').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#amount_group'),'من فضلك أدخل الكمية الموردة');
+		}
+		if($('#supplier_id').length){
+			if (!$("#supplier_id").val().trim() || !$('#supplier_id').val().trim().match(/^[0-9]+?$/)) {
+				check=false;
+				assignError($('#supplier_id_group'),'من فضلك أختار المورد');
+			}
+		}
+		if (!$("#value").val().trim() || !$('#value').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#value_group'),'من فضلك أدخل قيمة الوحدة بالجنيه, يجب أن تتكون من أرقام فقط');
+		}
+		if($('#amount_paid').length){
+			if (!$("#amount_paid").val().trim() || !$('#amount_paid').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+				check=false;
+				assignError($('#amount_paid_group'),'من فضلك أدخل المبلغ المدفوع, يجب أن يتكون من أرقام فقط');
+			}
+		}
+		if ($("#paymen_type").length) {
+			if (!$("#paymen_type").val().trim() || !$('#paymen_type').val().trim().match(/^(0|1)$/)) {
+				check=false;
+				assignError($('#'),'من فضلك أختار نوع الدفع ');
+			}
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	//validation of store type insertion
+	$("#add_store_type").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if (!$("#type").val().trim() || !$('#type').val().trim().match(/^[A-Za-z\u0600-\u06FF\s]+?$/)) {
+			check=false;
+			assignError($('#type'),'من فضلك أدخل نوع الخام , نوع الخام يجب أن يتكون من حروف و مسافات فقط');
+		}
+		if (!$("#unit").val().trim() || !$('#unit').val().trim().match(/^[A-Za-z\u0600-\u06FF0-9]+?$/)) {
+			check=false;
+			assignError($('#unit'),'من فضلك أدخل الوحدة, الوحدة يجب أن تتكون من حروف وأرقام ومسافات فقط');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	/******************************************Graphs********************************************/
+	//Validation of graph insertion
+	$("#add_graph").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if ($("#project_id").length) {
+			if(!$("#project_id").val().trim()||!$("#project_id").val().trim().match(/^[0-9]+$/)){
+				check=false;
+				assignError($('#project_id'),'من فضلك أختار المشروع');
+			}
+		}
+		if ($("#graph").length) {
+			if(!$("#graph").val().trim()||$('#graph').val().split('.').pop().toLowerCase()!='pdf'){
+				check=false;
+				assignError($('#graph_group'),'من فضلك ملف الرسم يجب أن يكون من نوع PDF فقط');
+			}
+		}
+		if(!$("#name").val().trim()||!$("#name").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+(-[0-9A-Za-z\u0600-\u06FF\s]+)$/)){
+			check=false;
+			assignError($('#name'),'من فضلك أدخل أسم الرسم ,يجب أن يتكون من حروف و أرقام و مسافات فقط');
+		}
+		if(!$("#type").val().trim()||!$("#type").val().trim().match(/^(0|1)$/)){
+			check=false;
+			assignError($('#type'),'من فضلك أختار نوع الرسم');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	//validate graph type on change (must be PDF)
+	$('#graph').change(function(e){
+		if($(this).val().split('.').pop().toLowerCase()!='pdf'){
+			assignError($('#graph_group'),'من فضلك ملف الرسم يجب أن يكون من نوع PDF فقط');
+		}else {
+			$('#graph_group').removeClass("is-invalid");
+			$('#graph_group + .invalid-feedback').remove();
+		}
+	});
+	/******************************************Expenses أكرامية ********************************************/
+	//Expenses validation
+	$("#add_expense").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if($('#project_id').length){
+			if(!$('#project_id').val().trim()||!$("#project_id").val().trim().match(/^[0-9]+$/)){
+				check=false;
+				assignError($('#project_id'),'من فضلك أختار المشروع');
+			}
+		}
+		if(!$('#whom').val().trim()){
+			check=false;
+			assignError($('#whom'),'من فضلك أدخل وصف لهذه الأكرامية , حتى تستطيع تذكر لمن دفعت ولماذا');
+		}
+		if(!$('#expense').val().trim()||!$("#expense").val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			check=false;
+			assignError($('#expense_group'),'من فضلك أدخل قيمة الأكرامية');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+
+	/******************************************Productions********************************************/
+	$("#add_production").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if (!$("#amount").val().trim() || !$('#amount').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#amount_group'),'من فضلك أدخل الكمية التى أُنتجت , الكمية يجب أن تتكون من أرقام فقط');
+		}
+		if (!$("#contract_id").val().trim() || !$('#contract_id').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#contract_id'),'من فضلك أختار المقاول الذى قام بكمية الأنتاج');
+		}
+		if (!$("#rate_prod").val().trim() || !$('#rate_prod').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#rate_prod'),'من فضلك أختار التقييم الذى تراه مناسباً لما قام به المقاول');
+		}
+		if ($("#rate_prod").val().trim()<8) {
+			if (!$("#note").val().trim()) {
+				check=false;
+				assignError($('#note'),'يجب كتابة ملوحظة على أداء المقاول أذا كان أقل من 8');
+			}
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 

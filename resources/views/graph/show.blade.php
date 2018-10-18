@@ -13,7 +13,7 @@
 				</div>
 			@endif
 			<div class="well" style="overflow: auto;">
-					<div style="font-size: 20px"><span class="label label-primary title">أسم المشروع</span> <a href="{{ route('showproject',$graph->project->id) }}">{{$graph->project->name}}</a></div>
+					<div style="font-size: 20px"><span class="label label-primary title">أسم المشروع</span> <a href="{{ route('showproject',$graph->project->id) }}">{{$graph->project->name}}</a> <a class="mr-5" href="{{ route('allgraph',$graph->project->id) }}">جميع رسومات المشروع</a></div>
 					<div style="font-size: 20px"><span class="label label-primary title">أسم الرسم</span> {{$graph->name}}</div>
 					<div style="font-size: 20px"><span class="label label-primary title">نوع الرسم</span> @if($graph->type==0) رسم أنشائى @else رسم معمارى @endif </div>
 				<a href="{{ route('showPdf',$graph->path) }}" target="_blank" class="btn btn-primary float">أفتح الملف</a>

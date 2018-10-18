@@ -30,6 +30,14 @@ Route::post('/',[
 //Authenticated Routes
 Route::group(['middleware' => 'auth'], function() {
     //
+    Route::get('/',function(){
+			return view('home',['active'=>'home']);
+		}
+	 );
+    Route::get('/home',function(){
+			return view('home',['active'=>'home']);
+		}
+	 );
     Route::get('dashboard',[
 		'as'=>'dashboard',
 		function(){

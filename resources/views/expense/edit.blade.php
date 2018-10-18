@@ -1,4 +1,4 @@
- row@extends('layouts.master')
+@extends('layouts.master')
 @section('title','تعديل الأكرامية')
 @section('content')
 <div class="content">
@@ -16,7 +16,12 @@
 					</ul>
 				</div>
 			@endif
-			<form method="post" action="{{ route('updateexpense',$expense->id) }}" class="form-horizontal">
+			@if(session('info'))
+				<div class="alert alert-info">
+						<h5>{{ session('info') }}</h5>
+				</div>
+			@endif
+			<form method="post" action="{{ route('updateexpense',$expense->id) }}" id="add_expense" class="form-horizontal">
 				<div class="form-group row @if($errors->has('whom')) has-error @endif">
 					<label for="whom" class="control-label col-sm-2 col-md-2 col-lg-2">وصف الأكرامية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -31,8 +36,8 @@
 				<div class="form-group row @if($errors->has('expense')) has-error @endif">
 					<label for="expense" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة الأكرامية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
-						<input type="text" name="expense" id="expense" value="{{$expense->expense}}" class="form-control" placeholder="أدخل قيمة الأكرامية">
+						<div class="input-group" id="expense_group">
+						<input type="text" name="expense" id="expense" value="{{$expense->expense}}" class="form-control number" placeholder="أدخل قيمة الأكرامية">
 						<span class="input-group-addon" id="basic-addon1">جنيه</span>
 						</div>
 						@if($errors->has('expense'))

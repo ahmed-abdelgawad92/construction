@@ -31,7 +31,7 @@
 				</div>
 			@endif
 			@if(( (isset($projects)&&count($projects)>0) || isset($project)) && ((isset($suppliers)&&count($suppliers)>0)||isset($supplier)))
-			<form method="post" action="{{ route('addstore') }}" class="form-horizontal">
+			<form method="post" action="{{ route('addstore') }}" class="form-horizontal" id="add_store">
 				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
 					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار مشروع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -39,7 +39,7 @@
 							@if(isset($project))
 							<option value="{{$project->id}}">{{$project->name}} - {{$project->city}} - {{$project->def_num}}</option>
 							@else
-							<option value="0">أختار مشروع</option>
+							<option value="">أختار مشروع</option>
 							@foreach($projects as $project)
 							<option value="{{$project->id}}" @if(old('project_id')==$project->id) selected @endif >{{$project->name}} - {{$project->city}} - {{$project->def_num}}</option>
 							@endforeach
@@ -76,7 +76,7 @@
 				<div class="form-group row @if($errors->has('amount')) has-error @elseif(count($errors) > 0) @else hide @endif" id="amount_div">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
+						<div class="input-group" id="amount_group">
 							<input type="text" name="amount" id="amount" value="{{old('amount')}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
 							<span class="input-group-addon" id="basic-addon1">@if(old("type")){{$store_types->where("name",old("type"))->first()->unit ?? " لا يوجد"}}@else لا يوجد @endif</span>
 						</div>
@@ -91,7 +91,7 @@
 				<div class="form-group row @if($errors->has("supplier_id")) has-error @endif">
 					<label for="supplier_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
+						<div class="input-group" id="supplier_id_group">
 							<input type="text"  autocomplete="off" class="form-control readonly" readonly  placeholder="أختار المقاول المورد" value="{{$supplier->name}} - {{$supplier->city}} - {{str_replace(","," , ",$supplier->phone)}} ({{str_replace(","," , ",$supplier->type)}})">
 							<input type="hidden" name="supplier_id" id="supplier_id" value="{{$supplier->id}}">
 							<span class="input-group-addon" id="basic-addon1">أختار</span>
@@ -107,7 +107,7 @@
 				<div class="form-group row @if($errors->has("supplier_id")) has-error @endif">
 					<label for="supplier_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول المورد *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
+						<div class="input-group"  id="supplier_id_group">
 							<input type="text" name="supplier_details" id="show_supplier_details" autocomplete="off" class="form-control readonly" readonly  placeholder="أختار المقاول المورد" value="{{old("supplier_details")}}">
 							<input type="hidden" name="supplier_id" id="supplier_id" value="{{old("supplier_id")}}">
 							<span class="input-group-addon" id="basic-addon1">أختار</span>
@@ -123,7 +123,7 @@
 				<div class="form-group row @if($errors->has('value')) has-error @endif">
 					<label for="value" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة الوحدة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
+						<div class="input-group"  id="value_group">
 							<input type="text" name="value" id="value" class="form-control" autocomplete="off" placeholder="أدخل قيمة الوحدة" value="{{old('value')}}">
 							<span class="input-group-addon" id="basic-addon1">جنيه</span>
 						</div>
@@ -137,7 +137,7 @@
 				<div class="form-group row @if($errors->has('amount_paid')) has-error @endif">
 					<label for="amount_paid" class="control-label col-sm-2 col-md-2 col-lg-2">المبلغ المدفوع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
+						<div class="input-group"  id="amount_paid_group">
 							<input type="text" name="amount_paid" id="amount_paid" autocomplete="off" class="form-control" placeholder="أدخل المبلغ المدفوع" value="{{old('amount_paid')}}">
 							<span class="input-group-addon" id="basic-addon1">جنيه</span>
 						</div>

@@ -20,7 +20,7 @@
 					</ul>
 				</div>
 			@endif
-			<form method="post" action="{{ route('addexpense') }}" class="form-horizontal">
+			<form method="post" action="{{ route('addexpense') }}" id="add_expense" class="form-horizontal">
 				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
 					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المشروع</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -55,8 +55,8 @@
 				<div class="form-group row @if($errors->has('expense')) has-error @endif">
 					<label for="expense" class="control-label col-sm-2 col-md-2 col-lg-2">قيمة الأكرامية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
-						<input type="text" name="expense" id="expense" value="{{old('expense')}}" class="form-control" placeholder="أدخل قيمة الأكرامية">
+						<div class="input-group" id="expense_group">
+						<input type="text" name="expense" id="expense" value="{{old('expense')}}" class="form-control number" placeholder="أدخل قيمة الأكرامية">
 						<span class="input-group-addon" id="basic-addon1">جنيه</span>
 						</div>
 						@if($errors->has('expense'))

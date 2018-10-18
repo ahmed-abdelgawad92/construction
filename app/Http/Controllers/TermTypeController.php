@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\TermType;
+use App\Log;
 use Validator;
 use Auth;
 
@@ -71,8 +72,16 @@ class TermTypeController extends Controller {
 			$term_type= new TermType;
 			$term_type->name=$req->input('type');
 			$saved=$term_type->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أدخال نوع بند جديد');
+			}
+			$log=new Log;
+			$log->table="term_types";
+			$log->action="create";
+			$log->record_id=$term_type->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة نوع بند جديد بالبرنامج (".$term_type->name.")";
+			$log->save();
 			return redirect()->back()->with('success','تم حفظ نوع بند بنجاح');
 		}else
 			abort('404');
@@ -124,10 +133,19 @@ class TermTypeController extends Controller {
 			if($validator->fails())
 				return redirect()->back()->withInput()->withErrors($validator);
 			$term_type= TermType::findOrFail($id);
+			$old=$term_type->name;
 			$term_type->name=$req->input('type');
 			$saved=$term_type->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال تعديل نوع البند');
+			}
+			$log=new Log;
+			$log->table="term_types";
+			$log->action="update";
+			$log->record_id=$id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بتغيير نوع بند بالبرنامج من (".$old.") إلى (".$req->input("type").")";
+			$log->save();
 			return redirect()->route('alltermtype')->with('success','تم تعديل نوع البند بنجاح');
 		}else
 			abort('404');
@@ -149,6 +167,13 @@ class TermTypeController extends Controller {
 			if(!$deleted){
 				return redirect()->route('alltermtype')->with('delete_error','حدث عطل خلال حذف هذا النوع يرجى المحاولة فى وقت لاحق');
 			}
+			$log=new Log;
+			$log->table="term_types";
+			$log->action="delete";
+			$log->record_id=$id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بحذف نوع بند من البرنامج (".$term_type->name.")";
+			$log->save();
 			return redirect()->route('alltermtype')->with('success','تم حذف نوع البند ('.$term_type->name.') بنجاح');
 		}
 		else

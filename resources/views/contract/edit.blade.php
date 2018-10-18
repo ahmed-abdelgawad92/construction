@@ -37,7 +37,7 @@
               </div>
            </div>
            <div class="form-group row @if($errors->has("unit_price")) has-error @endif">
-              <label for="unit_price" class="control-label col-sm-2 col-md-2 col-lg-2">سعر الوحدة</label>
+              <label for="unit_price" class="control-label col-sm-2 col-md-2 col-lg-2">سعر الوحدة *</label>
               <div class="col-sm-10 col-md-10 col-lg-10">
                 <div class="input-group">
                   <input type="text" name="unit_price" id="unit_price" autocomplete="off" class="form-control" placeholder="أدخل سعر الوحدة" value="{{$contract->unit_price}}">

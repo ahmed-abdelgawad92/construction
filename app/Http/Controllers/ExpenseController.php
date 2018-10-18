@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Project;
 use App\Expense;
+use App\Log;
 
 use Validator;
 use Auth;
@@ -71,8 +72,16 @@ class ExpenseController extends Controller {
 			$expense->expense=$req->input('expense');
 			$expense->project_id=$req->input('project_id');
 			$saved=$expense->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه الأكرامية, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="expenses";
+			$log->action="create";
+			$log->record_id=$expense->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة أكرامية تم دفعها بمشروع ".$expense->project->name." قيمتها ".$expense->expense." جنيه .";
+			$log->save();
 			return redirect()->route('showexpense',$expense->project_id)->with('success','تم أضافة الأكرامية بنجاح');
 		}
 		else
@@ -99,8 +108,8 @@ class ExpenseController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$project=Project::findOrFail($id);
-			$expenses=$project->expenses;
-			$total_expense=$project->expenses()->sum('expense');
+			$expenses=$project->expenses()->where('expenses.deleted',0)->get();
+			$total_expense=$project->expenses()->where('expenses.deleted',0)->sum('expense');
 			$array=[
 				'active'=>'exp',
 				'project'=>$project,
@@ -158,12 +167,33 @@ class ExpenseController extends Controller {
 			if($validator->fails())
 				return redirect()->back()->withErrors($validator)->withInput();
 			$expense=Expense::findOrFail($id);
-			$expense->whom=$req->input('whom');
-			$expense->expense=$req->input('expense');
-			$saved=$expense->save();
-			if(!$saved)
-				return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذه الأكرامية, يرجى المحاولة فى وقت لاحق');
-			return redirect()->route('showexpense',$expense->project_id)->with('success','تم تعديل الأكرامية بنجاح');
+			$check= false;
+			$description="";
+			if ($expense->expense != $req->input("expense")) {
+				$check = true;
+				$description.='قام بتغيير قيمة الأكرامية من "'.$expense->expense.'" إلى "'.$req->input("expense").'" . ';
+				$expense->expense=$req->input('expense');
+			}
+			if ($expense->whom != $req->input("whom")) {
+				$check = true;
+				$description.='قام بتغيير وصف الأكرامية من "'.$expense->whom.'" إلى "'.$req->input("whom").'" . ';
+				$expense->whom=$req->input('whom');
+			}
+			if($check){
+				$saved=$expense->save();
+				if(!$saved){
+					return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذه الأكرامية, يرجى المحاولة فى وقت لاحق');
+				}
+				$log=new Log;
+				$log->table="expenses";
+				$log->action="update";
+				$log->record_id=$id;
+				$log->user_id=Auth::user()->id;
+				$log->description=$description;
+				$log->save();
+				return redirect()->route('showexpense',$expense->project_id)->with('success','تم تعديل الأكرامية بنجاح');
+			}
+			return redirect()->back()->with('info','لا يوجد تعديل حتى يتم حفظه');
 		}
 		else
 			abort('404');
@@ -179,9 +209,18 @@ class ExpenseController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$expense=Expense::findOrFail($id);
-			$deleted=$expense->delete();
-			if(!$deleted)
+			$expense->deleted = 1;
+			$deleted=$expense->save();
+			if(!$deleted){
 				return redirect()->back()->with('delete_error','حدث عطل خلال حذف هذه الأكرامية, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="expenses";
+			$log->action="delete";
+			$log->record_id=$id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بحذف أكرامية ".$expense->expense." جنيه من مشروع ".$expense->project->name;
+			$log->save();
 			return redirect()->route('showexpense',$expense->project_id)->with('success','تم حذف الأكرامية بنجاح');
 		}
 		else

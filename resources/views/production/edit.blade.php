@@ -40,11 +40,11 @@
 				</div>
 			@endif
 			@if (count($contracts)>0)
-			<form method="post" action="{{ route('updateproduction',$production->id) }}" class="form-horizontal">
+			<form method="post" action="{{ route('updateproduction',$production->id) }}" class="form-horizontal" id="add_production">
 				<div class="form-group row @if($errors->has('amount')) has-error @endif">
-					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
+					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
+						<div class="input-group" id="amount_group">
 							<input type="text" name="amount" id="amount" value="{{$production->amount}}" class="form-control number" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
 							<span class="input-group-addon" id="basic-addon1">{{$term->unit}}</span>
 						</div>
@@ -57,7 +57,7 @@
 				</div>
 				@if (count($contracts)>1)
 				<div class="form-group row @if($errors->has('contract_id')) has-error @endif">
-					<label for="contract_id" class="control-label col-sm-2 col-md-2 col-lg-2">اختار المقاول</label>
+					<label for="contract_id" class="control-label col-sm-2 col-md-2 col-lg-2">اختار المقاول *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select class="form-control" name="contract_id" id="contract_id">
 							<option value="0">اختار المقاول</option>
@@ -68,13 +68,13 @@
 					</div>
 				</div>
 				@else
-				<input type="hidden" name="contract_id" value="{{$production->contract_id}}">
+				<input type="hidden" name="contract_id" id="contract_id" value="{{$production->contract_id}}">
 				@endif
 				<div class="form-group row @if($errors->has('rate')) has-error @endif">
-					<label for="rate" class="control-label col-sm-2 col-md-2 col-lg-2">تقييم الأنتاج</label>
+					<label for="rate" class="control-label col-sm-2 col-md-2 col-lg-2">تقييم الأنتاج *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="rate" id="rate_prod" class="form-control">
-							<option value="0">أدخل تقييم الأنتاج	</option>
+							<option value="">أدخل تقييم الأنتاج	</option>
 							<option value="1" @if($production->rate==1) selected @endif >1</option>
 							<option value="2" @if($production->rate==2) selected @endif >2</option>
 							<option value="3" @if($production->rate==3) selected @endif >3</option>
@@ -94,7 +94,7 @@
 					</div>
 				</div>
 				<div class="form-group row @if($production->rate<8) display @endif @if($errors->has('note')) has-error @endif " id="proNote">
-					<label for="note" class="control-label col-sm-2 col-md-2 col-lg-2">ملحوظة</label>
+					<label for="note" class="control-label col-sm-2 col-md-2 col-lg-2">ملحوظة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<textarea name="note" id="note" class="form-control" placeholder="أكتب ملحوظة توضح لماذا تعطيه هذا التقييم السئ">{{$production->note}}</textarea>
 						@if($errors->has('note'))

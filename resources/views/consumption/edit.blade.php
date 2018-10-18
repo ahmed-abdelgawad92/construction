@@ -39,11 +39,11 @@
 					</ul>
 				</div>
 			@endif
-			<form method="post" action="{{ route('updateconsumption',$consumption->id) }}" class="form-horizontal">
+			<form method="post" action="{{ route('updateconsumption',$consumption->id) }}" class="form-horizontal" id="add_consumption">
 				<div class="form-group row @if($errors->has('type')) has-error @endif">
-					<label for="type_consumption" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>
+					<label for="type_consumption" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<select id="type_consumption" name="type" class="form-control">
+						<select id="type_consumption" name="type" class="form-control type_consumption">
 						<option value="0">أختار نوع الخام المستهلك</option>
 						@foreach($store_types as $type)
 						@if($consumption->type==$type->name)
@@ -64,10 +64,10 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('amount')) has-error @endif">
-					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
+					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
-							<input type="text" name="amount" id="amount" value="{{$consumption->amount}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
+						<div class="input-group amount_group">
+							<input type="text" name="amount" id="amount" value="{{$consumption->amount}}" class="form-control amount" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
 							<span class="input-group-addon" id="basic-addon1">{{$unit->unit}}</span>
 						</div>
 						@if($errors->has('amount'))

@@ -77,8 +77,16 @@ class StoreTypeController extends Controller {
 			$store_type->name=$req->input('type');
 			$store_type->unit=$req->input('unit');
 			$saved=$store_type->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أدخال نوع بند جديد');
+			}
+			$log=new Log;
+			$log->table="store_types";
+			$log->action="create";
+			$log->record_id=$store_type->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة نوع خام جديد بالبرنامج (".$store_type->name.")";
+			$log->save();
 			return redirect()->route('allstoretype')->with('success','تم حفظ نوع بند بنجاح');
 		}else
 			abort('404');
@@ -134,12 +142,32 @@ class StoreTypeController extends Controller {
 			if($validator->fails())
 				return redirect()->back()->withInput()->withErrors($validator);
 			$store_type= StoreType::findOrFail($id);
-			$store_type->name=$req->input('type');
-			$store_type->unit=$req->input('unit');
-			$saved=$store_type->save();
-			if(!$saved)
-				return redirect()->back()->with('insert_error','حدث عطل خلال تعديل نوع البند');
-			return redirect()->route('allstoretype')->with('success','تم تعديل نوع البند بنجاح');
+			$description ="";
+			$check = false;
+			if($store_type->name!=$req->input('type')){
+				$description.="قام بتغيير نوع الخام بالبرنامج من (".$store_type->name.") إلى (".$req->input("type")."). ";
+				$check=true;
+				$store_type->name=$req->input('type');
+			}
+			if($store_type->unit!=$req->input('unit')){
+				$description.="قام بتغيير وحدة الخام بالبرنامج من (".$store_type->unit.") إلى (".$req->input("unit")."). ";
+				$check=true;
+				$store_type->unit=$req->input('unit');
+			}
+			if($check){
+				$saved=$store_type->save();
+				if(!$saved){
+					return redirect()->back()->with('insert_error','حدث عطل خلال تعديل نوع البند');
+				}
+				$log=new Log;
+				$log->table="store_types";
+				$log->action="update";
+				$log->record_id=$id;
+				$log->user_id=Auth::user()->id;
+				$log->description=$description;
+				$log->save();
+				return redirect()->route('allstoretype')->with('success','تم تعديل نوع البند بنجاح');
+			}
 		}else
 			abort('404');
 	}
@@ -160,6 +188,13 @@ class StoreTypeController extends Controller {
 			if(!$deleted){
 				return redirect()->route('allstoretype')->with('delete_error','حدث عطل خلال حذف هذا النوع يرجى المحاولة فى وقت لاحق');
 			}
+			$log=new Log;
+			$log->table="store_types";
+			$log->action="delete";
+			$log->record_id=$id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بحذف نوع البند (".$store_type->name.")";
+			$log->save();
 			return redirect()->route('allstoretype')->with('success','تم حذف نوع البند ('.$store_type->name.') بنجاح');
 		}
 		else

@@ -98,3 +98,18 @@ function adjustCircles(){
     });
   },10);
 }
+
+function drag(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  let input = document.getElementById("file_name");
+  input.value="أترك الملف هنا !";
+  input.classList.add('drag');
+}
+function drop(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  let input = document.getElementById("file_name");
+  input.value=$(".file").val().split("\\").pop();
+  input.classList.remove('drag');
+}

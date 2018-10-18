@@ -40,14 +40,14 @@
 				</div>
 			@endif
 			@if(count($store_types)>0)
-			<form method="post" action="{{ route('addconsumption',$term->id) }}" class="form-horizontal">
+			<form method="post" action="{{ route('addconsumption',$term->id) }}" class="form-horizontal" id="add_consumption">
 				@foreach($store_types as $type)
 					<input type="hidden" name="{{$type->name}}" value="{{$type->unit}}">
 				@endforeach
 				@if (old("type")!=null)
 					@for ($i=0; $i < count(old("type")); $i++)
 						<div class="form-group row @if($errors->has('type.'.$i)) has-error @endif" id="choose_raw_to_consume{{$i+1}}">
-							<label for="type_consumption{{$i+1}}" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>
+							<label for="type_consumption{{$i+1}}" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام *</label>
 							<div class="col-sm-8 col-md-8 col-lg-8">
 								<select id="type_consumption{{$i+1}}" name="type[]" class="form-control type_consumption">
 									<option value="0">أختار نوع الخام المستهلك</option>
@@ -79,10 +79,10 @@
 							@endif
 						</div>
 						<div class="form-group row flex @if($errors->has('amount.'.$i)) has-error @endif" id="amount_cons{{$i+1}}">
-							<label for="amount{{$i+1}}" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
+							<label for="amount{{$i+1}}" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 							<div class="col-sm-8 col-md-8 col-lg-8">
-								<div class="input-group">
-									<input type="text" name="amount[]" id="amount{{$i+1}}" value="{{old('amount.'.$i)}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
+								<div class="input-group amount_group">
+									<input type="text" name="amount[]" id="amount{{$i+1}}" value="{{old('amount.'.$i)}}" class="form-control amount" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
 									<span class="input-group-addon" id="basic-addon{{$i+1}}">{{$unit}}</span>
 								</div>
 								@if($errors->has('amount.'.$i))
@@ -95,7 +95,7 @@
 					@endfor
 				@else
 				<div class="form-group row @if($errors->has('type')) has-error @endif">
-					<label for="type_consumption1" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام</label>
+					<label for="type_consumption1" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الخام *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select id="type_consumption1" name="type[]" class="form-control type_consumption">
 							<option value="0">أختار نوع الخام المستهلك</option>
@@ -121,10 +121,10 @@
 					</div>
 				</div>
 				<div class="form-group row amount_cons @if(old('type')!=0 && old('type')!=null) display @endif @if($errors->has('amount')) has-error @endif" id="amount_cons1">
-					<label for="amount1" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
+					<label for="amount1" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<div class="input-group">
-							<input type="text" name="amount[]" id="amount1" value="{{old('amount')}}" class="form-control" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
+						<div class="input-group amount_group">
+							<input type="text" name="amount[]" id="amount1" value="{{old('amount')}}" class="form-control amount" placeholder="أدخل الكمية" aria-describedby="basic-addon1">
 							<span class="input-group-addon" id="basic-addon1"></span>
 						</div>
 						@if($errors->has('amount'))

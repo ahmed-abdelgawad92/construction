@@ -27,7 +27,7 @@
 			<br>
 		</div>
 	@endif
-	<form class="form-horizontal" method="post" action="{{ route('addnonorg',$project_id) }}">
+	<form class="form-horizontal" method="post" action="{{ route('addnonorg',$project_id) }}" id="add_non_organization_payment">
 		<div class="form-group row @if($errors->has('non_organization_payment')) has-error @endif">
 			<label for="non_organization_payment" class="control-label col-sm-2 col-md-2 col-lg-2">نسبة المقاول</label>
 			<div class="col-sm-8 col-md-8 col-lg-8">

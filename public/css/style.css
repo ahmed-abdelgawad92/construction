@@ -27,7 +27,7 @@ pre{
 	direction : ltr !important;
 	text-align:left !important;
 }
-label{
+label.control-label{
 	display: block;
 	padding-top: 8px;
 }
@@ -329,9 +329,9 @@ span.title{
   margin: 0 0 10px 10px;
 }
 .icon-name{
-  font-size: 16px;
+	font-size: 2rem;
   text-align: center;
-  margin-top: -40px;
+  margin-top: -80px;
   color: white;
 }
 #info{
@@ -1604,7 +1604,10 @@ select.form-control {
 	border-radius: 4px;
 }
 .input-group.is-invalid{
-	border:0;
+	color: #dc3545;
+}
+.input-group.is-invalid .input-group-addon{
+	background: #ffd4d4; 
 	color: #dc3545;
 }
 .glyphicon-trash{
@@ -1895,6 +1898,12 @@ h5.category{
 	font-size: 14px;
 }
 
+/*------------------------------------Graph------------------------------------*/
+.drag{
+	background-color: #597dbf !important;
+	color: white;
+	transition: .2s all;
+}
 
 
 
@@ -1904,4 +1913,5 @@ h5.category{
 
 
 
+/*------------------------------------Contracts------------------------------------*/
 /*------------------------------------Contracts------------------------------------*/

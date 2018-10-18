@@ -35,7 +35,7 @@
 					<h4>{{ session('info') }}</h4>
 				</div>
 			@endif
-			<form method="post" action="{{ route('updatestore',['id'=>$store->id]) }}" class="form-horizontal">
+			<form method="post" action="{{ route('updatestore',['id'=>$store->id]) }}" class="form-horizontal" id="add_store">
 				<div class="form-group row @if($errors->has('amount')) has-error @endif">
 					<label for="amount" class="control-label col-sm-2 col-md-2 col-lg-2">الكمية</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">

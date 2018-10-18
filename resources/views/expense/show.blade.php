@@ -49,7 +49,7 @@
 							<td>{{$count++}}</td>
 							<td>{{$expense->whom}}</td>
 							<td>{{$expense->expense}} جنيه</td>
-							<td>{{$expense->created_at->format('Y-m-d')}}</td>
+							<td>{{date('d/m/Y',strtotime($expense->created_at))}}</td>
 							<td><a href="{{ route('updateexpense',$expense->id) }}" class="btn btn-block btn-default">تعديل</a></td>
 							<td>
 							<form method="post" action="{{ route('deleteexpense',$expense->id) }}">
