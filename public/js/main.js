@@ -1006,11 +1006,10 @@ $(document).ready(function() {
 	});
 	//validate graph type on change (must be PDF)
 	$('#graph').change(function(e){
+		$('#graph_group').removeClass("is-invalid");
+		$('#graph_group + .invalid-feedback').remove();
 		if($(this).val().split('.').pop().toLowerCase()!='pdf'){
 			assignError($('#graph_group'),'من فضلك ملف الرسم يجب أن يكون من نوع PDF فقط');
-		}else {
-			$('#graph_group').removeClass("is-invalid");
-			$('#graph_group + .invalid-feedback').remove();
 		}
 	});
 	/******************************************Expenses أكرامية ********************************************/
@@ -1072,6 +1071,38 @@ $(document).ready(function() {
 		return false;
 	});
 
+	/******************************************Productions********************************************/
+	$("#add_paper").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if(!$('#name').val().trim()){
+			check=false;
+			assignError($("#name"),'من فضلك أدخل أسم الورقية');
+		}
+		if($("#path").length){
+			var ext =$("#path").val().split('.').pop().toLowerCase();
+			if(ext!='pdf'&&ext!='jpg'&&ext!='jpeg'&&ext!='png'&&ext!='bmp'&&ext!='gif'){
+				check=false;
+				assignError($('#path_group'),'من فضلك ملف الورقية يجب أن يكون من نوع PDF, PNG, JPG, JPEG, BMP أو GIF فقط');
+			}
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	//validate graph type on change (must be PDF)
+	$('#path').change(function(e){
+		$('#path_group').removeClass("is-invalid");
+		$('#path_group + .invalid-feedback').remove();
+		var ext =$(this).val().split('.').pop().toLowerCase();
+		if(ext!='pdf'&&ext!='jpg'&&ext!='jpeg'&&ext!='png'&&ext!='bmp'&&ext!='gif'){
+			assignError($('#path_group'),'من فضلك ملف الورقية يجب أن يكون من نوع PDF, PNG, JPG, JPEG, BMP أو GIF فقط');
+		}
+	});
 
 
 
@@ -1086,8 +1117,7 @@ $(document).ready(function() {
 
 
 
-
-
+	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 

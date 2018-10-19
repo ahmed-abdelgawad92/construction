@@ -102,18 +102,19 @@ class GraphController extends Controller {
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
-			if($validator->fails())
+			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
+			}
 			$fileName='graph_'.$req->input('project_id').'_'.time().'.pdf';
 			try{
 				DB::beginTransaction();
+				Storage::disk('graph')->put($fileName,File::get($req->file('graph')));
 				$graph=new Graph;
 				$graph->name=$req->input('name');
 				$graph->type=$req->input('type');
-				$graph->project_id=$req->input('project_id');
 				$graph->path=$fileName;
+				$graph->project_id=$req->input('project_id');
 				$saved=$graph->save();
-				Storage::disk('graph')->put($fileName,File::get($req->file('graph')));
 				$log=new Log;
 				$log->table="graphs";
 				$log->action="create";

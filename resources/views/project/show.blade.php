@@ -56,8 +56,8 @@
 				<li class="dropdown" role="presentation">
 					<a data-toggle="dropdown" class="dropdown-toggle" role="button" href="">ورقيات و رسومات <span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li><a href="#">إضافة ورقية</a></li>
-						<li><a href="#">جميع ورقيات المشروع</a></li>
+						<li><a href="{{route('addpaper',['id'=>$project->id])}}">إضافة ورقية</a></li>
+						<li><a href="{{route('allpaper',['id'=>$project->id])}}">جميع ورقيات المشروع</a></li>
 						<li><a href="{{ route('addgraphs',$project->id) }}">أضافة رسم</a></li>
 						<li><a href="{{ route('allgraph',$project->id) }}">عرض جميع الرسومات</a></li>
 					</ul>

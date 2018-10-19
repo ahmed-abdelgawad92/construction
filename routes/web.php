@@ -30,10 +30,6 @@ Route::post('/',[
 //Authenticated Routes
 Route::group(['middleware' => 'auth'], function() {
     //
-    Route::get('/',function(){
-			return view('home',['active'=>'home']);
-		}
-	 );
     Route::get('/home',function(){
 			return view('home',['active'=>'home']);
 		}
@@ -184,18 +180,16 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'uses'=>'ProjectController@show',
 	    	'as'=>'showproject'
 	    ])->where('id', '[0-9]+');
-
 	    //Non-Organization Payment
-
 	    Route::get('addNonOrg',[
 	    	'uses'=>'ProjectController@checkNonOrgCost',
 	    	'as'=>'nonorg'
     	]);
-
     	Route::put('add/non_org_cost/{id}',[
 	    	'uses'=>'ProjectController@addNonOrgCost',
 	    	'as'=>'addnonorg'
     	])->where('id','[0-9]+');
+
 	});
 
 	//User Manipulations
@@ -1163,4 +1157,46 @@ Route::group(['middleware' => 'auth'], function() {
       'as'=>'deletenote'
     ])->where('id','[0-9]+');
   });
+  //Routes to manipulate Papers within Projects
+  Route::group(['prefix'=>'document'],function(){
+    //add Papers
+    Route::get('add/{id}',[
+      'uses'=>'PaperController@create',
+      'as'=>'addpaper'
+    ])->where('id','[0-9]+');
+    Route::post('add/{id}',[
+      'uses'=>'PaperController@store',
+      'as'=>'addpaper'
+    ])->where('id','[0-9]+');
+    //update Papers
+    Route::get('update/{id}',[
+      'uses'=>'PaperController@edit',
+      'as'=>'updatepaper'
+    ])->where('id','[0-9]+');
+    Route::put('update/{id}',[
+      'uses'=>'PaperController@update',
+      'as'=>'updatepaper'
+    ])->where('id','[0-9]+');
+    //show all Papers
+    Route::get('all/{id}',[
+      'uses'=>'PaperController@index',
+      'as'=>'allpaper'
+    ])->where('id','[0-9]+');
+    //show Paper
+    Route::get('show/{id}',[
+      'uses'=>'PaperController@show',
+      'as'=>'showpaper'
+    ])->where('id','[0-9]+');
+    //show Paper PDF
+    Route::get('show/PDF/{fileName}/{ext}',[
+      'uses'=>'PaperController@showFile',
+      'as'=>'showPaperPdf'
+    ]);
+    //delete Paper
+    Route::delete('delete/{id}',[
+      'uses'=>'PaperController@destroy',
+      'as'=>'deletepaper'
+    ])->where('id','[0-9]+');
+  });
+
 });

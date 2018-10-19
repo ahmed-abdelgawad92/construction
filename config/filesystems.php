@@ -51,6 +51,10 @@ return [
     			'driver'=>'local',
     			'root'=> storage_path().'/graph'
     		],
+        'paper' => [
+    			'driver'=>'local',
+    			'root'=> storage_path().'/paper'
+    		],
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
