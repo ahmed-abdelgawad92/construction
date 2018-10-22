@@ -935,7 +935,7 @@ Route::group(['middleware' => 'auth'], function() {
 	    ])->where('id','[0-9]+');
 	    //show company employee
 	    Route::get('company/show/{id}',[
-	    	'uses'=>'EmployeeController@showCompany',
+	    	'uses'=>'EmployeeController@showCompanyEmployee',
 	    	'as'=>'showcompanyemployee'
 	    ])->where('id','[0-9]+');
 

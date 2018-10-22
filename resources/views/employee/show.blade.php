@@ -170,7 +170,7 @@
 					@endif
 				</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				<a href="{{ route('employeeprojects',$employee->id) }}"class="btn btn-default">
 					جميع المشاريع المنتدب بها
 				</a>
@@ -218,7 +218,7 @@
 					@endif
 				</div>
 			@endforeach
-			<div class="row item" style="text-align: center;">
+			<div class="center">
 				@if(Route::current()->getName()=='showemployee')
 				<a href="{{ route('showadvance',$employee->id) }}"class="btn btn-default">
 					جميع سلفات الموظف

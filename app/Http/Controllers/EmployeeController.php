@@ -1,12 +1,13 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 use App\CompanyEmployee;
 use App\Employee;
 use App\Project;
+use App\Log;
 
 use Auth;
 use Validator;
@@ -118,14 +119,14 @@ class EmployeeController extends Controller {
 				'name'=>'required|regex:/^[\pL\pN\s]+$/u',
 				'job'=>'required|regex:/^[\pL\pN\s]+$/u',
 				'type'=>'required|in:1,2',
-				'phone'=>'required|numeric',
-				'address'=>'regex:/^[\pL\pN\s]+$/u',
-				'village'=>'regex:/^[\pL\pN\s]+$/u',
+				'phone.*'=>'required|numeric',
+				'address'=>'nullable|regex:/^[\pL\pN\s]+$/u',
+				'village'=>'nullable|regex:/^[\pL\pN\s]+$/u',
 				'city'=>'required|regex:/^[\pL\pN\s]+$/u',
-				'assign_job'=>'required_if:type,2|in:0,1',
-				'project_id'=>'required_if:assign_job,1|exists:projects,id',
-				'salary'=>'required_if:assign_job,1|numeric',
-				'salary_company'=>'required_if:type,1|numeric'
+				'assign_job'=>'nullable|required_if:type,2|in:0,1',
+				'project_id'=>'nullable|required_if:assign_job,1|exists:projects,id',
+				'salary'=>'nullable|required_if:assign_job,1|numeric',
+				'salary_company'=>'nullable|required_if:type,1|numeric'
 			];
 			//error_messages
 			$error_messages=[
@@ -134,8 +135,8 @@ class EmployeeController extends Controller {
 				'job.required'=>'يجب أدخال السمى الوظيفى',
 				'job.regex'=>'المسمى الوظيفى يجب أن يتكون من حروف و أرقام و مسافت فقط',
 				'type.required'=>'يحب أختيار نوع الموظف',
-				'phone.required'=>'يجب أدخال رقم الهاتف',
-				'phone.numeric'=>'رقم الهاتف يجب أن يكون أرقام فقط',
+				'phone.*.required'=>'يجب أدخال رقم الهاتف',
+				'phone.*.numeric'=>'رقم الهاتف يجب أن يكون أرقام فقط',
 				'address.regex'=>'الشارع يجب أن يتكون من حروف و أرقام و مسافت فقط',
 				'village.regex'=>'القرية يجب أن تتكون من حروف و أرقام و مسافت فقط',
 				'city.required'=>'يجب أدخال المدينة',
@@ -150,46 +151,80 @@ class EmployeeController extends Controller {
 			];
 			//validator
 			$validator=Validator::make($req->all(),$rules,$error_messages);
-			if($validator->fails())
+			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
+			}
 			//save to db
-			if($req->input('type')==2){
-				$employee=new Employee;
-				$employee->name=$req->input('name');
-				$employee->job=$req->input('job');
-				$employee->phone=$req->input('phone');
-				$employee->address=$req->input('address');
-				$employee->village=$req->input('village');
-				$employee->city=$req->input('city');
-				//check if it should be assigned to a project now
-				if($req->input('assign_job')==1){
-					$pivotAttr=[
-						'salary'=>$req->input('salary')
-					];
-					$project=Project::findOrFail($req->input('project_id'));
-					$saved=$project->employees()->save($employee,$pivotAttr);
-					if(!$saved)
-						return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا الموظف, يرجى المحاولة فى وقت لاحق');
-					return redirect()->route('showemployee',$employee->id)->with('success','تم أضافة الموظف بنجاح, و تم أيضاً توظيفه بنجاح');
+			try {
+				if($req->input('type')==2){
+					DB::beginTransaction();
+					$employee=new Employee;
+					$employee->name=$req->input('name');
+					$employee->job=$req->input('job');
+					$employee->phone=implode(",",$req->input('phone'));
+					$employee->address=$req->input('address');
+					$employee->village=$req->input('village');
+					$employee->city=$req->input('city');
+					//check if it should be assigned to a project now
+					if($req->input('assign_job')==1){
+						$pivotAttr=[
+							'salary'=>$req->input('salary')
+						];
+						$project=Project::findOrFail($req->input('project_id'));
+						$project->employees()->save($employee,$pivotAttr);
+						//create Log
+						$log=new Log;
+						$log->table="employees";
+						$log->action="create";
+						$log->record_id=$employee->id;
+						$log->user_id=Auth::user()->id;
+						$log->description="قام بتعيين الموظف المنتدب : ".$employee->name." بمشروع ".$project->name." فى مدينة ".$project->city;
+						$log->save();
+					}else{
+						$employee->save();
+					}
+					//create Log
+					$log=new Log;
+					$log->table="employees";
+					$log->action="create";
+					$log->record_id=$employee->id;
+					$log->user_id=Auth::user()->id;
+					$log->description="قام بأضافة موظف جديد  الى الشركة";
+					$log->save();
+				}elseif($req->input('type')==1){
+					$employee=new CompanyEmployee;
+					$employee->name=$req->input('name');
+					$employee->job=$req->input('job');
+					$employee->phone=implode(",",$req->input('phone'));
+					$employee->address=$req->input('address');
+					$employee->village=$req->input('village');
+					$employee->city=$req->input('city');
+					$employee->salary=$req->input('salary_company');
+					$employee->save();
+					//create Log
+					$log=new Log;
+					$log->table="company_employees";
+					$log->action="create";
+					$log->record_id=$employee->id;
+					$log->user_id=Auth::user()->id;
+					$log->description="قام بأضافة موظف جديد  الى الشركة";
+					$log->save();
 				}
-				$saved=$employee->save();
-				if(!$saved)
-					return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا الموظف, يرجى المحاولة فى وقت لاحق');
-				return redirect()->route('showemployee',$employee->id)->with('success','تم أضافة الموظف بنجاح');
-			}elseif($req->input('type')==1){
-				$employee=new CompanyEmployee;
-				$employee->name=$req->input('name');
-				$employee->job=$req->input('job');
-				$employee->phone=$req->input('phone');
-				$employee->address=$req->input('address');
-				$employee->village=$req->input('village');
-				$employee->city=$req->input('city');
-				$employee->salary=$req->input('salary_company');
-				$saved=$employee->save();
-				if(!$saved)
-					return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا الموظف, يرجى المحاولة فى وقت لاحق');
+				DB::commit();
+			} catch (\Exception $e) {
+				DB::rollBack();
+				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا الموظف, يرجى المحاولة فى وقت لاحق');
+			}
+			if ($req->input("type")==2) {
+				if($req->input("assign_job")==1){
+					return redirect()->route('showemployee',$employee->id)->with('success','تم أضافة الموظف بنجاح, و تم أيضاً توظيفه بنجاح');
+				}else{
+					return redirect()->route('showemployee',$employee->id)->with('success','تم أضافة الموظف بنجاح');
+				}
+			}else{
 				return redirect()->route('showcompanyemployee',$employee->id)->with('success','تم أضافة الموظف بنجاح');
 			}
+
 		}
 		else
 			abort('404');
@@ -225,7 +260,7 @@ class EmployeeController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function showCompany($id)
+	public function showCompanyEmployee($id)
 	{
 		if(Auth::user()->type=='admin'){
 			$employee=CompanyEmployee::findOrFail($id);

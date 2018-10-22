@@ -110,10 +110,6 @@ class PaperController extends Controller
     public function show($id)
     {
       $paper = Paper::where("id",$id)->where('deleted',0)->firstOrFail();
-      $arr = explode('.',$paper->path);
-      $ext = strtolower(array_pop($arr));
-      $file=Storage::disk('paper')->get($paper->path);
-      Storage::disk('public')->put('file.'.$ext, $file);
       $array=[
         'project'=>$paper->project,
         'active'=>'project',

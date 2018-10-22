@@ -26,7 +26,7 @@
 			<div class="alert alert-danger">
 				{{session('update_error')}}
 			</div>
-			@endif 
+			@endif
 			@if($today->day==1)
 			<div class="alert alert-info alert-dismissible">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -94,7 +94,7 @@
 												<button class="btn btn-danger">نعم</button>
 											</div>
 										</div>
-									</div>					
+									</div>
 								</div>
 								<input type="hidden" name="_token" value="{{csrf_token()}}">
 								<input type="hidden" name="_method" value="PUT">
@@ -108,7 +108,7 @@
 								<th>يعمل</th>
 								<th>يعمل بالفعل</th>
 								@else
-								<th>لا يعمل</th>
+								<th>لا يعمل {{$employee->countCurrentProjects()}}</th>
 								<th><a href="{{ route('assignjob',$employee->id) }}" class="btn btn-primary btn-block">توظيف</a></th>
 								@endif
 							@endif

@@ -7,6 +7,30 @@
 			<h3>أضافة موظف</h3>
 		</div>
 		<div class="panel-body">
+			@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+			@if(session("success"))
+        <div class="alert alert-success">
+          <strong>{{ session("success") }}</strong>
+        </div>
+      @endif
+      @if(session("insert_error"))
+        <div class="alert alert-danger">
+          <strong>{{ session("insert_error") }}</strong>
+        </div>
+      @endif
+      @if(session("info"))
+        <div class="alert alert-info">
+          <strong>{{ session("info") }}</strong>
+        </div>
+      @endif
 			<form method="post" action="{{ route('addemployee') }}" class="form-horizontal">
 				<div class="form-group row @if($errors->has('name')) has-error @endif">
 					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم الموظف</label>
@@ -45,17 +69,28 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if($errors->has('phone')) has-error @endif">
-					<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">رقم الهاتف</label>
+				@if(old('phone')!==null)
+				@for($i=0; $i<count(old('phone')); $i++)
+				<div class="form-group row @if($errors->has("phone.$i")) has-error @endif" @if($i==0) id="phone_template" @else id="del_phone{{$i}}" @endif>
+					<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون * @if($i==0)<a href="#" id="add_another_phone"> أضافة رقم جديد؟</a>@else <span data-phone="{{$i}}" class="glyphicon glyphicon-trash delete_phone"></span> @endif</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="phone" id="phone" value="{{old('phone')}}" class="form-control" placeholder="أدخل رقم الهاتف">
-						@if($errors->has('phone'))
-							@foreach($errors->get('phone') as $error)
+						<input type="text" name="phone[{{$i}}]" id="phone{{$i>0?$i:null}}" value="{{old("phone.".$i)}}" class="form-control phone_input number" placeholder="أدخل التليفون">
+						@if($errors->has("phone.$i"))
+							@foreach($errors->get("phone.$i") as $error)
 								<span class="help-block">{{ $error }}</span>
 							@endforeach
 						@endif
 					</div>
 				</div>
+				@endfor
+				@else
+				<div class="form-group row @if($errors->has('phone')) has-error @endif" id="phone_template">
+					<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون * <a href="#" id="add_another_phone"> أضافة رقم جديد؟</a></label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<input type="text" name="phone[0]" id="phone" value="" class="form-control phone_input number" placeholder="أدخل التليفون">
+					</div>
+				</div>
+				@endif
 				<div class="form-group row @if($errors->has('address')) has-error @endif">
 					<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">الشارع</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">

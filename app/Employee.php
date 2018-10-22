@@ -9,6 +9,11 @@ class Employee extends Model {
 	{
 		return $this->belongsToMany('App\Project')->withPivot('salary','done','ended_at')->withTimestamps();
 	}
+	//Get Count of current projects
+	public function countCurrentProjects()
+	{
+		return $this->projects()->wherePivot("done",0)->count();
+	}
 	//relation with advances 1 to many
 	public function advances()
 	{

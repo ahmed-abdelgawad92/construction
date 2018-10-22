@@ -368,7 +368,7 @@
 	<div class="row">
 		<div class="col-lg-8 offset-lg-2 col-md-8 offset-sm-2 col-sm-8 offset-md-2">
 		<form method="get" action="">
-			<div class="form-group search">
+			<div class="search">
 				<input type="text" name="search" placeholder="بحث" class="form-control search">
 				<button class="search">
 					<span class="glyphicon glyphicon-search search" aria-hidden="true"></span>
@@ -378,7 +378,11 @@
 				<select class="search form-control">
 					<option value="">بالهيئة</option>
 					<option value="">بالمشروع</option>
+					<option value="">بكود البند</option>
 					<option value="">بالمقاول</option>
+					<option value="">بالمورد</option>
+					<option value="">بالموظف</option>
+					<option value="">بالمستخدم</option>
 				</select>
 			</div>
 			<input type="hidden" name="_token" value="{{ csrf_token() }}">
