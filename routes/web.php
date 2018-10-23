@@ -960,10 +960,10 @@ Route::group(['middleware' => 'auth'], function() {
 	    ])->where('id','[0-9]+');
 
 	    //update salary
-	    Route::put('update/salary/{eid}/{pid}',[
+	    Route::put('update/salary/{id}',[
 	    	'uses'=>'EmployeeController@updateSalary',
 	    	'as'=>'updatesalary'
-	    ])->where(['eid'=>'[0-9]+','pid'=>'[0-9]+']);
+	    ])->where(['id'=>'[0-9]+']);
 
 	    //delete employee
 	    Route::delete('delete/{id}',[
@@ -1010,10 +1010,10 @@ Route::group(['middleware' => 'auth'], function() {
 	    ]);
 
 	    //end a job of an employee
-	    Route::put('end/job/{eid}/{pid}',[
+	    Route::put('end/job/{id}',[
 	    	'uses'=>'EmployeeController@endJob',
 	    	'as'=>'endjob'
-	    ])->where(['eid'=>'[0-9]+','pid'=>'[0-9]+']);
+	    ])->where(['id'=>'[0-9]+']);
 	});
 
 	//Advance Manipulations

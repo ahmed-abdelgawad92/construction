@@ -79,7 +79,7 @@
 							<th>{{$employee->pivot->salary}} جنيه</th>
 							<th>
 							@if($employee->pivot->done==0)
-							<form method="post" action="{{ route('endjob',['eid'=>$employee->id,'pid'=>$project->id]) }}" >
+							<form method="post" action="{{ route('endjob',['id'=>$employee->pivot->id]) }}" >
 								<button type="button" data-toggle="modal" data-target="#delete{{$employee->id}}" class="btn btn-danger btn-block">إنهاء
 								</button>
 								<div class="modal fade" id="delete{{$employee->id}}" tabindex="-1" role="dialog">
@@ -104,11 +104,14 @@
 							@endif
 							</th>
 							@else
-								@if($employee->projects()->wherePivot('done',0)->count()>0)
+								@if($employee->countCurrentProjects()>0)
+									@php
+										$currentProject = $employee->projects()->wherePivot('done',0)->orderBy('created_at')->first();
+									@endphp
 								<th>يعمل</th>
-								<th>يعمل بالفعل</th>
+								<th><a href="{{route("showproject",['id'=>$currentProject->id])}}">{{$currentProject->name}}</a></th>
 								@else
-								<th>لا يعمل {{$employee->countCurrentProjects()}}</th>
+								<th>لا يعمل</th>
 								<th><a href="{{ route('assignjob',$employee->id) }}" class="btn btn-primary btn-block">توظيف</a></th>
 								@endif
 							@endif

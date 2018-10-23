@@ -990,7 +990,7 @@ $(document).ready(function() {
 				assignError($('#graph_group'),'من فضلك ملف الرسم يجب أن يكون من نوع PDF فقط');
 			}
 		}
-		if(!$("#name").val().trim()||!$("#name").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+(-[0-9A-Za-z\u0600-\u06FF\s]+)$/)){
+		if(!$("#name").val().trim()||!$("#name").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+$/)){
 			check=false;
 			assignError($('#name'),'من فضلك أدخل أسم الرسم ,يجب أن يتكون من حروف و أرقام و مسافات فقط');
 		}
@@ -1071,7 +1071,7 @@ $(document).ready(function() {
 		return false;
 	});
 
-	/******************************************Productions********************************************/
+	/******************************************Papers********************************************/
 	$("#add_paper").submit(function(e){
 		e.preventDefault();
 		$(".is-invalid").removeClass('is-invalid');
@@ -1094,7 +1094,7 @@ $(document).ready(function() {
 		$("#save_btn").removeClass('disabled');
 		return false;
 	});
-	//validate graph type on change (must be PDF)
+	//validate paper type on change (must be PDF)
 	$('#path').change(function(e){
 		$('#path_group').removeClass("is-invalid");
 		$('#path_group + .invalid-feedback').remove();
@@ -1102,6 +1102,75 @@ $(document).ready(function() {
 		if(ext!='pdf'&&ext!='jpg'&&ext!='jpeg'&&ext!='png'&&ext!='bmp'&&ext!='gif'){
 			assignError($('#path_group'),'من فضلك ملف الورقية يجب أن يكون من نوع PDF, PNG, JPG, JPEG, BMP أو GIF فقط');
 		}
+	});
+	/******************************************Employees********************************************/
+	$("#add_employee").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if(!$('#name').val().trim() || ! $("#name").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+$/)){
+			check=false;
+			assignError($("#name"),'من فضلك أدخل أسم الموظف , يجب أن يتكون من حروف و أرقام ومسافات فقط');
+		}
+		if(!$('#job').val().trim() || ! $("#job").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+$/)){
+			check=false;
+			assignError($("#job"),'من فضلك أدخل المسمى الوظيفى , يجب أن يتكون من حروف و أرقام ومسافات فقط');
+		}
+		if($('#type_employee').length){
+			if(!$('#type_employee').val().trim() || ! $("#type_employee").val().trim().match(/^(1|2)$/)){
+				check=false;
+				assignError($("#type_employee"),'من فضلك أختار نوع الموظف');
+			}else{
+				if($('#type_employee').val()==1){
+					if(!$('#salary_company').val().trim() || !$('#salary_company').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+						check=false;
+						assignError($("#salary_company"),'من فضلك أدخل الراتب , يجب أن يتكون من أرقام فقط');
+					}
+				}else{
+					if($("input[name=assign_job]:checked").val()==1){
+						if(!$('#project_id').val().trim() || !$('#project_id').val().trim().match(/^[0-9]+$/)){
+							check=false;
+							assignError($("#project_id"),'من فضلك أختار المشروع');
+						}
+						if(!$('#salary').val().trim() || !$('#salary').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+							check=false;
+							assignError($("#salary"),'من فضلك أدخل الراتب , يجب أن يتكون من أرقام فقط');
+						}
+					}
+				}
+			}
+		}else{
+			if($('#salary').length){
+				if(!$('#salary').val().trim() || !$('#salary').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+					check=false;
+					assignError($("#salary"),'من فضلك أدخل الراتب , يجب أن يتكون من أرقام فقط');
+				}
+			}
+		}
+		$('.phone_input').each(function() {
+			if(!$(this).val().trim().match(/^\+?[0-9]{8,}$/)){
+				check=false;
+				assignError($(this),'الهاتف يجب ان يتكون من ارقام و + فقط ولا يقل عن 8 أرقام');
+			}
+		});
+		if($('#address').val().trim() && ! $("#address").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+$/)){
+			check=false;
+			assignError($("#address"),'يجب أن يتكون من حروف و أرقام ومسافات فقط');
+		}
+		if($('#village').val().trim() && ! $("#village").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+$/)){
+			check=false;
+			assignError($("#village"),'يجب أن يتكون من حروف و أرقام ومسافات فقط');
+		}
+		if(!$('#city').val().trim() || ! $("#city").val().trim().match(/^[0-9A-Za-z\u0600-\u06FF\s]+$/)){
+			check=false;
+			assignError($("#city"),'يجب أن يتكون من حروف و أرقام ومسافات فقط');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
 	});
 
 

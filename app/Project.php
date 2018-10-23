@@ -82,7 +82,7 @@ class Project extends Model {
 	//Define the many to many relationship with employees
 	public function employees()
 	{
-		return $this->belongsToMany('App\Employee')->withPivot('salary','done','ended_at')->withTimestamps();
+		return $this->belongsToMany('App\Employee')->withPivot('id','salary','done','ended_at')->withTimestamps();
 	}
 
 	//has many consumptions through terms

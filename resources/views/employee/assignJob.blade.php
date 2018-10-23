@@ -12,6 +12,11 @@
 				{{session('insert_error')}}
 			</div>
 			@endif
+			@if(session('info'))
+			<div class="alert alert-info">
+				{{session('info')}}
+			</div>
+			@endif
 			<form method="post" action="{{ route('assignjob',$employee->id) }}" class="form-horizontal">
 				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
 					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المشروع</label>

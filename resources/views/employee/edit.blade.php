@@ -14,12 +14,12 @@
 		</div>
 		<div class="panel-body">
 			@if(Route::current()->getName()=='updateemployee')
-			<form method="post" action="{{ route('updateemployee',$employee->id) }}" class="form-horizontal">
+			<form method="post" action="{{ route('updateemployee',$employee->id) }}" class="form-horizontal" id="add_employee">
 			@elseif(Route::current()->getName()=='updatecompanyemployee')
-			<form method="post" action="{{ route('updatecompanyemployee',$employee->id) }}" class="form-horizontal">
+			<form method="post" action="{{ route('updatecompanyemployee',$employee->id) }}" class="form-horizontal" id="add_employee">
 			@endif
 				<div class="form-group row @if($errors->has('name')) has-error @endif">
-					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم الموظف</label>
+					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم الموظف *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="name" id="name" value="{{$employee->name}}" class="form-control" placeholder="أدخل أسم الموظف">
 						@if($errors->has('name'))
@@ -30,7 +30,7 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('job')) has-error @endif">
-					<label for="job" class="control-label col-sm-2 col-md-2 col-lg-2">المسمى الوظيفى</label>
+					<label for="job" class="control-label col-sm-2 col-md-2 col-lg-2">المسمى الوظيفى *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="job" id="job" value="{{$employee->job}}" class="form-control" placeholder="أدخل المسمى الوظيفى">
 						@if($errors->has('job'))
@@ -42,7 +42,7 @@
 				</div>
 				@if(Route::current()->getName()=='updatecompanyemployee')
 				<div class="form-group row @if($errors->has('salary')) has-error @endif">
-					<label for="salary" class="control-label col-sm-2 col-md-2 col-lg-2">الراتب</label>
+					<label for="salary" class="control-label col-sm-2 col-md-2 col-lg-2">الراتب *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="salary" id="salary" value="{{$employee->salary}}" class="form-control" placeholder="أدخل الراتب">
 						@if($errors->has('salary'))
@@ -53,17 +53,22 @@
 					</div>
 				</div>
 				@endif
-				<div class="form-group row @if($errors->has('phone')) has-error @endif">
-					<label for="phone" class="control-label col-sm-2 col-md-2 col-lg-2">رقم الهاتف</label>
+				@php
+				$phones=explode(',',$employee->phone);
+				@endphp
+				@for($i=0;$i<count($phones);$i++)
+				<div class="form-group row @if($errors->has('phone.'.$i)) has-error @endif" @if($i==0) id="phone_template" @else id="del_phone{{$i}}" @endif>
+					<label for="phone{{$i}}" class="control-label col-sm-2 col-md-2 col-lg-2">تليفون @if($i==0)<a href="#" id="add_another_phone"> أضافة رقم جديد؟</a> *@else <span data-phone="{{$i}}" class="glyphicon glyphicon-trash delete_phone"></span> @endif</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
-						<input type="text" name="phone" id="phone" value="{{$employee->phone}}" class="form-control" placeholder="أدخل رقم الهاتف">
-						@if($errors->has('phone'))
-							@foreach($errors->get('phone') as $error)
+						<input type="text" name="phone[{{$i}}]" id="phone{{$i}}" value="{{$phones[$i]}}" class="form-control phone_input" placeholder="أدخل التليفون">
+						@if($errors->has('phone.'.$i))
+							@foreach($errors->get('phone.'.$i) as $error)
 								<span class="help-block">{{ $error }}</span>
 							@endforeach
 						@endif
 					</div>
 				</div>
+				@endfor
 				<div class="form-group row @if($errors->has('address')) has-error @endif">
 					<label for="address" class="control-label col-sm-2 col-md-2 col-lg-2">الشارع</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -87,7 +92,7 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('city')) has-error @endif">
-					<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">المدينة</label>
+					<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">المدينة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="city" id="city" value="{{$employee->city}}" class="form-control" placeholder="أدخل المدينة">
 						@if($errors->has('city'))

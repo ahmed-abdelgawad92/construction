@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','جميع المشلريع')
+@section('title','جميع المشاريع المنتدب بها '.$employee->name)
 @section('content')
 <div class="content">
 	<div class="panel panel-default">
@@ -33,10 +33,10 @@
 						@else
 						<th>أنتهى العمل</th>
 						@endif
-						<th>{{$project->pivot->created_at->format('Y-m-d')}}</th>
+						<th>{{date('d/m/Y',strtotime($project->pivot->created_at))}}</th>
 						@if($project->pivot->done==0)
 						<th>
-						<form method="post" action="{{ route('endjob',['eid'=>$employee->id,'pid'=>$project->id]) }}" >
+						<form method="post" action="{{ route('endjob',['id'=>$project->pivot->id]) }}" >
 							<button type="button" data-toggle="modal" data-target="#endjob{{$project->id}}" class="btn btn-danger btn-block">إنهاء الوظيفة
 							</button>
 							<div class="modal fade" id="endjob{{$project->id}}" tabindex="-1" role="dialog">
@@ -58,11 +58,11 @@
 						</form>
 						</th>
 						@else
-						<th>{{$project->pivot->ended_at}}</th>
+						<th>{{date('d/m/Y',strtotime($project->pivot->ended_at))}}</th>
 						@endif
 						@if($project->pivot->done==0)
 						<th>
-						<form method="post" class="form-inline" action="{{ route('updatesalary',['eid'=>$employee->id,'pid'=>$project->id]) }}" >
+						<form method="post" class="form-inline" action="{{ route('updatesalary',['id'=>$project->pivot->id]) }}" >
 							<button type="button" data-toggle="modal" data-target="#update-salary{{$project->id}}" class="btn btn-default btn-block">تعديل الراتب
 							</button>
 							<div class="modal fade" id="update-salary{{$project->id}}" tabindex="-1" role="dialog">

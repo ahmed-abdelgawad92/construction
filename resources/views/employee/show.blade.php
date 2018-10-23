@@ -24,6 +24,11 @@
 				{{session('update_error')}}
 			</div>
 			@endif
+			@if(session('info'))
+			<div class="alert alert-info">
+				{{session('info')}}
+			</div>
+			@endif
 			@if(count($errors)>0)
 				<div class="alert alert-danger">
 				خطأ
@@ -57,7 +62,7 @@
 					<tr><th class="min100">التليفون </th><td>{{$employee->phone}}</td></tr>
 				</table>
 			</div>
-			@if(Route::current()->getName()=='showemployee')
+			@if(Route::current()->getName()=='showemployee' && $employee->countCurrentProjects()==0)
 			<a href="{{ route('assignjob',$employee->id) }}" class="m-top btn btn-primary float">توظيف</a>
 			@endif
 			@if(Route::current()->getName()=='showemployee')
@@ -111,17 +116,17 @@
 			@foreach($projects as $project)
 				<div class="bordered-right border-navy" style="padding:0 5px 5px 0">
 					<h4 style="padding-right: 5px;">
-						أسم المشروع : {{$project->name}}
+						أسم المشروع : <a href="{{route("showproject",['id'=>$project->id])}}">{{$project->name}}</a>
 					</h4>
 					<p style="padding-right: 5px;">
 						الراتب	: {{$project->pivot->salary}} جنيه<br>
 						حالة الوظيفة : @if($project->pivot->done==1) أنتهت @else مستمر @endif <br>
 						@if($project->pivot->done==1)
-						تاريخ الانتهاء : {{$project->pivot->ended_at}}
+						تاريخ الانتهاء : {{date('d/m/Y',strtotime($project->pivot->ended_at))}}
 						@endif
 					</p>
 					@if($project->pivot->done==0)
-					<form method="post" class="float" class="form-inline" action="{{ route('updatesalary',['eid'=>$employee->id,'pid'=>$project->id]) }}" >
+					<form method="post" class="float" class="form-inline" action="{{ route('updatesalary',['id'=>$project->pivot->id]) }}" >
 						<button type="button" data-toggle="modal" data-target="#update-salary{{$project->id}}" class="btn btn-default">تعديل الراتب
 						</button>
 						<div class="modal fade" id="update-salary{{$project->id}}" tabindex="-1" role="dialog">
@@ -147,7 +152,7 @@
 						<input type="hidden" name="_token" value="{{csrf_token()}}">
 						<input type="hidden" name="_method" value="PUT">
 					</form>
-					<form method="post" class="form-inline" action="{{ route('endjob',['eid'=>$employee->id,'pid'=>$project->id]) }}" >
+					<form method="post" class="form-inline" action="{{ route('endjob',['id'=>$project->pivot->id]) }}" >
 						<button type="button" data-toggle="modal" data-target="#endjob{{$project->id}}" class="btn btn-danger">إنهاء الوظيفة
 						</button>
 						<div class="modal fade" id="endjob{{$project->id}}" tabindex="-1" role="dialog">

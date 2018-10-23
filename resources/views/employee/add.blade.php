@@ -31,9 +31,9 @@
           <strong>{{ session("info") }}</strong>
         </div>
       @endif
-			<form method="post" action="{{ route('addemployee') }}" class="form-horizontal">
+			<form method="post" action="{{ route('addemployee') }}" class="form-horizontal" id="add_employee">
 				<div class="form-group row @if($errors->has('name')) has-error @endif">
-					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم الموظف</label>
+					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أسم الموظف *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="name" id="name" value="{{old('name')}}" class="form-control" placeholder="أدخل أسم الموظف">
 						@if($errors->has('name'))
@@ -44,10 +44,10 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('type')) has-error @endif ">
-					<label for="type_employee" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الموظف</label>
+					<label for="type_employee" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الموظف *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="type" id="type_employee" class="form-control">
-							<option>أختار نوع الموظف</option>
+							<option value="">أختار نوع الموظف</option>
 							<option value="1" @if(old('type')==1) selected @endif >معين بالشركة</option>
 							<option value="2" @if(old('type')==2) selected @endif >منتدب</option>
 						</select>
@@ -59,7 +59,7 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('job')) has-error @endif">
-					<label for="job" class="control-label col-sm-2 col-md-2 col-lg-2">المسمى الوظيفى</label>
+					<label for="job" class="control-label col-sm-2 col-md-2 col-lg-2">المسمى الوظيفى *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="job" id="job" value="{{old('job')}}" class="form-control" placeholder="أدخل المسمى الوظيفى">
 						@if($errors->has('job'))
@@ -114,7 +114,7 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('city')) has-error @endif">
-					<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">المدينة</label>
+					<label for="city" class="control-label col-sm-2 col-md-2 col-lg-2">المدينة *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="city" id="city" value="{{old('city')}}" class="form-control" placeholder="أدخل المدينة">
 						@if($errors->has('city'))
@@ -124,8 +124,8 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if(old('salary_company')!=null) display @endif @if($errors->has('salary_company')) has-error @endif" id="div-salary-company">
-					<label for="salary_company" class="control-label col-sm-2 col-md-2 col-lg-2">الراتب</label>
+				<div class="form-group row @if(old('salary_company')!=null||old("type")==1) display @endif @if($errors->has('salary_company')) has-error @endif" id="div-salary-company">
+					<label for="salary_company" class="control-label col-sm-2 col-md-2 col-lg-2">الراتب *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="salary_company" id="salary_company" value="{{old('salary_company')}}" class="form-control" placeholder="أدخل الراتب">
 						@if($errors->has('salary_company'))
@@ -135,15 +135,15 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if(old('assign_job')!=null) display @endif @if($errors->has('assign_job')) has-error @endif" id="div-assign-job">
+				<div class="form-group row @if(old('type')==2) display @endif @if($errors->has('assign_job')) has-error @endif" id="div-assign-job">
 					<label for="assign_job" class="control-label col-sm-2 col-md-2 col-lg-2">تعيين الموظف ألأن</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<label>
-						<input type="radio" name="assign_job" @if(old('assign_job')==0 ||old('assign_job')==null) checked @endif id="assign_job" value="0">
+						<input type="radio" name="assign_job" @if(old('assign_job')==0 ||old('assign_job')==null) checked @endif value="0">
 						لا
 						</label>
 						<label>
-						<input type="radio" name="assign_job" @if(old('assign_job')==1) checked @endif id="assign_job" value="1">
+						<input type="radio" name="assign_job" @if(old('assign_job')==1) checked @endif value="1">
 						نعم
 						</label>
 						@if($errors->has('assign_job'))
@@ -153,9 +153,9 @@
 						@endif
 					</div>
 				</div>
-				<div id="assign_job_form" @if(old('assign_job')!=null && old('assign_job')==1) display @endif >
+				<div id="assign_job_form" class="@if(old('assign_job')==1) display @endif" >
 				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
-					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">تعيينه بمشروع</label>
+					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">تعيينه بمشروع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="project_id" id="project_id" class="form-control">
 							<option value="">أختار مشروع</option>
@@ -173,7 +173,7 @@
 					</div>
 				</div>
 				<div class="form-group row @if($errors->has('salary')) has-error @endif">
-					<label for="salary" class="control-label col-sm-2 col-md-2 col-lg-2">الراتب الشهرى بالمشروع</label>
+					<label for="salary" class="control-label col-sm-2 col-md-2 col-lg-2">الراتب الشهرى بالمشروع *</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<input type="text" name="salary" id="salary" value="{{old('salary')}}" class="form-control" placeholder="أدخل الراتب الشهرى بالمشروع">
 						@if($errors->has('salary'))

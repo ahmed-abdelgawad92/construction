@@ -74,7 +74,7 @@
 							<td>{{$count++}}</td>
 							<td>{{$advance->advance}} جنيه</td>
 							<td>@if($advance->active==0) لم تدفع بعد @else تم دفع السلفة @endif </td>
-							<td>{{$advance->created_at->format('Y-m-d')}}</td>
+							<td>{{date('d/m/Y',strtotime($advance->created_at))}}</td>
 							<td>
 							@if($advance->active==0)
 							<form method="post" action="{{ route('repayadvance',$advance->id) }}">
@@ -99,7 +99,7 @@
 							<input type="hidden" name="_method" value="PUT">
 							</form>
 							@else
-							{{$advance->payment_at->format('Y-m-d')}}
+							{{date('d/m/Y',strtotime($advance->payment_at))}}
 							@endif
 							</td>
 							<td><a href="{{ route('updateadvance',$advance->id) }}" class="btn btn-block btn-default">تعديل</a></td>
