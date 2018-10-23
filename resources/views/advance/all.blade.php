@@ -1,10 +1,10 @@
 @extends('layouts.master')
-@section('title','جميع السلفات')
+@section('title','جميع السلفات بالشركة')
 @section('content')
 <div class="content">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>جميع السلفات</h3>
+			<h3>جميع السلفات بالشركة</h3>
 		</div>
 		<div class="panel-body">
 			@if(session('update_error'))
@@ -23,7 +23,7 @@
 				</div>
 			@endif
 			<div class="jumbotron">
-				<h2 style="border-bottom: 1px solid #000; padding-bottom: 5px;">أجمالى السلفات</h2>
+				<h2 style="border-bottom: 1px solid #000; padding-bottom: 5px;">أجمالى السلفات بالشركة</h2>
 				<br><br>
 				<div class="row">
 					<div class="col-sm-6 col-md-4 col-lg-4 col-xs-12" style="margin-bottom: 10px;">

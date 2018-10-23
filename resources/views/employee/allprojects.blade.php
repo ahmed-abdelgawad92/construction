@@ -14,7 +14,6 @@
 							<th>#</th>
 							<th>أسم المشروع</th>
 							<th>الراتب</th>
-							<th>حالة العمل</th>
 							<th>تاريخ الأنتداب</th>
 							<th>تاريخ أنتهاء العمل</th>
 							<th>تعديل الراتب</th>
@@ -22,17 +21,12 @@
 					</thead>
 					<tbody>
 						<?php $count=1; ?>
-						@foreach($employee->projects as $project)
+						@foreach($employee->projects()->orderBy('employee_project.created_at','desc')->get() as $project)
 						<tr>
 						<th>{{$count++}}</th>
 						<th>
 						<a href="{{ route('showproject',$project->id) }}">{{$project->name}}</a></th>
 						<th>{{$project->pivot->salary}} جنيه</th>
-						@if($project->pivot->done==0)
-						<th>يعمل</th>
-						@else
-						<th>أنتهى العمل</th>
-						@endif
 						<th>{{date('d/m/Y',strtotime($project->pivot->created_at))}}</th>
 						@if($project->pivot->done==0)
 						<th>
@@ -62,7 +56,7 @@
 						@endif
 						@if($project->pivot->done==0)
 						<th>
-						<form method="post" class="form-inline" action="{{ route('updatesalary',['id'=>$project->pivot->id]) }}" >
+						<form method="post" action="{{ route('updatesalary',['id'=>$project->pivot->id]) }}" id="edit_salary">
 							<button type="button" data-toggle="modal" data-target="#update-salary{{$project->id}}" class="btn btn-default btn-block">تعديل الراتب
 							</button>
 							<div class="modal fade" id="update-salary{{$project->id}}" tabindex="-1" role="dialog">

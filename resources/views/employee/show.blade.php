@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','بيانات الموظف')
+@section('title','بيانات الموظف '.$employee->name)
 @section('content')
 <div class="content">
 <div class="row">
@@ -126,7 +126,7 @@
 						@endif
 					</p>
 					@if($project->pivot->done==0)
-					<form method="post" class="float" class="form-inline" action="{{ route('updatesalary',['id'=>$project->pivot->id]) }}" >
+					<form method="post" class="float" class="form-inline" action="{{ route('updatesalary',['id'=>$project->pivot->id]) }}" id="edit_salary">
 						<button type="button" data-toggle="modal" data-target="#update-salary{{$project->id}}" class="btn btn-default">تعديل الراتب
 						</button>
 						<div class="modal fade" id="update-salary{{$project->id}}" tabindex="-1" role="dialog">

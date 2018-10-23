@@ -17,7 +17,7 @@
 				{{session('success')}}
 			</div>
 			@endif
-			<form method="post" action="{{ route('updateadvance',$advance->id) }}" class="form-horizontal">
+			<form method="post" action="{{ route('updateadvance',$advance->id) }}" class="form-horizontal" id="add_advance">
 				<div class="form-group row @if($errors->has('advance')) has-error @endif">
 					<label for="advance" class="control-label col-sm-2 col-md-2 col-lg-2">السلفة</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">

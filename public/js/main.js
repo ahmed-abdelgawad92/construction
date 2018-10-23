@@ -1104,6 +1104,43 @@ $(document).ready(function() {
 		}
 	});
 	/******************************************Employees********************************************/
+	//validate edit salary of assigned jobs
+	$("#edit_salary").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if(!$('#salary').val().trim() || !$('#salary').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			check=false;
+			assignError($("#salary"),'من فضلك أدخل الراتب , يجب أن يتكون من أرقام فقط');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	//validate assigning job
+	$("#assign_job").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if(!$('#project_id').val().trim() || !$('#project_id').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			check=false;
+			assignError($("#project_id"),'من فضلك أدخل الراتب , يجب أن يتكون من أرقام فقط');
+		}
+		if(!$('#salary').val().trim() || !$('#salary').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			check=false;
+			assignError($("#salary"),'من فضلك أدخل الراتب , يجب أن يتكون من أرقام فقط');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	//validate employee creation
 	$("#add_employee").submit(function(e){
 		e.preventDefault();
 		$(".is-invalid").removeClass('is-invalid');
@@ -1173,7 +1210,28 @@ $(document).ready(function() {
 		return false;
 	});
 
-
+	/******************************************Advances********************************************/
+	$("#add_advance").submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check=true;
+		if($('#employee_id').length){
+			if(!$('#employee_id').val().trim() || !$('#employee_id').val().trim().match(/^[0-9]+$/)){
+				check=false;
+				assignError($("#employee_id"),'من فضلك أختار الموظف صاحب السلفة');
+			}
+		}
+		if(!$('#advance').val().trim() || !$('#advance').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)){
+			check=false;
+			assignError($("#advance").parent(),'من فضلك أدخل قيمة السلفة , يجب أن يتكون من أرقام فقط');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
 
 
 

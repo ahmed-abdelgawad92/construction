@@ -1,14 +1,27 @@
 @extends('layouts.master')
-@section('title','أضافة سلفة')
+@section('title')
+أضافة سلفة
+@if (isset($employee))
+	للموظف {{$employee->name}}
+@endif
+@endsection
 @section('content')
 <div class="content">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>أضافة سلفة @if(Route::current()->getName()=='addcompanyadvances')
-						  لموظف بالشركة
-						  @elseif(Route::current()->getName()=='addadvances')
-						  لموظف منتدب
-						  @endif</h3>
+			<h3>أضافة سلفة
+				@if(Route::current()->getName()=='addcompanyadvances')
+			  لموظف بالشركة
+				@isset($employee)
+					<a href="{{route("showcompanyemployee",$employee->id)}}">{{$employee->name}}</a>
+				@endisset
+			  @elseif(Route::current()->getName()=='addadvances')
+			  لموظف منتدب
+				@isset($employee)
+					<a href="{{route("showemployee",$employee->id)}}">{{$employee->name}}</a>
+				@endisset
+			  @endif
+			</h3>
 		</div>
 		<div class="panel-body">
 			@if(session('insert_error'))
@@ -16,13 +29,14 @@
 				{{session('insert_error')}}
 			</div>
 			@endif
+			@if (isset($employee) || (isset($employees)&&count($employees)>0))
 			<form method="post"
 					@if(Route::current()->getName()=='addcompanyadvances')
 					action="{{ route('addcompanyadvance') }}"
 					@elseif(Route::current()->getName()=='addadvances')
 					action="{{ route('addadvance') }}"
 					@endif
-					class="form-horizontal">
+					class="form-horizontal" id="add_advance">
 				<div class="form-group row @if($errors->has('employee_id')) has-error @endif ">
 					<label for="type_employee" class="control-label col-sm-2 col-md-2 col-lg-2">الموظف</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -62,6 +76,9 @@
 				</div>
 				<input type="hidden" name="_token" value="{{csrf_token()}}">
 			</form>
+			@else
+				<div class="alert alert-warning">لا يوجد موظفيين</div>
+			@endif
 		</div>
 	</div>
 </div>

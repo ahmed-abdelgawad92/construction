@@ -17,12 +17,12 @@
 				{{session('info')}}
 			</div>
 			@endif
-			<form method="post" action="{{ route('assignjob',$employee->id) }}" class="form-horizontal">
+			<form method="post" action="{{ route('assignjob',$employee->id) }}" class="form-horizontal" id="assign_job">
 				<div class="form-group row @if($errors->has('project_id')) has-error @endif">
 					<label for="project_id" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المشروع</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<select name="project_id" id="project_id" class="form-control">
-						<option>أختار المشروع</option>
+						<option value="">أختار المشروع</option>
 						@foreach($projects as $project)
 						<option @if(old('project_id')==$project->id) selected @endif value="{{$project->id}}">
 						{{$project->name}}
