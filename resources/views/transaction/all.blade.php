@@ -49,13 +49,13 @@
 				<div class="row">
 					<div class="col-sm-6 col-md-4 col-lg-4 col-xs-12" style="margin-bottom: 10px;">
 						<div class="circle-div">
-							{{ $total_in }} جنيه
+							{{ Str::number_format($total_in) }} جنيه
 						</div>
 						<p style="text-align: center; margin-top: 8px;">أجمالى المستخلصات</p>
 					</div>
-					<div class="col-sm-6 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4 col-xs-12" style="margin-bottom: 10px;">
+					<div class="col-sm-6 col-md-4 offset-md-4 col-lg-4 offset-lg-4 col-xs-12" style="margin-bottom: 10px;">
 						<div class="circle-div">
-							{{ $total_out }} جنيه
+							{{ Str::number_format($total_out) }} جنيه
 						</div>
 						<p style="text-align: center; margin-top: 8px;">أجمالى المدفوع للمقاول</p>
 					</div>
@@ -81,19 +81,23 @@
 					<tbody>
 						<?php $count=1; ?>
 						@foreach($terms as $term)
-						<?php 
-						$total_transaction=$term->transactions()->where('type','in')->sum('transactions.transaction'); 
-						$total_contractor=$term->transactions()->where('type','out')->sum('transactions.transaction');
+						<?php
+						$total_transaction=$term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
+						$total_contractor=$term->payments();
 						?>
 						<tr>
 							<td>{{$count++}}</td>
 							<td><a href="{{ route('alltermtransaction',$term->id) }}">{{$term->code}}</a></td>
-							<td>{{$term->contractor->name}}</td>
+							<td>
+								@foreach ($term->contracts as $contract)
+									{{$contract->contractor->name}} ,
+								@endforeach
+							</td>
 							<td>{{$term->type}}</td>
-							<td>{{$term->amount}} <span class="badge">{{$term->unit}}</span></td>
-							<td>{{ $total_transaction/$term->value }} <span class="badge">{{$term->unit}}</span></td>
-							<td>{{$total_transaction}} <span class="badge">جنيه</span></td>
-							<td>{{$total_contractor }} <span class="badge">جنيه</span></td>
+							<td>{{Str::number_format($term->amount)}} <span class="badge">{{$term->unit}}</span></td>
+							<td>{{ Str::number_format($total_transaction/$term->value) }} <span class="badge">{{$term->unit}}</span></td>
+							<td>{{Str::number_format($total_transaction)}} <span class="badge">جنيه</span></td>
+							<td>{{Str::number_format($total_contractor)}} <span class="badge">جنيه</span></td>
 						</tr>
 						@endforeach
 					</tbody>
@@ -124,8 +128,8 @@
 						@foreach($transactions_in as $transaction)
 						<tr>
 							<td>{{$count++}}</td>
-							<td>{{$transaction->transaction}} <span class="badge">جنيه</span></td>
-							<td>{{$transaction->transaction/$transaction->term->value}} <span class="badge">{{$transaction->term->unit}}</span></td>
+							<td>{{Str::number_format($transaction->transaction)}} <span class="badge">جنيه</span></td>
+							<td>{{Str::number_format($transaction->transaction/$transaction->term->value)}} <span class="badge">{{$transaction->term->unit}}</span></td>
 							<td>{{$transaction->created_at->format('Y-m-d')}}</td>
 							<td>
 							<form method="post" action="{{ route('updatetransaction',$transaction->id) }}">
@@ -152,7 +156,7 @@
 											<button class="btn btn-primary">تعديل</button>
 										</div>
 									</div>
-								</div>					
+								</div>
 							</div>
 							<input type="hidden" name="_token" value="{{csrf_token()}}">
 							<input type="hidden" name="_method" value="PUT">
@@ -175,7 +179,7 @@
 											<button class="btn btn-danger">نعم</button>
 										</div>
 									</div>
-								</div>					
+								</div>
 							</div>
 							<input type="hidden" name="_token" value="{{csrf_token()}}">
 							<input type="hidden" name="_method" value="DELETE">
@@ -209,7 +213,7 @@
 						@foreach($transactions_out as $transaction)
 						<tr>
 							<td>{{$count++}}</td>
-							<td>{{$transaction->transaction}} <span class="badge">جنيه</span></td>
+							<td>{{Str::number_format($transaction->transaction)}} <span class="badge">جنيه</span></td>
 							<td>{{$transaction->created_at->format('Y-m-d')}}</td>
 							<td>
 							<form method="post" action="{{ route('updatetransaction',$transaction->id) }}">
@@ -236,7 +240,7 @@
 											<button class="btn btn-primary">تعديل</button>
 										</div>
 									</div>
-								</div>					
+								</div>
 							</div>
 							<input type="hidden" name="_token" value="{{csrf_token()}}">
 							<input type="hidden" name="_method" value="PUT">
@@ -259,7 +263,7 @@
 											<button class="btn btn-danger">نعم</button>
 										</div>
 									</div>
-								</div>					
+								</div>
 							</div>
 							<input type="hidden" name="_token" value="{{csrf_token()}}">
 							<input type="hidden" name="_method" value="DELETE">

@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
+use App\Payment;
 use App\Project;
 use App\Expense;
 use App\Log;
@@ -53,7 +54,8 @@ class ExpenseController extends Controller {
 			$rules=[
 				'whom'=>'required',
 				'expense'=>'required|numeric',
-				'project_id'=>'required|exists:projects,id'
+				'project_id'=>'required|exists:projects,id',
+				'payment_type'=>'in:0,1'
 			];
 			//error messages
 			$error_messages=[
@@ -65,8 +67,10 @@ class ExpenseController extends Controller {
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
-			if($validator->fails())
+			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
+			}
+			$project = Project::findOrFail($req->input("project_id"));
 			$expense=new Expense;
 			$expense->whom=$req->input('whom');
 			$expense->expense=$req->input('expense');
@@ -80,8 +84,16 @@ class ExpenseController extends Controller {
 			$log->action="create";
 			$log->record_id=$expense->id;
 			$log->user_id=Auth::user()->id;
-			$log->description="قام بأضافة أكرامية تم دفعها بمشروع ".$expense->project->name." قيمتها ".$expense->expense." جنيه .";
+			$log->description="قام بأضافة أكرامية تم دفعها بمشروع ".$project->name." قيمتها ".$expense->expense." جنيه .";
 			$log->save();
+			// ADD Payment to Payment Table
+			$payment = new Payment;
+			$payment->project_id= $project->id;
+			$payment->type = $req->input("payment_type");
+			$payment->payment_amount = $req->input("expense");
+			$payment->table_name = "expenses";
+			$payment->table_id = $expense->id;
+			$payment->save();
 			return redirect()->route('showexpense',$expense->project_id)->with('success','تم أضافة الأكرامية بنجاح');
 		}
 		else
@@ -167,12 +179,14 @@ class ExpenseController extends Controller {
 			if($validator->fails())
 				return redirect()->back()->withErrors($validator)->withInput();
 			$expense=Expense::findOrFail($id);
+			$payment = Payment::where('project_id',$expense->project_id)->where('table_name','expenses')->where('table_id',$expense->id)->first();
 			$check= false;
 			$description="";
 			if ($expense->expense != $req->input("expense")) {
 				$check = true;
 				$description.='قام بتغيير قيمة الأكرامية من "'.$expense->expense.'" إلى "'.$req->input("expense").'" . ';
 				$expense->expense=$req->input('expense');
+				$payment->payment_amount=$req->input("expense");
 			}
 			if ($expense->whom != $req->input("whom")) {
 				$check = true;
@@ -184,6 +198,7 @@ class ExpenseController extends Controller {
 				if(!$saved){
 					return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذه الأكرامية, يرجى المحاولة فى وقت لاحق');
 				}
+				$payment->save();
 				$log=new Log;
 				$log->table="expenses";
 				$log->action="update";
@@ -210,6 +225,9 @@ class ExpenseController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$expense=Expense::findOrFail($id);
 			$expense->deleted = 1;
+			$payment=$expense->payment();
+			$payment->deleted=1;
+			$payment->save();
 			$deleted=$expense->save();
 			if(!$deleted){
 				return redirect()->back()->with('delete_error','حدث عطل خلال حذف هذه الأكرامية, يرجى المحاولة فى وقت لاحق');

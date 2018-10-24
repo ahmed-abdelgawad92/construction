@@ -156,7 +156,7 @@ class StoreController extends Controller {
 				'amount'=>'required|numeric',
 				'value'=>'required|numeric',
 				'amount_paid'=>'required|numeric',
-				'payment_type'=>'nullable|in:0,1'
+				'payment_type'=>'in:0,1'
 			];
 			$error_messages=[
 				'project_id.required'=>'يجب أختيار مشروع',
@@ -209,6 +209,7 @@ class StoreController extends Controller {
 			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
+			$project = Project::findOrFail($req->input("project_id"));
 			try{
 				DB::beginTransaction();
 				$store->value=$req->input('value');
@@ -226,6 +227,7 @@ class StoreController extends Controller {
 				$log->save();
 				// ADD Payment to Payment Table
 				$payment = new Payment;
+				$payment->project_id=$req->input("project_id");
 				$payment->type = $req->input("payment_type");
 				$payment->payment_amount = $req->input("amount_paid");
 				$payment->table_name = "stores";
@@ -395,6 +397,7 @@ class StoreController extends Controller {
 				 $log->save();
 				 // ADD Payment to Payment Table
 				 $payment = new Payment;
+				 $payment->project_id=$store->project_id;
 				 $payment->type = $req->input("payment_type");
 				 $payment->payment_amount = $req->input("payment");
 				 $payment->table_name = "stores";
