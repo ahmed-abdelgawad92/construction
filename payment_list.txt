@@ -1,0 +1,5 @@
+# Payments ==> type (0,1); [ 0 =>'cash_box' , 1=>'loan']
+
+# Advances ==> active (0,1); [ 0=>'not paid' , 1=>'paid back']
+
+#

@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use App\Contractor;
 use App\Contract;
 
@@ -19,7 +20,7 @@ class Term extends Model {
 	//Define the many to many relationship with labor_supplier
 	// public function contractors()
 	// {
-	// 	return $this->hasManyThrough('App\Contractor','App\Contract');
+	// 	$contractors = $this->contracts;
 	// }
 	//get all contracted contractor ids
 	public function getContractorsId()
@@ -46,6 +47,13 @@ class Term extends Model {
 	public function transactions()
 	{
 		return $this->hasMany('App\Transaction');
+	}
+	//1 to many with Payments
+	public function payments()
+	{
+		$sql = "select sum(payments.payment_amount) as payment from payments where project_id=? and table_name='contracts' and table_id in (select id from contracts where term_id=?)";
+		$payment = DB::select($sql,[$this->project_id, $this->id]);
+		return $payment[0]->payment;
 	}
 	//1 to many with Notes
 	public function notes()

@@ -162,7 +162,7 @@
 					</div>
 				</div>
 				@else
-				<input type="hidden" name="paymen_type" value="0">
+				<input type="hidden" name="payment_type" value="0">
 				@endif
 				<div class="col-sm-2 col-md-2 col-lg-2 offset-sm-5 offset-md-5 offset-lg-5">
 					<button class="btn btn-primary form-control" id="save_btn">حفظ</button>

@@ -24,12 +24,12 @@ class TransactionController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$project=Project::findOrFail($id);
-			$total_in=$project->transactions()->where('transactions.type','in')->sum('transactions.transaction');
-			$total_out=$project->transactions()->where('transactions.type','out')->sum('transactions.transaction');
+			$total_in=$project->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
+			$total_out=$project->payments()->where('payments.deleted',0)->sum('payments.payment_amount');
 			$terms=$project
 					->terms()
 					->where('started_at','<=',Carbon::today())
-					->with('transactions','contractor')
+					->with('transactions','contracts')
 					->orderBy('terms.code')
 					->get();
 			$array=[
@@ -51,9 +51,9 @@ class TransactionController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$term=Term::findOrFail($id);
-			$transactions_in=$term->transactions()->where('type','in')->get();
+			$transactions_in=$term->transactions()->where('transactions.deleted',0)->orderBy('transactions.created_at')->get();
 			$transactions_out=$term->transactions()->where('type','out')->get();
-			$total_in=$term->transactions()->where('type','in')->sum('transactions.transaction');
+			$total_in=$term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
 			$total_out=$term->transactions()->where('type','out')->sum('transactions.transaction');
 			$array=[
 				'active'=>'trans',
