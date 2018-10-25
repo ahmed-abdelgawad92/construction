@@ -45,7 +45,7 @@
 			@foreach($terms as $term)
 			<?php
 				$total_production=$term->productions()->sum('productions.amount');
-				$prev_production=$term->transactions()->where('type','in')->sum('transaction')/$term->value;
+				$prev_production=$term->transactions()->sum('transaction')/$term->value;
 				$current_production=$total_production-$prev_production;
 			?>
 			<tr>
@@ -62,7 +62,7 @@
 			<th style="width: 100px;">{{$current_production}}</th>
 			<th class="total_production">{{$total_production}}</th>
 			@endif
-			
+
 			<th>{{$term->deduction_percent}}</th>
 			<th>{{($term->deduction_percent/100)*$term->term_amount*$term->value}}</th>
 			<th>{{$term->amount*$term->value-(($term->deduction_percent/100)*$term->amount*$term->value)}}</th>

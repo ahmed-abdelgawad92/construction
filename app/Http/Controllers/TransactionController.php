@@ -25,7 +25,7 @@ class TransactionController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$project=Project::findOrFail($id);
 			$total_in=$project->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
-			$total_out=$project->payments()->where('payments.deleted',0)->sum('payments.payment_amount');
+			$total_out=$project->payments()->where('payments.deleted',0)->where('payments.table_name','contracts')->sum('payments.payment_amount');
 			$terms=$project
 					->terms()
 					->where('started_at','<=',Carbon::today())
@@ -52,9 +52,9 @@ class TransactionController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$term=Term::findOrFail($id);
 			$transactions_in=$term->transactions()->where('transactions.deleted',0)->orderBy('transactions.created_at')->get();
-			$transactions_out=$term->transactions()->where('type','out')->get();
+			$transactions_out=$term->transactions()->get();
 			$total_in=$term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
-			$total_out=$term->transactions()->where('type','out')->sum('transactions.transaction');
+			$total_out=$term->transactions()->sum('transactions.transaction');
 			$array=[
 				'active'=>'trans',
 				'term'=>$term,
@@ -102,44 +102,53 @@ class TransactionController extends Controller {
 	public function store(Request $req,$id)
 	{
 		if(Auth::user()->type=='admin'){
-			$terms=$req->input('term');
-			$found=0;
-			$transactions=array();
-			$errors=array('type_error'=>'الكمية الحالية يجب أن تكون أرقام فقط');
-			for($i=1;$i<=count($terms);$i++) {
-				if(isset($terms[$i]['check'])&&$terms[$i]['check']==1){
-					$found++;
-					if(!is_numeric($terms[$i]['current_amount'])){
-						$errors['current_amount'.$i]=1;
-					}else{
-						if($terms[$i]['current_amount']>0){
-							$term=Term::findOrFail($terms[$i]['id']);
-							$transaction=new Transaction;
-							$transaction->transaction=$terms[$i]['current_amount']*$term->value;
-							$transaction->term_id=$term->id;
-							$transaction->type='in';
-							$transactions[]=$transaction;
-						}
+			$checked = $req->input("checked")??[];
+			$terms = $req->input('term');
+			$transactions = array();
+			$changedTerms = array();
+			$errors = array('type_error'=>'الكمية الحالية يجب أن تكون أرقام فقط');
+			if(count($checked)==0){
+				return redirect()->back()->with('empty_error','يجب أختيار صف واحد على الأقل')->withInput();
+			}
+			foreach($checked as $i) {
+				$term=Term::findOrFail($terms[$i]['id']);
+				if(!is_numeric($terms[$i]['current_amount'])){
+					$errors['current_amount'.$i]=1;
+				}else{
+					if($terms[$i]['current_amount']>0){
+						$transaction=new Transaction;
+						$transaction->transaction=$terms[$i]['current_amount']*$term->value;
+						$transaction->term_id=$term->id;
+						$transactions[]=$transaction;
 					}
 				}
-			}
-			if($found==0)
-				return redirect()->back()->with('empty_error','يجب أختيار صف واحد على الأقل')->withInput();
-			if(count($errors)>1)
-				return redirect()->back()->with($errors)->withInput();
-			DB::beginTransaction();
-			$insert_error=0;
-			foreach ($transactions as $transaction) {
-				$saved=$transaction->save();
-				if(!$saved){
-					$insert_error=1;
-					DB::rollBack();
+				if(!is_numeric($terms[$i]['deduction_percent'])){
+					$errors['deduction_percent'.$i]=1;
+				}else{
+					if($terms[$i]['deduction_percent']>0 && $terms[$i]['deduction_percent']<100){
+						$term->deduction_percent=$terms[$i]['deduction_percent'];
+						$changedTerms[]=$term;
+					}
 				}
+
 			}
-			DB::commit();
-			if($insert_error==1)
+			if(count($errors)>1){
+				return redirect()->back()->with($errors)->withInput();
+			}
+			try {
+				DB::beginTransaction();
+				foreach ($transactions as $transaction) {
+					$transaction->save();
+				}
+				foreach ($changedTerms as $term) {
+					$term->save();
+				}
+				DB::commit();
+			} catch (\Exception $e) {
+				DB::rollBack();
 				return redirect()->back()->with('insert_error','حدث عطل خلال حفظ هذا المستخلص , يرجى المحاولة فى وقت لاحق');
-			return redirect()->route('createextractor',$id)->with('success','تم حفظ المستخلص بنجاح, لاحظ أنه جميع كمية الأنتاج السابقة للبنود التى أختيرت أضيفت إليها الكمية الحالية التى أدخلتموها (أو التى أستخلصها النظام) . أذا وجدت ألأن كيمة الأنتاج لبند أنت أدخلته لا تساوى الصفر , لا تقلق فقط أعلم أنك أنتجت أكثر من ما تم محاسبتك عليه أو تم محاسبتك على كمية أكثر من ما أنتجت(فى هذه الحالة أذا كنت أنتجت الكمية كلها فربما نسيت أضافت هذا الأنتاج)');
+			}
+			return redirect()->route('createextractor',$id)->with('success','تم حفظ المستخلص بنجاح, لاحظ أنه جميع كمية الأنتاج السابقة للبنود التى أختيرت أضيفت إليها الكمية الحالية التى أدخلتموها (أو التى أستخلصها النظام) . أذا وجدت ألأن كمية الأنتاج لبند أنت أدخلته لا تساوى الصفر , لا تقلق فقط أعلم أنه تم محاسبتك على كمية أكثر من مما أنتجت (فى هذه الحالة أذا كنت أنتجت الكمية كلها فربما نسيت أضافت هذا الأنتاج)');
 		}
 		else
 			abort('404');

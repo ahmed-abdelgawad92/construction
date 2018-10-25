@@ -4,12 +4,17 @@
 <div class="content">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>أنشاء مستخلص تجريبى للمشروع <a href="{{ route('showproject',$project->id) }}">{{$project->name}}</a><a data-html="true" tabindex="0" id="info" role="button" data-toggle="popover" data-trigger="focus" title="معلومات يجب معرفتها للتعامل مع المستخلص بهذا النظام" data-content="1.ضع علامة صح على البنود التى تم محاسبتك على أنتاجها الحالى, ,ان تم محاسبتك على أنتاج أقل أو أكثر مما موجود بالنظام ,فقط أدخل الكمية التى تم محاسبتك عليها فى مدخل الكمية الحالية الخاص بالبند.<br>2.القيم السالبة بالكمية المنتجة الحالية تعنى أنك قد أخذت مستحقات أكثر مما أنتجت بالبند.<br>3.أذا كانت القيمة صفر أذاً أنت أخذت مستحقات كل ما أنتجت بالبند. <br>4.أذا كانت القيمة أكثر من الصفر أذاً الكمية الحالية المنتجة لم تتم محاسبتك عليها. <br>5.أذا أردت أظهار القيم المنتجة المبنية على ما تم أخذ مستحقاته أضغط على زر ضبط قيم المستخلص, هذا فى حالة أنك تريد أن ترى المستخلص بوجهة نظر العميل أو الهيئة المختصة. <br>6.ما يتم أظهاره هنا هو قيمة المستخلص على حسب أنتاجك, و هذا يفسر القيم السالبة التى شرحناها.<br>7.لا تقلق من القيم السالبة أذا أردت حفظ المستخلص كما تم أصداره من النظام ,سيتم تجاهلها برمجياً, لذا فقط ضع علامة صح على الكل و النظام سيحفظ المستخلص."><span class="glyphicon glyphicon-info-sign"></span></a></h3>
+			<h3>أنشاء مستخلص تجريبى للمشروع <a href="{{ route('showproject',$project->id) }}">{{$project->name}}</a><a data-html="true" tabindex="0" id="info" role="button" data-toggle="popover" data-trigger="focus" title="معلومات يجب معرفتها للتعامل مع المستخلص بهذا النظام" data-content="1.ضع علامة صح على البنود التى تم محاسبتك على أنتاجها الحالى, ,ان تم محاسبتك على أنتاج أقل أو أكثر مما موجود بالنظام ,فقط أدخل الكمية التى تم محاسبتك عليها فى مدخل الكمية الحالية الخاص بالبند.<br>2.القيم السالبة بالكمية المنتجة الحالية تعنى أنك قد أخذت مستحقات أكثر مما أنتجت بالبند.<br>3.أذا كانت القيمة صفر أذاً أنت أخذت مستحقات كل ما أنتجت بالبند. <br>4.أذا كانت القيمة أكثر من الصفر أذاً الكمية الحالية المنتجة لم تتم محاسبتك عليها. <br>5.أذا أردت أظهار القيم المنتجة المبنية على ما تم أخذ مستحقاته أضغط على زر ضبط قيم المستخلص, هذا فى حالة أنك تريد أن ترى المستخلص بوجهة نظر العميل أو الهيئة المختصة. <br>6.ما يتم أظهاره هنا هو قيمة المستخلص على حسب أنتاجك, و هذا يفسر القيم السالبة التى شرحناها.<br>7.لا تقلق من القيم السالبة أذا أردت حفظ المستخلص كما تم أصداره من النظام ,سيتم تجاهلها برمجياً, لذا فقط ضع علامة صح على الكل و النظام سيحفظ المستخلص.<br><br>8.المستخلص يُظهر فقط البنودالتى بدأت."><span class="glyphicon glyphicon-info-sign"></span></a></h3>
 		</div>
 		<div class="panel-body">
 			@if(session('empty_error'))
 			<div class="alert alert-danger">
 				{{session('empty_error')}}
+			</div>
+			@endif
+			@if(session('insert_error'))
+			<div class="alert alert-danger">
+				{{session('insert_error')}}
 			</div>
 			@endif
 			@if(session('type_error'))
@@ -43,8 +48,8 @@
 							<th>السابقة</th>
 							<th>الحالية</th>
 							<th>الجملة</th>
-							<th>نسبة</th>
-							<th>قيمة</th>
+							<th class="imp-width-100">نسبة</th>
+							<th style="width:180px;">قيمة</th>
 							<th>الصافى</th>
 						</tr>
 					</thead>
@@ -53,11 +58,11 @@
 						@foreach($terms as $term)
 						<?php
 							$total_production=$term->productions()->sum('productions.amount');
-							$prev_production=$term->transactions()->where('type','in')->sum('transaction')/$term->value;
+							$prev_production=$term->transactions()->sum('transaction')/$term->value;
 							$current_production=$total_production-$prev_production;
 						?>
 						<tr>
-						<th class="all_checkbox"><input type="checkbox" class="term" name="term[{{$c}}][check]" value="1"></th>
+						<th class="all_checkbox"><input type="checkbox" @if(old('checked.'.$c)) checked	@endif class="term" name="checked[]" value="{{$c}}"></th>
 						<th>{{$count++}}</th>
 						<th><a href="{{ route('showterm',$term->id) }}">{{$term->code}}</a>
 						<input type="hidden" name="term[{{$c}}][id]" value="{{$term->id}}">
@@ -67,12 +72,26 @@
 						<th>{{$term->amount}}</th>
 						<th class="prev_amount">{{ $prev_production }}</th>
 						<th style="width: 100px;" class=" @if(session('current_amount'.$c)==1) has-error @endif ">
-						<input type="text" style="width:100px;" name="term[{{$c}}][current_amount]" class="form-control @if(session('current_amount'.$c)==1) has-error @endif current_amount" value="{{$current_production}}">
+						<input type="text" style="width:100px;" name="term[{{$c}}][current_amount]" class="form-control number @if(session('current_amount'.$c)==1) has-error @endif current_amount" value="{{ old('term.'.$c.'.current_amount')??$current_production}}">
 						</th>
 						<th class="total_production">{{$total_production}}</th>
-						<th>{{$term->deduction_percent}}</th>
-						<th>{{($term->deduction_percent/100)*$term->amount*$term->value}}</th>
-						<th>{{$term->term_amount*$term->value-(($term->deduction_percent/100)*$term->amount*$term->value)}}</th>
+						<th>
+					 		<div class="input-group" @if(session('deduction_percent'.$c)==1) has-error @endif >
+					 			<input type="text" name="term[{{$c}}][deduction_percent]" class="form-control number imp-width-100" value="{{old('term.'.$c.'.deduction_percent')??$term->deduction_percent}}">
+					 			<span class="input-group-addon" id="basic-addon1" style="font-size:20px; font-weight:100; ">&#37;</span>
+					 		</div>
+						</th>
+						@php
+							$total_value=$term->amount*$term->value;
+							$deduction_value=($term->deduction_percent/100)*$total_value;
+						@endphp
+						<th>
+							<div class="input-group" @if(session('deduction_percent'.$c)==1) has-error @endif >
+					 			<input type="text" name="term[{{$c}}][deduction_percent]" class="form-control number" value="{{old('term.'.$c.'.deduction_value')??$deduction_value}}">
+					 			<span class="input-group-addon" id="basic-addon1" style="font-size:20px; font-weight:100; ">جنيه</span>
+					 		</div>
+						</th>
+						<th>{{Str::number_format($total_value-$deduction_value)}} جنيه</th>
 						</tr>
 						<?php $c++; ?>
 						@endforeach
@@ -98,7 +117,7 @@
 					</div>
 				</div>
 				<a href="{{ route('printextractor',$project->id) }}" target="_blank" class="btn btn-default">طباعة <span class="glyphicon glyphicon-print"></span></a>
-				<button id="set_extractor" type="button" class="btn btn-default">ضبط قيم المستخلص</button>
+				<button id="set_extractor" type="button" class="btn btn-default"><span style="top:3px; position:relative; margin-left:0.5rem">&#10227;</span> ضبط قيم المستخلص</button>
 			</form>
 			@else
 			<div class="alert alert-warning">

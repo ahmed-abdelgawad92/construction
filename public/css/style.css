@@ -44,6 +44,9 @@ button.form-control{
 a.no-underline{
 	text-decoration: none;
 }
+.imp-width-100{
+	width: 100px !important;
+}
 .width-100{
   width: 100px;
 }
@@ -55,6 +58,9 @@ a.no-underline{
 }
 a:hover>img{
 	opacity: 0.8;
+}
+.all_checkbox{
+	max-width: 20px;
 }
 /*-------------------------------Navbar and Sidebar----------------------------------*/
 .navbar-default {
@@ -444,7 +450,7 @@ footer{
 .row {
   display: -ms-flexbox;
 	display: flex;
-	display: -webkit-box;
+	display: -webkit-flex;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 	flex-direction: row;
