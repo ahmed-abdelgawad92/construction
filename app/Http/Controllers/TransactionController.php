@@ -104,35 +104,61 @@ class TransactionController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$checked = $req->input("checked")??[];
 			$terms = $req->input('term');
+			$production=0;
 			$transactions = array();
 			$changedTerms = array();
-			$errors = array('type_error'=>'الكمية الحالية يجب أن تكون أرقام فقط');
+			$errors = array();
 			if(count($checked)==0){
 				return redirect()->back()->with('empty_error','يجب أختيار صف واحد على الأقل')->withInput();
 			}
 			foreach($checked as $i) {
 				$term=Term::findOrFail($terms[$i]['id']);
-				if(!is_numeric($terms[$i]['current_amount'])){
+				if (empty($terms[$i]['current_amount'])) {
+					$errors['empty_error']='يجب أدخال جميع الكميات الحالية المختارة';
+				}elseif(!is_numeric($terms[$i]['current_amount'])){
+					$errors['type_error']='جميع المدخلات يجب أن تكون أرقام فقط';
 					$errors['current_amount'.$i]=1;
 				}else{
 					if($terms[$i]['current_amount']>0){
+						$production=$terms[$i]['current_amount'];
 						$transaction=new Transaction;
 						$transaction->transaction=$terms[$i]['current_amount']*$term->value;
 						$transaction->term_id=$term->id;
 						$transactions[]=$transaction;
 					}
 				}
-				if(!is_numeric($terms[$i]['deduction_percent'])){
-					$errors['deduction_percent'.$i]=1;
-				}else{
-					if($terms[$i]['deduction_percent']>0 && $terms[$i]['deduction_percent']<100){
-						$term->deduction_percent=$terms[$i]['deduction_percent'];
+				if (isset($terms[$i]['deduction_percent'])) {
+					if(!is_numeric($terms[$i]['deduction_percent'])){
+						$errors['type_error']='جميع المدخلات يجب أن تكون أرقام فقط';
+						$errors['deduction_percent'.$i]=1;
+					}else{
+						if($terms[$i]['deduction_percent']>0 && $terms[$i]['deduction_percent']<100){
+							$term->deduction_percent=$terms[$i]['deduction_percent'];
+							$changedTerms[]=$term;
+						}else{
+							$errors['error_100']='يجب أدخال نسبة الأستقطاع و تكون أرقام فقط ولا أن تكون أكثر من 99% أو أقل من 0%';
+							$errors['deduction_percent'.$i]=1;
+						}
+					}
+				}
+				if (isset($terms[$i]['deduction_value'])) {
+					if(!is_numeric($terms[$i]['deduction_value'])){
+						$errors['type_error']='جميع المدخلات يجب أن تكون أرقام فقط';
+						$errors['deduction_value'.$i]=1;
+					}else{
+						$production += $term->productions()->where('productions.deleted',0)->sum('productions.amount');
+						$total_production_value= $production * $term->value;
+						$deduction_percent = ($terms[$i]['deduction_value']/$total_production_value) * 100;
+						if ($deduction_percent>99 ) {
+							$errors['error_100']='يجب أدخال نسبة الأستقطاع و تكون أرقام فقط ولا أن تكون أكثر من 99% أو أقل من 0%';
+							$errors['deduction_value'.$i]=1;
+						}
+						$term->deduction_percent= $deduction_percent;
 						$changedTerms[]=$term;
 					}
 				}
-
 			}
-			if(count($errors)>1){
+			if(count($errors)>0){
 				return redirect()->back()->with($errors)->withInput();
 			}
 			try {
