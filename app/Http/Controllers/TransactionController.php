@@ -4,9 +4,10 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 
+use App\Transaction;
 use App\Project;
 use App\Term;
-use App\Transaction;
+use App\Log;
 
 use Carbon\Carbon;
 use Validator;
@@ -113,9 +114,7 @@ class TransactionController extends Controller {
 			}
 			foreach($checked as $i) {
 				$term=Term::findOrFail($terms[$i]['id']);
-				if (empty($terms[$i]['current_amount'])) {
-					$errors['empty_error']='يجب أدخال جميع الكميات الحالية المختارة';
-				}elseif(!is_numeric($terms[$i]['current_amount'])){
+				if(!is_numeric($terms[$i]['current_amount'])){
 					$errors['type_error']='جميع المدخلات يجب أن تكون أرقام فقط';
 					$errors['current_amount'.$i]=1;
 				}else{
@@ -133,8 +132,10 @@ class TransactionController extends Controller {
 						$errors['deduction_percent'.$i]=1;
 					}else{
 						if($terms[$i]['deduction_percent']>0 && $terms[$i]['deduction_percent']<100){
-							$term->deduction_percent=$terms[$i]['deduction_percent'];
-							$changedTerms[]=$term;
+							if($term->deduction_percent != $terms[$i]['deduction_percent']) {
+								$term->deduction_percent=$terms[$i]['deduction_percent'];
+								$changedTerms[]=$term;
+							}
 						}else{
 							$errors['error_100']='يجب أدخال نسبة الأستقطاع و تكون أرقام فقط ولا أن تكون أكثر من 99% أو أقل من 0%';
 							$errors['deduction_percent'.$i]=1;
@@ -152,9 +153,12 @@ class TransactionController extends Controller {
 						if ($deduction_percent>99 ) {
 							$errors['error_100']='يجب أدخال نسبة الأستقطاع و تكون أرقام فقط ولا أن تكون أكثر من 99% أو أقل من 0%';
 							$errors['deduction_value'.$i]=1;
+						}else{
+							if($term->deduction_percent != $deduction_percent){
+								$term->deduction_percent= $deduction_percent;
+								$changedTerms[]=$term;
+							}
 						}
-						$term->deduction_percent= $deduction_percent;
-						$changedTerms[]=$term;
 					}
 				}
 			}
@@ -163,18 +167,39 @@ class TransactionController extends Controller {
 			}
 			try {
 				DB::beginTransaction();
+				$count = 0;
 				foreach ($transactions as $transaction) {
 					$transaction->save();
+					$log=new Log;
+					$log->table="transactions";
+					$log->action="create";
+					$log->record_id=$transaction->id;
+					$log->user_id=Auth::user()->id;
+					$log->description='قام باضافة مستخلص قيمته '.$transaction->transaction.' جنيه الى البند '.$transaction->term->code.' بمشروع '.$transaction->term->project->name;
+					$log->save();
+					$count++;
 				}
 				foreach ($changedTerms as $term) {
 					$term->save();
+					$log=new Log;
+					$log->table="terms";
+					$log->action="update";
+					$log->record_id=$term->id;
+					$log->user_id=Auth::user()->id;
+					$log->description='قام بتغيير نسبة الاستقطاع الى '.$term->deduction_percent.'%';
+					$log->save();
+					$count++;
 				}
 				DB::commit();
 			} catch (\Exception $e) {
 				DB::rollBack();
 				return redirect()->back()->with('insert_error','حدث عطل خلال حفظ هذا المستخلص , يرجى المحاولة فى وقت لاحق');
 			}
-			return redirect()->route('createextractor',$id)->with('success','تم حفظ المستخلص بنجاح, لاحظ أنه جميع كمية الأنتاج السابقة للبنود التى أختيرت أضيفت إليها الكمية الحالية التى أدخلتموها (أو التى أستخلصها النظام) . أذا وجدت ألأن كمية الأنتاج لبند أنت أدخلته لا تساوى الصفر , لا تقلق فقط أعلم أنه تم محاسبتك على كمية أكثر من مما أنتجت (فى هذه الحالة أذا كنت أنتجت الكمية كلها فربما نسيت أضافت هذا الأنتاج)');
+			if ($count>0) {
+				return redirect()->route('createextractor',$id)->with('success','تم حفظ المستخلص بنجاح, لاحظ أنه جميع كمية الأنتاج السابقة للبنود التى أختيرت أضيفت إليها الكمية الحالية التى أدخلتموها (أو التى أستخلصها النظام) . أذا وجدت ألأن كمية الأنتاج لبند أنت أدخلته لا تساوى الصفر , لا تقلق فقط أعلم أنه تم محاسبتك على كمية أكثر من مما أنتجت (فى هذه الحالة أذا كنت أنتجت الكمية كلها فربما نسيت أضافت هذا الأنتاج)');
+			}else{
+				return redirect()->route('createextractor',$id)->with('info','الكميات الحالية التي تساوي الصفر او اقل لا يتم حفظها');
+			}
 		}
 		else
 			abort('404');

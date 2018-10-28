@@ -91,46 +91,50 @@
 	<div id="float_form_container">
 		<span class="close">&times;</span>
 		<h3 class="center">أختار المقاول</h3>
+    @if (count($termTypeContractors)>0)
     <div class="category">
       <h5 class="category">{{$term->type}}</h5>
     </div>
     <div>
     @foreach ($termTypeContractors as $contractor)
-    <div class="contractor_select" data-id="{{$contractor->id}}" data-name="{{$contractor->name}}" data-type="{{str_replace(","," , ",$contractor->type)}}" data-phone="{{str_replace(","," , ",$contractor->phone)}}" data-city="{{$contractor->city}}">
-      <div class="row">
-        <div class="col-2">
-          <img src="{{asset("images/contractor.png")}}" class="w-100" alt="">
-        </div>
-        <div class="col-10">
-          <h4>{{$contractor->name}}</h4>
-          {{str_replace(","," , ",$contractor->phone)}}&nbsp;&nbsp;&nbsp;&nbsp;
-          {{$contractor->city}}&nbsp;&nbsp;&nbsp;&nbsp;
-          {{str_replace(","," , ",$contractor->type)}}
+      <div class="contractor_select" data-id="{{$contractor->id}}" data-name="{{$contractor->name}}" data-type="{{str_replace(","," , ",$contractor->type)}}" data-phone="{{str_replace(","," , ",$contractor->phone)}}" data-city="{{$contractor->city}}">
+        <div class="row">
+          <div class="col-2">
+            <img src="{{asset("images/contractor.png")}}" class="w-100" alt="">
+          </div>
+          <div class="col-10">
+            <h4>{{$contractor->name}}</h4>
+            {{str_replace(","," , ",$contractor->phone)}}&nbsp;&nbsp;&nbsp;&nbsp;
+            {{$contractor->city}}&nbsp;&nbsp;&nbsp;&nbsp;
+            {{str_replace(","," , ",$contractor->type)}}
+          </div>
         </div>
       </div>
-    </div>
     @endforeach
     </div>
+    @endif
+    @if (count($ContractorsWithoutTermType)>0)
     <div class="category">
       <h5 class="category">مقاولين من أنواع آخرى</h5>
     </div>
     <div>
     @foreach ($ContractorsWithoutTermType as $contractor)
-    <div class="contractor_select" data-id="{{$contractor->id}}" data-name="{{$contractor->name}}" data-type="{{str_replace(","," , ",$contractor->type)}}" data-phone="{{str_replace(","," , ",$contractor->phone)}}" data-city="{{$contractor->city}}">
-      <div class="row">
-        <div class="col-2">
-          <img src="{{asset("images/contractor.png")}}" class="w-100" alt="">
-        </div>
-        <div class="col-10">
-          <h4>{{$contractor->name}}</h4>
-          {{str_replace(","," , ",$contractor->phone)}}&nbsp;&nbsp;&nbsp;&nbsp;
-          {{$contractor->city}}&nbsp;&nbsp;&nbsp;&nbsp;
-          {{str_replace(","," , ",$contractor->type)}}
+      <div class="contractor_select" data-id="{{$contractor->id}}" data-name="{{$contractor->name}}" data-type="{{str_replace(","," , ",$contractor->type)}}" data-phone="{{str_replace(","," , ",$contractor->phone)}}" data-city="{{$contractor->city}}">
+        <div class="row">
+          <div class="col-2">
+            <img src="{{asset("images/contractor.png")}}" class="w-100" alt="">
+          </div>
+          <div class="col-10">
+            <h4>{{$contractor->name}}</h4>
+            {{str_replace(","," , ",$contractor->phone)}}&nbsp;&nbsp;&nbsp;&nbsp;
+            {{$contractor->city}}&nbsp;&nbsp;&nbsp;&nbsp;
+            {{str_replace(","," , ",$contractor->type)}}
+          </div>
         </div>
       </div>
-    </div>
     @endforeach
     </div>
+    @endif
 	</div>
 </div>
 @else

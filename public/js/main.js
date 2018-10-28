@@ -1267,7 +1267,6 @@ $(document).ready(function() {
 		if ($('#deduction_percent_'+id).length) {
 			parent=$('#deduction_percent_'+id).parent().parent();
 			deduction_percent = parent.attr('data-value');
-			console.log('deduction_percent = '+deduction_percent);
 			parent.html(parseFloat(deduction_percent).toLocaleString('en',strOptions) +' %');
 		}
 		let name = $(this).attr('data-term');
@@ -1275,6 +1274,9 @@ $(document).ready(function() {
 		let input_group ='<div class="input-group">\
 			<input type="text" name="'+name+'" autocomplete="off" class="form-control number deduction_input_value" value="'+value+'" id="deduction_value_'+id+'">\
 			<span class="input-group-addon" style="font-size:20px; font-weight:100; ">جنيه</span>\
+		</div>\
+		<div class="center mt-3">\
+		<span data-post="جنيه" data-id="deduction_value_'+id+'" style="color:#dc250c" class="delete_deduction_value glyphicon glyphicon-minus-sign"></span>\
 		</div>';
 		$(this).html(input_group);
 	});
@@ -1286,7 +1288,6 @@ $(document).ready(function() {
 		if ($('#deduction_value_'+id).length) {
 			parent=$('#deduction_value_'+id).parent().parent();
 			deduction_value=parent.attr('data-value');
-			console.log('deduction_value = '+deduction_value);
 			parent.html(parseFloat(deduction_value).toLocaleString('en',strOptions)  +' جنيه');
 		}
 		let name = $(this).attr('data-term');
@@ -1294,6 +1295,9 @@ $(document).ready(function() {
 		let input_group ='<div class="input-group">\
 			<input type="text" name="'+name+'" autocomplete="off" class="form-control number deduction_input_percent" value="'+value+'" id="deduction_percent_'+id+'">\
 			<span class="input-group-addon" style="font-size:20px; font-weight:100; ">&#37;</span>\
+		</div>\
+		<div class="center mt-3">\
+		<span data-post="%" data-id="deduction_percent_'+id+'" style="color:#dc250c" class="delete_deduction_percent glyphicon glyphicon-minus-sign"></span>\
 		</div>';
 		$(this).html(input_group);
 	});
@@ -1351,6 +1355,16 @@ $(document).ready(function() {
 	});
 	$(document).on('click','.deduction_input_value , .deduction_input_percent',function(e){
 		e.stopPropagation();
+	});
+	//delete deduction input
+	$('tr th').on('click','span.delete_deduction_value, span.delete_deduction_percent',function(e){
+		e.stopPropagation();
+		let input_id = $(this).attr('data-id');
+		let old_value = $(this).parent().parent().attr('data-old-value');
+		let postfix = $(this).attr('data-post');
+		$('#'+input_id).val(old_value);
+		$('#'+input_id).trigger('change');
+		$('#'+input_id).parent().parent().text(old_value+" "+postfix);
 	});
 	//Transaction Validation
 	// $('#add_transaction').submit(function(e){

@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\StoreType;
 
 class Consumption extends Model {
 
@@ -9,5 +10,10 @@ class Consumption extends Model {
 	{
 		return $this->belongsTo('App\Term');
 	}
-
+	//get unit of the store type
+	public function getUnit()
+	{
+		$storeType = StoreType::where('name',$this->type)->where('deleted',0)->first();
+		return $storeType->unit;
+	}
 }

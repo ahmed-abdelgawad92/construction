@@ -32,6 +32,11 @@
 				{{session('success')}}
 			</div>
 			@endif
+			@if(session('info'))
+			<div class="alert alert-info">
+				{{session('info')}}
+			</div>
+			@endif
 			@if(count($terms)>0)
 			<form method="post" action="{{ route('saveextractor',$project->id) }}" id="add_transaction">
 			<div class="table-responsive">
@@ -39,8 +44,8 @@
 				<table class="table table-bordered" id="printTable">
 					<thead id="pageHeader">
 						<tr>
-						<th class="all_checkbox">الكل</th>
-						<th rowspan="2">#</th>
+						<th class="all_checkbox center" style="width:40px;">الكل</th>
+						<th rowspan="2" class="center">#</th>
 						<th rowspan="2">كود البند</th>
 						<th rowspan="2">الوحدة</th>
 						<th rowspan="2">الفئة</th>
@@ -53,7 +58,7 @@
 						</th>
 						</tr>
 						<tr>
-							<th class="all_checkbox"><input type="checkbox" name="checkall" id="checkall" value="1"></th>
+							<th class="all_checkbox center"><input type="checkbox" name="checkall" id="checkall" value="1"></th>
 							<th>السابقة</th>
 							<th>الحالية</th>
 							<th>الجملة</th>
@@ -71,8 +76,8 @@
 							$current_production=$total_production-$prev_production;
 						?>
 						<tr>
-						<th class="all_checkbox"><input type="checkbox" @if(old('checked.'.$c)) checked	@endif class="term" name="checked[{{$c}}]" value="{{$c}}"></th>
-						<th>{{$count++}}</th>
+						<th class="all_checkbox center"><input type="checkbox" @if(old('checked.'.$c)) checked	@endif class="term" name="checked[{{$c}}]" value="{{$c}}"></th>
+						<th class="center">{{$count++}}</th>
 						<th><a href="{{ route('showterm',$term->id) }}">{{$term->code}}</a>
 						<input type="hidden" name="term[{{$c}}][id]" value="{{$term->id}}">
 						</th>
@@ -84,11 +89,14 @@
 						<input type="text" style="width:100px;" id="current_amount_{{$c}}" autocomplete="off" name="term[{{$c}}][current_amount]" class="form-control number @if(session('current_amount'.$c)==1) has-error @endif current_amount" value="{{ old('term.'.$c.'.current_amount')??$current_production}}">
 						</th>
 						<th class="total_production" data-total="{{$total_production}}" data-total-price="{{$total_production*$term->value}}">{{Str::number_format($total_production)}}</th>
-						<th class="deduction_percent" data-term="term[{{$c}}][deduction_percent]" data-value="{{$term->deduction_percent}}"  data-value-id="{{$c}}">
+						<th class="deduction_percent" data-term="term[{{$c}}][deduction_percent]" data-value="{{$term->deduction_percent}}" data-old-value="{{$term->deduction_percent}}"  data-value-id="{{$c}}">
 							@if (old('term.'.$c.'.deduction_percent'))
 								<div class="input-group @if(session('deduction_percent'.$c)==1) has-error @endif" >
 									<input type="text" name="term[{{$c}}][deduction_percent]" autocomplete="off" class="form-control number imp-width-100" value="{{old('term.'.$c.'.deduction_percent')??$term->deduction_percent}}" id="deduction_percent_{{$c}}">
 									<span class="input-group-addon" style="font-size:20px; font-weight:100; ">&#37;</span>
+								</div>
+								<div class="center">
+									<span data-old-value="{{old('term.'.$c.'.deduction_percent')??$term->deduction_percent}}" data-id="deduction_percent_{{$c}}" style="color:#dc250c" class="delete_deduction_percent glyphicon glyphicon-minus-sign"></span>
 								</div>
 							@else
 								{{$term->deduction_percent}} &#37;
@@ -98,11 +106,14 @@
 							$total_value=$total_production*$term->value;
 							$deduction_value=($term->deduction_percent/100)*$total_value;
 						@endphp
-						<th class="deduction_value" data-term="term[{{$c}}][deduction_value]"  data-value="{{$deduction_value}}" data-value-id="{{$c}}">
+						<th class="deduction_value" data-term="term[{{$c}}][deduction_value]"  data-value="{{$deduction_value}}" data-old-value="{{$deduction_value}}" data-value-id="{{$c}}">
 							@if (old('term.'.$c.'.deduction_value'))
 								<div class="input-group @if(session('deduction_value'.$c)==1) has-error @endif" >
 									<input type="text" name="term[{{$c}}][deduction_value]" autocomplete="off" class="form-control number" value="{{old('term.'.$c.'.deduction_value')}}" id="deduction_value_{{$c}}">
 									<span class="input-group-addon" style="font-size:20px; font-weight:100; ">جنيه</span>
+								</div>
+								<div class="center">
+									<span data-old-value="{{old('term.'.$c.'.deduction_value')}}" data-id="deduction_value_{{$c}}" style="color:#dc250c" class="delete_deduction_value glyphicon glyphicon-minus-sign"></span>
 								</div>
 							@else
 								{{Str::number_format($deduction_value)}} جنيه

@@ -196,7 +196,7 @@
 						 {{$consumption->type}}
 						<br>
 						<span class="label label-default">كمية الأستهلاك</span>
-						 {{$consumption->amount}}
+						 {{$consumption->amount}} {{$consumption->getUnit()}}
 						<br>
 						<span class="label label-default">تاريخ الأستهلاك</span>
 						 {{date("d/m/Y",strtotime($consumption->created_at))}}

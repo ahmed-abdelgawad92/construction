@@ -448,8 +448,8 @@ footer{
 	line-height: 1.5;
 }
 .row {
-  display: -ms-flexbox;
 	display: flex;
+  display: -ms-flexbox;
 	display: -webkit-flex;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
@@ -1950,12 +1950,14 @@ span.file_type{
 	border-radius: 10px;
 	margin: 30px auto;
 }
+/*------------------------------------Transactions------------------------------------*/
+#printTable th, #printTable td{
+	padding: 4px;
+}
 
 
 
 
 
-
-/*------------------------------------Contracts------------------------------------*/
 /*------------------------------------Contracts------------------------------------*/
 /*------------------------------------Contracts------------------------------------*/
