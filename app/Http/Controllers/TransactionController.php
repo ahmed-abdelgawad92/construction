@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Transaction;
+use App\Contract;
+use App\Payment;
 use App\Project;
 use App\Term;
 use App\Log;
@@ -204,6 +206,67 @@ class TransactionController extends Controller {
 		else
 			abort('404');
 	}
+
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	 public function createForTerm($id)
+	 {
+		 $term = Term::findOrFail($id);
+		 $prev_production= $term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction') / $term->value;
+		 $total_production= $term->productions()->where('productions.deleted',0)->sum('productions.amount');
+		 $current_production= $total_production - $prev_production;
+		 $deduction_value= ($prev_production>$total_production) ? ($prev_production*$term->value)*($term->deduction_percent/100) : ($total_production*$term->value)*($term->deduction_percent/100);
+		 $net_value= ($prev_production>$total_production) ? ($prev_production*$term->value)-($deduction_value) : ($total_production*$term->value)-($deduction_value);
+
+		 $array = [
+			 'active'=>'trans',
+			 'term' => $term,
+			 'prev_production'=>$prev_production,
+			 'total_production'=>$total_production,
+			 'current_production'=>$current_production,
+			 'deduction_value'=>$deduction_value,
+			 'net_value'=>$net_value
+		 ];
+		 return view('transaction.addForTerm',$array);
+	 }
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	 public function storeForTerm($id)
+	 {
+
+	 }
+	/**
+	 * Show the form for creating a new OUT PAYMENT to a Contract resource.
+	 *
+	 * @return Response
+	 */
+	 public function createForContract($id)
+	 {
+		 $contract = Contract::findOrFail($id)->with('productions');
+		 $array = [
+			 'active'=>'trans',
+			 'contract' => $contract
+		 ];
+		 return view('transaction.addForContract',$array);
+	 }
+
+	/**
+	 * Store a newly created OUT PAYMENT to a Contract resource in storage.
+	 *
+	 * @return Response
+	 */
+	 public function storeForContract($id)
+	 {
+
+	 }
+
 
 	//print extractor
 	public function printTable($id)

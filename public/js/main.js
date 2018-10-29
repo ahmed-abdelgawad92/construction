@@ -1367,55 +1367,129 @@ $(document).ready(function() {
 		$('#'+input_id).parent().parent().text(old_value+" "+postfix);
 	});
 	//Transaction Validation
-	// $('#add_transaction').submit(function(e){
-	// 	e.preventDefault();
-	// 	$(".is-invalid").removeClass('is-invalid');
-	// 	$('.invalid-feedback').remove();
-	// 	$('.alert-danger').remove();
-	// 	var check = true;
-	// 	if ($('.term:checked').length) {
-	// 		$('.term:checked').each(function() {
-	// 			var id = $(this).val();
-	// 			var current_amount = $('#current_amount_'+id);
-	// 			var deduction_percent = $('#deduction_percent_'+id);
-	// 			var deduction_value = $('#deduction_value_'+id);
-	// 			if (!current_amount.val().trim() || !current_amount.val().trim().match(/^\-?[0-9]+(\.[0-9]+)?$/)) {
-	// 				check = false;
-	// 				assignError(current_amount,'يجب أدخال الكمية الحالية و يجب أن تتكون من أرقام فقط')
-	// 			}
-	// 			if (deduction_value.length) {
-	// 				if (!deduction_value.val().trim() || !deduction_value.val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
-	// 					check = false;
-	// 					assignError(deduction_value.parent(),'يجب أدخال قيمة الأستقطاع وتكون مكونة من أرقام فقط');
-	// 				}else {
-	// 					value_per_unit=parseFloat(current_amount.parent().prevAll(".value_per_unit").text());
-	// 					total_production=parseFloat(current_amount.val())+parseFloat(current_amount.parent().siblings('.prev_amount').attr('data-amount'));
-	// 					total_price = value_per_unit * total_production;
-	// 					if ((parseFloat(deduction_value.val().trim())/total_price)*100 > 99) {
-	// 						check = false;
-	// 						assignError(deduction_value.parent(),'هذه القيمة ستجعل النسبة تساوى أكثر من 99%');
-	// 					}
-	// 				}
-	// 			}
-	// 			if (deduction_percent.length) {
-	// 				if (!deduction_percent.val().trim() || !deduction_percent.val().trim().match(/^[0-9]{0,2}(\.[0-9]+)?$/) || deduction_percent.val().trim() > 99 || deduction_percent.val().trim() < 0) {
-	// 					check = false;
-	// 					assignError(deduction_percent.parent(),'يجب أدخال نسبة الأستقطاع و تكون أرقام فقط ولا أن تكون أكثر من 99%');
-	// 				}
-	// 			}
-	// 		});
-	// 	}else{
-	// 		check = false;
-	// 		$(this).before('<div class="alert alert-danger">يجب أختيار صف واحد على الأقل</div>');
-	// 	}
-	// 	if(check){
-	// 		this.submit();
-	// 	}
-	// 	$('div#save').modal('hide');
-	// 	$("#save_btn").removeClass('disabled');
-	// 	return false;
-	// });
+	$('#add_transaction').submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		$('.alert-danger').remove();
+		var check = true;
+		if ($('.term:checked').length) {
+			$('.term:checked').each(function() {
+				var id = $(this).val();
+				var current_amount = $('#current_amount_'+id);
+				var deduction_percent = $('#deduction_percent_'+id);
+				var deduction_value = $('#deduction_value_'+id);
+				if (!current_amount.val().trim() || !current_amount.val().trim().match(/^\-?[0-9]+(\.[0-9]+)?$/)) {
+					check = false;
+					assignError(current_amount,'يجب أدخال الكمية الحالية و يجب أن تتكون من أرقام فقط')
+				}
+				if (deduction_value.length) {
+					if (!deduction_value.val().trim() || !deduction_value.val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+						check = false;
+						assignError(deduction_value.parent(),'يجب أدخال قيمة الأستقطاع وتكون مكونة من أرقام فقط');
+					}else {
+						value_per_unit=parseFloat(current_amount.parent().prevAll(".value_per_unit").text());
+						total_production=parseFloat(current_amount.val())+parseFloat(current_amount.parent().siblings('.prev_amount').attr('data-amount'));
+						total_price = value_per_unit * total_production;
+						if ((parseFloat(deduction_value.val().trim())/total_price)*100 > 99) {
+							check = false;
+							assignError(deduction_value.parent(),'هذه القيمة ستجعل النسبة تساوى أكثر من 99%');
+						}
+					}
+				}
+				if (deduction_percent.length) {
+					if (!deduction_percent.val().trim() || !deduction_percent.val().trim().match(/^[0-9]{0,2}(\.[0-9]+)?$/) || deduction_percent.val().trim() > 99 || deduction_percent.val().trim() < 0) {
+						check = false;
+						assignError(deduction_percent.parent(),'يجب أدخال نسبة الأستقطاع و تكون أرقام فقط ولا أن تكون أكثر من 99%');
+					}
+				}
+			});
+		}else{
+			check = false;
+			$(this).before('<div class="alert alert-danger">يجب أختيار صف واحد على الأقل</div>');
+		}
+		if(check){
+			this.submit();
+		}
+		$('div#save').modal('hide');
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
+	// ADD Transaction To a specific Term
+	$('#add_term_transaction #current_production').on('keyup change',function(e){
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		let current_production = $(this).val().trim();
+		if (!current_production.match(/^\-?[0-9]+(\.[0-9]+)?$/)) {
+			assignError($(this).parent(),'يجب أن تتكون من أرقام فقط');
+			return false;
+		}
+		let term_value = parseFloat($(this).attr('data-term-value'));
+		let prev_value = parseFloat($('#prev_production').attr('data-value'));
+		let prev_amount = parseFloat($('#prev_production').attr('data-prev-amount'));
+		let deduction_percent = parseFloat($('#add_term_transaction #deduction_percent').val())/100;
+		let total_value = prev_value;
+		let total_production = prev_amount;
+		if (current_production>0) {
+			total_value = total_value+(parseFloat(current_production)*term_value);
+		}
+		total_production = total_production+parseFloat(current_production);
+		let deduction_value = parseFloat(total_value*deduction_percent);
+		let net_value = total_value-deduction_value;
+		$('#add_term_transaction #deduction_value').val((deduction_value.toFixed(2)*1));
+		$('#net_value').text((net_value.toFixed(2)*1) + ' جنيه');
+		$('#total_production').text(total_production);
+		$('#total_value').text(total_value + ' جنيه');
+	});
+	$('#add_term_transaction #deduction_percent').on('keyup change',function(e){
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		let deduction_percent = $(this).val().trim();
+		if (!deduction_percent.match(/^[0-9]{1,2}(\.[0-9]+)?$/)) {
+			assignError($(this).parent(),'يجب أن تتكون من أرقام فقط ,ولا تكون أكبر من 99%');
+			return false;
+		}
+		console.log('triggered');
+		$('#current_production').trigger('change');
+	});
+	$('#add_term_transaction #deduction_value').on('keyup change',function(e){
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		let deduction_value = $(this).val().trim();
+		if (!deduction_value.match(/^[0-9]+(\.[0-9]+)?$/)) {
+			assignError($(this).parent(),'يجب أن تتكون من أرقام فقط');
+			return false;
+		}
+		let current_production = parseFloat($('#current_production').val());
+		let term_value = parseFloat($('#current_production').attr('data-term-value'));
+		let prev_value = parseFloat($('#prev_production').attr('data-value'));
+		let total_value = prev_value;
+		if (current_production>0) {
+			total_value = total_value+(parseFloat(current_production)*term_value);
+		}
+		let deduction_percent = (deduction_value/total_value)*100;
+		if (deduction_percent>99 || deduction_percent<0) {
+			assignError($(this).parent(),'هذه القيمة تجعل النسبة أكثر من 99% أو أقل من الصفر');
+			return false;
+		}
+		$('#deduction_percent').val(deduction_percent.toFixed(2));
+		let net_value = total_value-deduction_value;
+		$('#net_value').text(net_value.toFixed(2)*1 + ' جنيه');
+	});
+	// Validation of Adding transaction to a specific Term
+	$('#add_term_transaction').submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check = true;
 
+		if(check){
+			this.submit();
+		}
+		$('div#save').modal('hide');
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
 
 
 

@@ -1087,7 +1087,27 @@ Route::group(['middleware' => 'auth'], function() {
 		Route::post('save/extractor/{id}',[
 			'uses'=>'TransactionController@store',
 			'as'=>'saveextractor'
-		]);
+		])->where('id','[0-9]+');
+    //Create Transaction for a specific Term
+		Route::get('term/create/{id}',[
+			'uses'=>'TransactionController@createForTerm',
+			'as'=>'addtermtransaction'
+		])->where('id','[0-9]+');
+    //Save Transaction for a specific Term
+		Route::post('term/create/{id}',[
+			'uses'=>'TransactionController@storeForTerm',
+			'as'=>'addtermtransaction'
+		])->where('id','[0-9]+');
+    //Create Transaction for a specific Contract
+		Route::get('contractor/create/{id}',[
+			'uses'=>'TransactionController@createForContract',
+			'as'=>'addcontracttransaction'
+		])->where('id','[0-9]+');
+    //Save Transaction for a specific Contract
+		Route::post('contractor/create/{id}',[
+			'uses'=>'TransactionController@storeForContract',
+			'as'=>'addcontracttransaction'
+		])->where('id','[0-9]+');
 		//print extractor
 		Route::get('print/{id}',[
 			'uses'=>'TransactionController@printTable',

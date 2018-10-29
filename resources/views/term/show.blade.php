@@ -59,6 +59,7 @@
 			<a href="{{route('addcontract',$term->id)}}" class="float btn btn-dark">عقد البند</a>
 			<a href="{{route('addproduction',$term->id)}}" class="float btn btn-primary">أضافة أنتاج</a>
 			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة أستهلاك</a>
+			<a href="{{route('addtermtransaction',$term->id)}}" class="float btn btn-primary">أضافة مستخلص</a>
 			<a href="#add_note" class="float btn btn-warning open_float_div" >أضافة ملحوظة</a>
 			<a href="{{route('updateterm',$term->id)}}" class="float btn btn-default">تعديل</a>
 			<button type="button" data-toggle="modal" data-target="#delete" class="btn btn-danger float">حذف</button>
