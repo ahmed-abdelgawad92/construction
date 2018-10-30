@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Payment;
 class Contract extends Model
 {
   //Define the one to many relationship with Terms
@@ -20,5 +20,11 @@ class Contract extends Model
   public function productions()
   {
     return $this->hasMany('App\Production');
+  }
+  //Paid Productions
+  public function paidProductions()
+  {
+    $total = Payment::where('table_name','transactions')->where('table_id',$this->id)->where('deleted',0)->sum('payment_amount');
+    return $total;
   }
 }

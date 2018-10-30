@@ -238,9 +238,64 @@ class TransactionController extends Controller {
 	 *
 	 * @return Response
 	 */
-	 public function storeForTerm($id)
+	 public function storeForTerm(Request $req,$id)
 	 {
-
+		 $term = Term::findOrFail($id);
+		 $count = 0;
+		 $rules=[
+			 'current_production'=>'required|numeric',
+			 'deduction_percent'=>'required|numeric|min:0|max:99'
+		 ];
+		 $error_messages=[
+			 'current_production.required'=>'يجب أدخال الكمية الحالية',
+			 'current_production.numeric'=>'يجب أن تتكون من أرقام فقط',
+			 'deduction_percent.required'=>'يجب أدخال نسبة الأستقطاع',
+			 'deduction_percent.numeric'=>'يجب أن تتكون من أرقام فقط',
+			 'deduction_percent.min'=>'يجب ان لا تقل عن الصفر',
+			 'deduction_percent.max'=>'يجب أن لا تزيد عن 99%'
+		 ];
+		 $validator = Validator::make($req->all(),$rules,$error_messages);
+		  if ($validator->fails()) {
+		  	return redirect()->back()->withErrors($validator)->withInput();
+		 }
+		 if($req->input("current_production")>0){
+			 $transaction = new Transaction;
+			 $transaction->transaction = $req->input("current_production")*$term->value;
+			 $transaction->term_id=$term->id;
+			 $saved = $transaction->save();
+			 //check if saved correctly
+			 if (!$saved) {
+			 	return redirect()->back()->with("insert_error","حدث عطل خلال حفظ هذا المستخلص");
+			 }
+			 $log=new Log;
+			 $log->table="transactions";
+			 $log->action="create";
+			 $log->record_id=$transaction->id;
+			 $log->user_id=Auth::user()->id;
+			 $log->description='قام باضافة مستخلص قيمته '.$transaction->transaction.' جنيه الى البند '.$term->code.' بمشروع '.$term->project->name;
+			 $log->save();
+			 $count++;
+		 }
+		 if ($req->input("deduction_percent")!=$term->deduction_percent) {
+			 $term->deduction_percent = $req->input("deduction_percent");
+			 $saved=$term->save();
+			 //check if saved correctly
+			 if (!$saved) {
+			 	return redirect()->back()->with("insert_error","حدث عطل خلال تعديل نسبة الأستقطاع");
+			 }
+			 $log=new Log;
+			 $log->table="terms";
+			 $log->action="update";
+			 $log->record_id=$term->id;
+			 $log->user_id=Auth::user()->id;
+			 $log->description='قام بتغيير نسبة الاستقطاع الى '.$term->deduction_percent.'%';
+			 $log->save();
+			 $count++;
+		 }
+		 if ($count>0) {
+			 return redirect()->back()->with("success","تم حفظ المستخلص أو نسبة الأستقطاع بنجاح");
+		 }
+		 return redirect()->back()->with("info","لا يوجد شئ كي يتم حفظه");
 	 }
 	/**
 	 * Show the form for creating a new OUT PAYMENT to a Contract resource.
@@ -249,10 +304,16 @@ class TransactionController extends Controller {
 	 */
 	 public function createForContract($id)
 	 {
-		 $contract = Contract::findOrFail($id)->with('productions');
+		 $contract = Contract::with('contractor','term','productions')->findOrFail($id);
+		 $total_production = $contract->productions()->where('productions.deleted',0)->sum('productions.amount');
+		 $prev_production = $contract->paidProductions()/$contract->unit_price;
+		 $current_production = $total_production - $prev_production;
 		 $array = [
 			 'active'=>'trans',
-			 'contract' => $contract
+			 'contract' => $contract,
+			 'current_production' => $current_production,
+			 'prev_production' => $prev_production,
+			 'total_production' => $total_production
 		 ];
 		 return view('transaction.addForContract',$array);
 	 }
@@ -262,9 +323,42 @@ class TransactionController extends Controller {
 	 *
 	 * @return Response
 	 */
-	 public function storeForContract($id)
+	 public function storeForContract(Request $req, $id)
 	 {
-
+		 $contract = Contract::findOrFail($id);
+		 $rules=[
+			 'current_production'=>'required|numeric',
+			 'paymen_type'=>'nullable|in:0,1'
+		 ];
+		 $error_messages=[
+			 'current_production.required'=>'يجب أدخال الكمية الحالية',
+			 'current_production.numeric'=>'يجب أن تتكون من أرقام فقط'
+		 ];
+		 $validator = Validator::make($req->all(),$rules,$error_messages);
+		  if ($validator->fails()) {
+		  	return redirect()->back()->withErrors($validator)->withInput();
+		 }
+		 if($req->input("current_production")>0){
+			 // ADD Payment to Payment Table
+			 $payment = new Payment;
+			 $payment->type = $req->input("payment_type")??0;
+			 $payment->payment_amount = $req->input("current_production")*$contract->unit_price;
+			 $payment->table_name = "transactions";
+			 $payment->table_id = $contract->id;
+			 $payment->project_id = $contract->term->project_id;
+			 $saved = $payment->save();
+			 //check if saved correctly
+			 if (!$saved) {
+			 	return redirect()->back()->with("insert_error","حدث عطل خلال حفظ هذا المستخلص");
+			 }
+			 $log=new Log;
+			 $log->table="payments";
+			 $log->action="create";
+			 $log->record_id=$payment->id;
+			 $log->user_id=Auth::user()->id;
+			 $log->description='قام باضافة مستخلص قيمته '.$payment->payment_amount.' جنيه الى المقاول '.$contract->contractor->name.' بمشروع '.$contract->term->project->name.' بند '.$contract->term->code;
+			 $log->save();
+		 }
 	 }
 
 

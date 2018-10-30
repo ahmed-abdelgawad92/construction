@@ -56,6 +56,12 @@
 				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">الجملة</h4></div>
 				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{Str::number_format($term->amount*$term->value)}}</div>
 			</div>
+			@if ($term->deduction_percent!=null)
+			<div class="row mb-3">
+				<div class="col-xs-4 col-sm-3 col-md-2"><h4 class="box-heading-right">نسبة الأستقطاع</h4></div>
+				<div class="col-xs-8 col-sm-9 col-md-10"><h4 class="box-heading text-right">{{$term->deduction_percent}} %</div>
+			</div>
+			@endif
 			<a href="{{route('addcontract',$term->id)}}" class="float btn btn-dark">عقد البند</a>
 			<a href="{{route('addproduction',$term->id)}}" class="float btn btn-primary">أضافة أنتاج</a>
 			<a href="{{route('addconsumption',$term->id)}}" class="float btn btn-primary">أضافة أستهلاك</a>
@@ -124,6 +130,7 @@
 				</div>
 				<div class="center mt-3">
 					<button class="btn btn-dark show_contract" data-contract="@if (!empty($contract->contract_text)) {!!nl2br(htmlspecialchars($contract->contract_text))!!} @else لا يوجد نص للعقد @endif">أفتح العقد</button>
+					<a href="{{route('addcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary">أضافة مستخلص</a>
 					<a href="{{route('updatecontract',['id'=>$contract->id])}}" class="btn btn-default">تعديل العقد</a>
 					@if(empty($contract->ended_at)) <a href="{{route('endcontract',['id'=>$contract->id])}}" class="btn btn-success finish_contract">انهاءالعقد</a> @endif
 				</div>

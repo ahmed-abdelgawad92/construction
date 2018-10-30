@@ -1477,18 +1477,47 @@ $(document).ready(function() {
 		$('#net_value').text(net_value.toFixed(2)*1 + ' جنيه');
 	});
 	// Validation of Adding transaction to a specific Term
-	$('#add_term_transaction').submit(function(e){
+	$('#add_term_transaction , #add_contract_transaction').submit(function(e){
 		e.preventDefault();
 		$(".is-invalid").removeClass('is-invalid');
 		$('.invalid-feedback').remove();
 		var check = true;
-
+		if($('#deduction_percent').length){
+			if (!$('#deduction_percent').val().trim()||!$('#deduction_percent').val().trim().match(/^[0-9]{1,2}(\.[0-9]+)?$/)) {
+				check=false;
+				assignError($('#deduction_percent').parent(),'يجب أدخاله و قيمته تتكون من أرقام فقط وما بين 0 و 99%');
+			}
+		}
+		if (!$('#current_production').val().trim()||!$('#current_production').val().trim().match(/^\-?[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#current_production').parent(),'يجب أدخاله و قيمته تتكون من أرقام فقط');
+		}
 		if(check){
 			this.submit();
 		}
-		$('div#save').modal('hide');
 		$("#save_btn").removeClass('disabled');
 		return false;
+	});
+
+	/*
+	**
+	** ADD New Transaction to A specific Contract
+	** Change Total Production on current production change
+	****/
+	$('#add_contract_transaction #current_production').on('keyup change',function(){
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		let current_production = $(this).val().trim();
+		if (!current_production.match(/^\-?[0-9]+(\.[0-9]+)?$/)) {
+			assignError($(this).parent(),'يجب أن تتكون من أرقام فقط');
+			return false;
+		}
+		let unit_price = parseFloat($('#unit_price').attr('data-value'));
+		let prev_value = parseFloat($('#prev_production').attr('data-prev-amount'));
+		let total_production = prev_value;
+		total_production = total_production+parseFloat(current_production);
+		$('#total_production').text(total_production);
+		$('#current_value').text((current_production*unit_price) + ' جنيه');
 	});
 
 
@@ -1496,8 +1525,5 @@ $(document).ready(function() {
 
 
 
-
 	/******************************************Productions********************************************/
-	/******************************************Productions********************************************/
-
 });
