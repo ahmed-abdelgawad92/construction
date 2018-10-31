@@ -138,6 +138,8 @@
 	</div>
 </div>
 @else
-<div class="alert alert-warning">لا يوجد مقاولون <a href="" class="btn btn-warning">اضافة مقاول</a></div>
+<div class="col-12">
+  <div class="alert alert-warning">لا يوجد مقاولون <a href="" class="btn btn-warning">اضافة مقاول</a></div>
+</div>
 @endif
 @endsection
