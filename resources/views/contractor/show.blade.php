@@ -13,7 +13,7 @@
 				@php
 					$rate_avg = ($rate[0]->rate/2)+0;
 				@endphp
-				<div class="badge left"><h5 class="center">تقييم {{$rate_avg}}/5</h5>
+				<div class="badge left"><h5 class="center">تقييم {{Str::number_format($rate_avg)}}/5</h5>
 				@for ($i=0; $i < 5; $i++)
 					@if ($i<=$rate_avg)
 						@if ($rate_avg - $i < 1)
@@ -82,7 +82,6 @@
 					</div>
 				</div>
 			</div>
-			<a href="" class="m-top btn btn-primary float">أضافة معاملة مالية</a>
 			<a href="" class="m-top btn btn-primary float">عقد بند</a>
 			<a href="{{ route('updatecontractor',$contractor->id) }}" class="m-top btn btn-default float">تعديل</a>
 			<form class="float" method="post" action="{{ route('deletecontractor',$contractor->id) }}">
@@ -125,6 +124,8 @@
 						 {{$contract->term->statement}}
 					</p>
 					</a>
+					<a href="{{route('addcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary mr-3 mb-3">أضافة معاملة مالية</a>
+					<a href="{{route('allcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary mb-3">جميع المبالغ المدفوعة</a>
 				</div>
 			@endforeach
 			<div class="center mt-3">
@@ -221,6 +222,8 @@
 						 @endif
 					</p>
 					</a>
+					<a href="{{route('addcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary">أضافة معاملة مالية</a>
+					<a href="{{route('allcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary">جميع المبالغ المدفوعة</a>
 				</div>
 			@endforeach
 			<div class="center">

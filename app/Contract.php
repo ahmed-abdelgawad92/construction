@@ -27,4 +27,10 @@ class Contract extends Model
     $total = Payment::where('table_name','transactions')->where('table_id',$this->id)->where('deleted',0)->sum('payment_amount');
     return $total;
   }
+  //Contractor Payments
+  public function payments()
+  {
+    $payments = Payment::where('project_id',$this->term->project_id)->where('table_name','transactions')->where('table_id',$this->id)->where('deleted',0)->orderBy('created_at','desc')->get();
+    return $payments;
+  }
 }

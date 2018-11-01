@@ -73,7 +73,7 @@
 					<div class="modal-dialog modal-sm">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h4 class="modal-title">هل تريد حذف هذا البند {{$term->code}}</h4>
+								<h4 class="modal-title">هل تريد حذف هذا البند {{$term->code}} ؟</h4>
 							</div>
 							<div class="modal-footer">
 								<button type="button" class="btn btn-default" data-dismiss="modal">لا
@@ -131,6 +131,7 @@
 				<div class="center mt-3">
 					<button class="btn btn-dark show_contract" data-contract="@if (!empty($contract->contract_text)) {!!nl2br(htmlspecialchars($contract->contract_text))!!} @else لا يوجد نص للعقد @endif">أفتح العقد</button>
 					<a href="{{route('addcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary">أضافة معاملة مالية</a>
+					<a href="{{route('allcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary">جميع المبالغ المدفوعة</a>
 					<a href="{{route('updatecontract',['id'=>$contract->id])}}" class="btn btn-default">تعديل العقد</a>
 					@if(empty($contract->ended_at)) <a href="{{route('endcontract',['id'=>$contract->id])}}" class="btn btn-success finish_contract">انهاءالعقد</a> @endif
 				</div>

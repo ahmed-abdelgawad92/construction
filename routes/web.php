@@ -1108,6 +1108,11 @@ Route::group(['middleware' => 'auth'], function() {
 			'uses'=>'TransactionController@storeForContract',
 			'as'=>'addcontracttransaction'
 		])->where('id','[0-9]+');
+    //Show All Transactions of a specific Contract
+		Route::get('contractor/all/{id}',[
+			'uses'=>'PaymentController@showAllContractorPayments',
+			'as'=>'allcontracttransaction'
+		])->where('id','[0-9]+');
 		//print extractor
 		Route::get('print/{id}',[
 			'uses'=>'TransactionController@printTable',

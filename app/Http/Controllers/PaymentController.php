@@ -2,51 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Payment;
 use Illuminate\Http\Request;
+use App\Payment;
+use App\Contract;
+use Validator;
+use Auth;
 
 class PaymentController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
-     * @param  \App\Payment  $payment
+     * @param  \App\Contract $contract
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function showAllContractorPayments($id)
     {
-        //
+      $contract = Contract::where('id',$id)->where('deleted',0)->firstOrFail();
+      $payments = $contract->payments();
+      $total_payment = $contract->paidProductions();
+      $contractor = $contract->contractor;
+      $term = $contract->term;
+      $array=[
+        'contract'=>$contract,
+        'contractor'=>$contractor,
+        'term'=>$term,
+        'payments'=>$payments,
+        'active'=>'trans',
+        'total_payment'=>$total_payment
+      ];
+      return view('contract.payment',$array);
     }
 
     /**
