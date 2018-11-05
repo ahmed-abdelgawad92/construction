@@ -332,7 +332,8 @@ class TransactionController extends Controller {
 		 ];
 		 $error_messages=[
 			 'current_production.required'=>'يجب أدخال الكمية الحالية',
-			 'current_production.numeric'=>'يجب أن تتكون من أرقام فقط'
+			 'current_production.numeric'=>'يجب أن تتكون من أرقام فقط',
+			 'current_production.numeric'=>'يجب على الأقل أن يكون صفر'
 		 ];
 		 $validator = Validator::make($req->all(),$rules,$error_messages);
 		  if ($validator->fails()) {

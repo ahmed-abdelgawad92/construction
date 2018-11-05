@@ -1492,6 +1492,12 @@ $(document).ready(function() {
 			check=false;
 			assignError($('#current_production').parent(),'يجب أدخاله و قيمته تتكون من أرقام فقط');
 		}
+		if ($(this).attr('id')=='add_contract_transaction') {
+			if ($('#current_production').val().trim()<0) {
+				check=false;
+				assignError($('#current_production').parent(),'لا يجوز بقيمة أقل من الصفر');
+			}
+		}
 		if(check){
 			this.submit();
 		}

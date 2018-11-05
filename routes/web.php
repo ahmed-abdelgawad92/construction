@@ -1113,6 +1113,11 @@ Route::group(['middleware' => 'auth'], function() {
 			'uses'=>'PaymentController@showAllContractorPayments',
 			'as'=>'allcontracttransaction'
 		])->where('id','[0-9]+');
+    //Delete a Transaction of a specific Contract
+		Route::delete('delete/contractor_payment/{id}',[
+			'uses'=>'PaymentController@destroy',
+			'as'=>'deletecontractpayment'
+		])->where('id','[0-9]+');
 		//print extractor
 		Route::get('print/{id}',[
 			'uses'=>'TransactionController@printTable',

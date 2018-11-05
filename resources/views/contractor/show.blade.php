@@ -14,10 +14,12 @@
 					$rate_avg = ($rate[0]->rate/2)+0;
 				@endphp
 				<div class="badge left"><h5 class="center">تقييم {{Str::number_format($rate_avg)}}/5</h5>
-				@for ($i=1; $i <= 5; $i++)
+				@for ($i=0; $i < 5; $i++)
 					@if ($i<=$rate_avg)
 						@if ($rate_avg - $i < 1 && $rate_avg - $i > 0)
 						<span class="glyphicon glyphicon-star half"></span>
+						@elseif($rate_avg - $i == 0)
+						<span class="glyphicon glyphicon-star empty"></span>
 						@else
 						<span class="glyphicon glyphicon-star"></span>
 						@endif

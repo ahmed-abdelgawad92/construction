@@ -77,22 +77,25 @@
                @endif
                <td>{{date('d/m/Y',strtotime($payment->created_at))}}</td>
                <td>
-                 <a href="" class="btn btn-default ml-2">تعديل</a>
-                 <button type="button" data-toggle="modal" data-target="#delete" class="btn btn-danger">حذف</button>
-           				<div class="modal fade" id="delete" tabindex="-1" role="dialog">
-           					<div class="modal-dialog modal-sm">
-           						<div class="modal-content">
-           							<div class="modal-header">
-           								<h4 class="modal-title">هل تريد حذف هذه المعاملة؟</h4>
-           							</div>
-           							<div class="modal-footer">
-           								<button type="button" class="btn btn-default" data-dismiss="modal">لا
-           								</button>
-           								<a href="" class="btn btn-danger">نعم</a>
-           							</div>
-           						</div>
-           					</div>
-           				</div>
+                 <form class="float" method="post" action="{{route('deletecontractpayment',['id'=>$payment->id])}}">
+                   <button type="button" data-toggle="modal" data-target="#delete{{$payment->id}}" class="btn btn-danger">حذف</button>
+             				<div class="modal fade" id="delete{{$payment->id}}" tabindex="-1" role="dialog">
+             					<div class="modal-dialog modal-sm">
+             						<div class="modal-content">
+             							<div class="modal-header">
+             								<h4 class="modal-title">هل تريد حذف هذه المعاملة؟</h4>
+             							</div>
+             							<div class="modal-footer">
+             								<button type="button" class="btn btn-default" data-dismiss="modal">لا
+             								</button>
+             								<input type="submit" class="btn btn-danger" value="نعم"/>
+             							</div>
+             						</div>
+             					</div>
+             				</div>
+                    <input type="hidden" name="_token" value="{{csrf_token()}}">
+            				<input type="hidden" name="_method" value="DELETE">
+                  </form>
                </td>
              </tr>
            @endforeach

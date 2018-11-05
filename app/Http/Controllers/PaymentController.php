@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Payment;
 use App\Contract;
+use App\Log;
 use Validator;
 use Auth;
 
@@ -65,6 +66,23 @@ class PaymentController extends Controller
      */
     public function destroy($id)
     {
-        //
+      $payment = Payment::findOrFail($id);
+      $contract = Contract::findOrFail($payment->table_id);
+      if($payment->deleted==0){
+        $payment->deleted=1;
+        $saved= $payment->save();
+        //check if saved correctly
+        if (!$saved) {
+          return redirect()->back()->with("insert_error","حدث عطل خلال حذف هذه المعاملة");
+        }
+        $log=new Log;
+        $log->table="payments";
+        $log->action="delete";
+        $log->record_id=$id;
+        $log->user_id=Auth::user()->id;
+        $log->description='قام بحذف معاملة بقيمة '.$payment->payment_amount.' جنيه من المقاول '.$contract->contractor->name.' بالبند '.$contract->term->code.' بمشروع '.$payment->project->name;
+        $log->save();
+      }
+      return redirect()->back()->with("success","تم حذف المعاملة بنجاح");
     }
 }
