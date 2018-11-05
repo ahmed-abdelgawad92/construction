@@ -28,7 +28,7 @@ class TransactionController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$project=Project::findOrFail($id);
 			$total_in=$project->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
-			$total_out=$project->payments()->where('payments.deleted',0)->where('payments.table_name','contracts')->sum('payments.payment_amount');
+			$total_out=$project->payments()->where('payments.deleted',0)->where('payments.table_name','transactions')->sum('payments.payment_amount');
 			$terms=$project
 					->terms()
 					->where('started_at','<=',Carbon::today())
@@ -55,9 +55,10 @@ class TransactionController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$term=Term::findOrFail($id);
 			$transactions_in=$term->transactions()->where('transactions.deleted',0)->orderBy('transactions.created_at')->get();
-			$transactions_out=$term->transactions()->get();
+			$transactions_out=$term->getPayments();
+			// dd($transactions_out);
 			$total_in=$term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
-			$total_out=$term->transactions()->sum('transactions.transaction');
+			$total_out=$term->payments();
 			$array=[
 				'active'=>'trans',
 				'term'=>$term,

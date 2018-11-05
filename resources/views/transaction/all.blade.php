@@ -89,9 +89,19 @@
 							<td>{{$count++}}</td>
 							<td><a href="{{ route('alltermtransaction',$term->id) }}">{{$term->code}}</a></td>
 							<td>
-								@foreach ($term->contracts as $contract)
-									{{$contract->contractor->name}} ,
-								@endforeach
+								@if (count($term->contracts))
+									@php
+									$contractsHTML="";
+									@endphp
+									@foreach ($term->contracts as $contract)
+										@php
+										$contractsHTML.="<a href='".route('showcontractor',['id'=>$contract->contractor_id])."'>".$contract->contractor->name."</a> , ";
+										@endphp
+									@endforeach
+									{!!substr($contractsHTML,0,-2)!!}
+								@else
+									لا يوجد مقاولين متعاقد معهم
+								@endif
 							</td>
 							<td>{{$term->type}}</td>
 							<td>{{Str::number_format($term->amount)}} <span class="badge">{{$term->unit}}</span></td>
@@ -130,7 +140,7 @@
 							<td>{{$count++}}</td>
 							<td>{{Str::number_format($transaction->transaction)}} <span class="badge">جنيه</span></td>
 							<td>{{Str::number_format($transaction->transaction/$transaction->term->value)}} <span class="badge">{{$transaction->term->unit}}</span></td>
-							<td>{{$transaction->created_at->format('Y-m-d')}}</td>
+							<td>{{$transaction->created_at->format('d/m/Y')}}</td>
 							<td>
 							<form method="post" action="{{ route('updatetransaction',$transaction->id) }}">
 							<button type="button" data-toggle="modal" data-target="#update{{$transaction->id}}" class="btn btn-block btn-default">
@@ -202,6 +212,7 @@
 					<thead>
 						<tr>
 							<th>#</th>
+							<th>المقاول</th>
 							<th>قيمة المستخلص</th>
 							<th>تاريخ المستخلص</th>
 							<th style="width: 100px;">تعديل</th>
@@ -213,8 +224,9 @@
 						@foreach($transactions_out as $transaction)
 						<tr>
 							<td>{{$count++}}</td>
-							<td>{{Str::number_format($transaction->transaction)}} <span class="badge">جنيه</span></td>
-							<td>{{$transaction->created_at->format('Y-m-d')}}</td>
+							<td><a href="{{route('showcontractor',['id'=>$transaction->contractor->id])}}">{{$transaction->contractor->name}}</a></td>
+							<td>{{Str::number_format($transaction->payment_amount)}} <span class="badge">جنيه</span></td>
+							<td>{{date('d/m/Y',strtotime($transaction->created_at))}}</td>
 							<td>
 							<form method="post" action="{{ route('updatetransaction',$transaction->id) }}">
 							<button type="button" data-toggle="modal" data-target="#update{{$transaction->id}}" class="btn btn-block btn-default">
@@ -231,7 +243,7 @@
 												<label for="transaction" class="control-label">
 													قيمة المستخلص
 												</label>
-												<input type="text" name="transaction" id="transaction" placeholder="أدخل قيمة المستخلص الجديدة" value="{{$transaction->transaction}}" class="form-control">
+												<input type="text" name="transaction" id="transaction" placeholder="أدخل قيمة المستخلص الجديدة" value="{{$transaction->payment_amount}}" class="form-control">
 											</div>
 										</div>
 										<div class="modal-footer">

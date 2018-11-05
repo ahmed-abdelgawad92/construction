@@ -115,7 +115,7 @@
 			@if(count($contracts)>0)
 			@foreach($contracts as $contract)
 				<div class="bordered-right border-navy">
-					<a href="{{ route('showterm',$contract->term_id) }}" class="whole">
+					<a href="{{ route('showterm',$contract->term_id) }}" class="whole" title="افتح البند">
 					<h4>
 						أسم المشروع : {{$contract->term->project->name}}<br>
 						كود البند	: {{$contract->term->code}}<br>
@@ -188,53 +188,6 @@
 			</div>
 			@else
 				<div class="alert alert-warning">لا يوجد أنتاج حتى آلان لهذا المقاول</div>
-			@endif
-		</div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading navy-heading">
-			<h3>اخر ثلاث عقود</h3>
-		</div>
-		<div class="panel-body">
-			@if(count($contracts)>0)
-			@foreach($contracts as $contract)
-				<div class="bordered-right border-navy whole" title="أذهب إلى صفحة البند">
-					<a href="{{route('showterm',['id'=>$contract->term->id])}}" class="no-underline">
-					<p>
-						<span class="label label-default">أسم المشروع</span>
-						{{$contract->term->project->name}}
-						<br>
-						<span class="label label-default">كود البند</span>
-						{{$contract->term->code}}
-						<br>
-						<span class="label label-default">نوع البند</span>
-						 {{$contract->amount}} {{$contract->term->unit}}
-						<br>
-						<span class="label label-default">تاريخ  بداية العقد</span>
-						 {{date("d/m/Y",strtotime($contract->started_at))}}
-						 @if($contract->ended_at!=null)
-							 <br>
-							 <span class="label label-default">تاريخ نهاية العقد</span>
-							 {{date("d/m/Y",strtotime($contract->ended_at))}}
-						 @endif
-						 @if($contract->contract_text!=null)
-							 <br>
-							 <span class="label label-default">نص العقد</span>
-							 {!!nl2br(htmlspecialchars($contract->contract_text))!!}
-						 @endif
-					</p>
-					</a>
-					<a href="{{route('addcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary">أضافة معاملة مالية</a>
-					<a href="{{route('allcontracttransaction',['id'=>$contract->id])}}" class="btn btn-primary">جميع المبالغ المدفوعة</a>
-				</div>
-			@endforeach
-			<div class="center">
-				<a href="{{route('ContractedTerms',$contractor->id)}}" class="btn btn-default">
-					جميع البنود المتعاقد عليها
-				</a>
-			</div>
-			@else
-				<div class="alert alert-warning">لا يوجد بنود متعاقد عليها مع هذا المقاول</div>
 			@endif
 		</div>
 	</div>

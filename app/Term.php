@@ -3,10 +3,12 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Contractor;
+use App\Payment;
 use App\Contract;
 
 class Term extends Model {
 	public $dates = ['created_at','updated_at','started_at'];
+
 	//Define the one to many relationship with project
 	public function project()
 	{
@@ -48,10 +50,18 @@ class Term extends Model {
 	{
 		return $this->hasMany('App\Transaction');
 	}
-	//1 to many with Payments
+	//get all Payments
+	public function getPayments()
+	{
+		$payments = Payment::whereRaw("project_id=? and table_name='transactions' and table_id in (select id from contracts where term_id=?)",[$this->project_id, $this->id])
+									->orderBy('created_at','desc')
+									->get();
+		return $payments;
+	}
+	//Sum of Payments
 	public function payments()
 	{
-		$sql = "select sum(payments.payment_amount) as payment from payments where project_id=? and table_name='contracts' and table_id in (select id from contracts where term_id=?)";
+		$sql = "select sum(payments.payment_amount) as payment from payments where project_id=? and table_name='transactions' and table_id in (select id from contracts where term_id=?)";
 		$payment = DB::select($sql,[$this->project_id, $this->id]);
 		return $payment[0]->payment;
 	}
