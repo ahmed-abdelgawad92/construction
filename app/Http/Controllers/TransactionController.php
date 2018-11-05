@@ -327,7 +327,7 @@ class TransactionController extends Controller {
 	 {
 		 $contract = Contract::findOrFail($id);
 		 $rules=[
-			 'current_production'=>'required|numeric',
+			 'current_production'=>'required|numeric|min:0',
 			 'paymen_type'=>'nullable|in:0,1'
 		 ];
 		 $error_messages=[
@@ -358,6 +358,7 @@ class TransactionController extends Controller {
 			 $log->user_id=Auth::user()->id;
 			 $log->description='قام باضافة مستخلص قيمته '.$payment->payment_amount.' جنيه الى المقاول '.$contract->contractor->name.' بمشروع '.$contract->term->project->name.' بند '.$contract->term->code;
 			 $log->save();
+			 return redirect()->back()->with('success','تم حفظ المعاملة بنجاح');
 		 }
 	 }
 

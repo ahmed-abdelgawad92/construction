@@ -98,6 +98,9 @@
            @endforeach
          </tbody>
        </table>
+       <a class="btn btn-primary" href="{{route('addcontracttransaction',['id'=>$contract->id])}}">أضافة معاملة مالية</a>
+     @else
+       <div class="alert alert-warning">لا يوجد معاملات مالية <a class="btn btn-warning" href="{{route('addcontracttransaction',['id'=>$contract->id])}}">أضافة معاملة مالية</a></div>
      @endif
      </div>
   </div>
