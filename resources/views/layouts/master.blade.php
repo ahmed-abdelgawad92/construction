@@ -239,11 +239,11 @@
 		</li>
 		<li @if($active=="tax")class="active"@endif>
 			<a href="#" class="side-link">
-			<span class="glyphicon glyphicon-euro" aria-hidden="true"> </span> ضرائب
+			<span class="glyphicon glyphicon-euro" aria-hidden="true"> </span> أستقطاعات
 			</a>
 			<ul class="nav child-options">
-				<li><a href="{{ route('addtaxes') }}">أضافة ضريبة</a></li>
-				<li><a href="{{ route('chooseprojecttax') }}">أجمالى ضرائب المشروع</a></li>
+				<li><a href="{{ route('addtaxes') }}">أضافة أستقطاع</a></li>
+				<li><a href="{{ route('chooseprojecttax') }}">أجمالى أستقطاعات المشروع</a></li>
 			</ul>
 		</li>
 		<li @if($active=="exp")class="active"@endif>
