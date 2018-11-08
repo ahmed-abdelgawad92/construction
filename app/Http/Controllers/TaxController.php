@@ -57,9 +57,9 @@ class TaxController extends Controller {
 			];
 			//error messages
 			$error_messages=[
-				'name.required'=>'يجب أدخال أسم الضريبة',
-				'value.required'=>'يجب أدخال نسبة أو قيمة الضريبة',
-				'value.numeric'=>'قيمة أو نسبة الضريبة يجب أن تكون أرقام فقط',
+				'name.required'=>'يجب أدخال أسم الأستقطاع',
+				'value.required'=>'يجب أدخال نسبة أو قيمة الأستقطاع',
+				'value.numeric'=>'قيمة أو نسبة الأستقطاع يجب أن تكون أرقام فقط',
 				'project_id.required'=>'يجب أختيار المشروع',
 				'project_id.exists'=>'يجب على المشروع أن يكون موجود بقاعدة البيانات'
 			];
@@ -67,10 +67,6 @@ class TaxController extends Controller {
 			$validator=Validator::make($req->all(),$rules,$error_messages);
 			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
-			}
-			$sum=Tax::where('project_id',$req->input('project_id'))->sum('percent');
-			if(($sum+$req->input('percent'))>20){
-				return redirect()->back()->with('insert_error','مجموع ضرئب المشروع لا يمكن أن تتعدى العشرون بالمئة');
 			}
 			$tax=new Tax;
 			$tax->name=$req->input('name');
@@ -167,25 +163,53 @@ class TaxController extends Controller {
 			//validation rules
 			$rules=[
 				'name'=>'required',
-				'percent'=>'required|numeric'
+				'value'=>'required|numeric',
+				'type'=>'required|in:1,2'
 			];
 			//error messages
 			$error_messages=[
-				'name.required'=>'يجب أدخال أسم الضريبة',
-				'percent.required'=>'يجب أدخال نسبة الضريبة',
-				'percent.numeric'=>'نسبة الضريبة يجب أن تكون أرقام فقط'
+				'name.required'=>'يجب أدخال أسم الأستقطاع',
+				'value.required'=>'يجب أدخال نسبة أو قيمة الأستقطاع',
+				'value.numeric'=>'قيمة أو نسبة الأستقطاع يجب أن تكون أرقام فقط'
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
-			if($validator->fails())
+			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
+			}
 			$tax=Tax::findOrFail($id);
-			$tax->name=$req->input('name');
-			$tax->percent=$req->input('percent');
-			$saved=$tax->save();
-			if(!$saved)
-				return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذه الضريبة, يرجى المحاولة فى وقت لاحق');
-			return redirect()->route('showtax',$tax->project_id)->with('success','تم تعديل الضريبة بنجاح');
+			$oldType = $tax->getType();
+			$description = "";
+			$check = false;
+			if($tax->name != $req->input("name")){
+				$check = true;
+				$description = "قام بتغيير اسم الاستقطاع من ".$tax->name." الي ".$req->input("name")." . ";
+				$tax->name = $req->input("name");
+			}
+			if($tax->type != $req->input("type")){
+				$check = true;
+				$tax->type = $req->input("type");
+				$description .= "قام بتغيير نوع الاستقطاع من '".$oldgetType."' الي '".$tax->getType()."' . ";
+			}
+			if($tax->value != $req->input("value")){
+				$check = true;
+				$description .= "قام بتغيير قيمة الاستقطاع من ".$tax->value." ".$oldType." الي ".$req->input("value")." ".$tax->getType()." . ";
+				$tax->value = $req->input("value");
+			}
+			if($check){
+				$saved=$tax->save();
+				if(!$saved){
+					return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذا الأستقطاع, يرجى المحاولة فى وقت لاحق');
+				}
+				$log=new Log;
+				$log->table="taxes";
+				$log->action="update";
+				$log->record_id=$id;
+				$log->user_id=Auth::user()->id;
+				$log->description=$description;
+				$log->save();
+				return redirect()->route('showtax',$tax->project_id)->with('success','تم تعديل الأستقطاع بنجاح');
+			}
 		}
 		else
 			abort('404');

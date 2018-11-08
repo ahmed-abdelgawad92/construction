@@ -70,9 +70,9 @@
 						<li><a href="{{ route('createextractor',$project->id) }}">أضافة مستخلص</a></li>
 						<li><a href="{{ route('alltransaction',$project->id) }}">عرض أجمالى المستخلصات</a></li>
 						<li class="divider"></li>
-						<li class="dropdown-header">ضرائب</li>
-						<li><a href="{{ route('addtaxes',$project->id) }}">أضافة ضريبة</a></li>
-						<li><a href="{{ route('showtax',$project->id) }}">عرض جميع الضرائب</a></li>
+						<li class="dropdown-header">الأستقطاعات</li>
+						<li><a href="{{ route('addtaxes',$project->id) }}">أضافة أستقطاع</a></li>
+						<li><a href="{{ route('showtax',$project->id) }}">عرض جميع الأستقطاعات</a></li>
 						<li class="divider"></li>
 						<li class="dropdown-header">أكراميات</li>
 						<li><a href="{{ route('addexpenses',$project->id) }}">أضافة أكرامية</a></li>

@@ -56,7 +56,6 @@ class TransactionController extends Controller {
 			$term=Term::findOrFail($id);
 			$transactions_in=$term->transactions()->where('transactions.deleted',0)->orderBy('transactions.created_at')->get();
 			$transactions_out=$term->getPayments();
-			// dd($transactions_out);
 			$total_in=$term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
 			$total_out=$term->payments();
 			$array=[
