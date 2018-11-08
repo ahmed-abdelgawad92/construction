@@ -42,7 +42,7 @@ class TaxController extends Controller {
 
 	/**
 	 * Store a newly created resource in storage.
-	 *
+	 * type = 1 ==> % || type = 2 ==> LE
 	 * @return Response
 	 */
 	public function store(Request $req)
@@ -51,32 +51,44 @@ class TaxController extends Controller {
 			//validation rules
 			$rules=[
 				'name'=>'required',
-				'percent'=>'required|numeric',
+				'value'=>'required|numeric',
+				'type'=>'required|in:1,2',
 				'project_id'=>'required|exists:projects,id'
 			];
 			//error messages
 			$error_messages=[
 				'name.required'=>'يجب أدخال أسم الضريبة',
-				'percent.required'=>'يجب أدخال نسبة الضريبة',
-				'percent.numeric'=>'نسبة الضريبة يجب أن تكون أرقام فقط',
+				'value.required'=>'يجب أدخال نسبة أو قيمة الضريبة',
+				'value.numeric'=>'قيمة أو نسبة الضريبة يجب أن تكون أرقام فقط',
 				'project_id.required'=>'يجب أختيار المشروع',
 				'project_id.exists'=>'يجب على المشروع أن يكون موجود بقاعدة البيانات'
 			];
 			//validate
 			$validator=Validator::make($req->all(),$rules,$error_messages);
-			if($validator->fails())
+			if($validator->fails()){
 				return redirect()->back()->withErrors($validator)->withInput();
+			}
 			$sum=Tax::where('project_id',$req->input('project_id'))->sum('percent');
-			if(($sum+$req->input('percent'))>20)
+			if(($sum+$req->input('percent'))>20){
 				return redirect()->back()->with('insert_error','مجموع ضرئب المشروع لا يمكن أن تتعدى العشرون بالمئة');
+			}
 			$tax=new Tax;
 			$tax->name=$req->input('name');
-			$tax->percent=$req->input('percent');
+			$tax->value=$req->input('value');
+			$tax->type=$req->input('type');
 			$tax->project_id=$req->input('project_id');
 			$saved=$tax->save();
-			if(!$saved)
-				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه الضريبة, يرجى المحاولة فى وقت لاحق');
-			return redirect()->route('showtax',$tax->project_id)->with('success','تم أضافة الضريبة بنجاح');
+			if(!$saved){
+				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا الأستقطاع, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="taxes";
+			$log->action="create";
+			$log->record_id=$tax->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة أستقطاع قيمته ".$tax->value." ".$tax->getType()." بمشروع ".$tax->project->name;
+			$log->save();
+			return redirect()->route('showtax',$tax->project_id)->with('success','تم أضافة الأستقطاع بنجاح');
 		}
 		else
 			abort('404');
