@@ -847,6 +847,11 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'uses'=>'TaxController@update',
 	    	'as'=>'updatetax'
 	    ])->where('id','[0-9]+');
+      // Pay Tax
+	    Route::put('pay/{id}',[
+	    	'uses'=>'TaxController@payTax',
+	    	'as'=>'paytax'
+	    ])->where('id','[0-9]+');
 	    //show all Tax within a project
 	    Route::get('show/{id}',[
 	    	'uses'=>'TaxController@show',

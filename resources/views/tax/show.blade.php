@@ -12,6 +12,11 @@
 					{{session('success')}}
 				</div>
 			@endif
+			@if(session('info'))
+				<div class="alert alert-info">
+					{{session('info')}}
+				</div>
+			@endif
 			<div class="jumbotron">
 				<h2 style="border-bottom: 1px solid #000; padding-bottom: 5px;">أجمالى الأستقطاعات</h2>
 				<br><br>
@@ -20,11 +25,11 @@
 						<div class="circle-div">
 							{{$total_term_value}} جنيه
 						</div>
-						<p style="text-align: center; margin-top: 8px;">أجمالى قيمة البنود</p>
+						<p style="text-align: center; margin-top: 8px;">أجمالى قيمة البنود المدفوعة</p>
 					</div>
 					<div class="col-sm-12 col-md-4 col-lg-4 col-xs-12" style="margin-bottom: 10px;">
 						<div class="circle-div">
-							{{ $total_tax }}%
+							{{ Str::number_format($total_tax) }}%
 						</div>
 						<p style="text-align: center; margin-top: 8px;">أجمالى نسبة الأستقطاعات</p>
 					</div>
@@ -46,6 +51,7 @@
 							<th>أسم الأستقطاع</th>
 							<th>قيمة الأستقطاع</th>
 							<th>تاريخ</th>
+							<th style="width: 100px;">أدفع</th>
 							<th style="width: 100px;">تعديل</th>
 							<th style="width: 100px;">حذف</th>
 						</tr>
@@ -58,6 +64,34 @@
 							<td>{{$tax->name}}</td>
 							<td>{{$tax->value.' '.$tax->getType()}}</td>
 							<td>{{$tax->created_at->format('d/m/Y')}}</td>
+							<td class="center">
+							@if($tax->paid==0)
+								<form method="post" action="{{ route('paytax',$tax->id) }}">
+								<button type="button" data-toggle="modal" data-target="#pay{{$tax->id}}" class="btn btn-block btn-primary">
+									أدفع
+								</button>
+								<div class="modal fade" id="pay{{$tax->id}}" tabindex="-1" role="dialog">
+									<div class="modal-dialog modal-sm">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h4 class="modal-title">هل تريد دفع هذا الأستقطاع ألأن "{{$tax->name}}"؟</h4>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-default" data-dismiss="modal">لا
+												</button>
+												<input type="submit" class="btn btn-primary width-100" name="loan" value="دفع بالقرض">
+												<input type="submit" class="btn btn-primary width-100" name="box" value="دفع بالصندوق">
+											</div>
+										</div>
+									</div>
+								</div>
+								<input type="hidden" name="_token" value="{{csrf_token()}}">
+								<input type="hidden" name="_method" value="PUT">
+								</form>
+							@else
+								تم الدفع
+							@endif
+							</td>
 							<td><a href="{{ route('updatetax',$tax->id) }}" class="btn btn-block btn-default">تعديل</a></td>
 							<td>
 							<form method="post" action="{{ route('deletetax',$tax->id) }}">
@@ -68,7 +102,7 @@
 								<div class="modal-dialog modal-sm">
 									<div class="modal-content">
 										<div class="modal-header">
-											<h4 class="modal-title">هل تريد حذف هذه الأستقطاع؟</h4>
+											<h4 class="modal-title">هل تريد حذف هذه الأستقطاع "{{$tax->name}}"؟</h4>
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal">لا

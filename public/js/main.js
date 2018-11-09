@@ -1528,7 +1528,35 @@ $(document).ready(function() {
 
 
 	/******************************************Taxes********************************************/
-	
+	$('#add_tax').submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$('.invalid-feedback').remove();
+		var check = true;
+		if($('#project_id').length){
+			if (!$('#project_id').val().trim() || !$('#project_id').val().trim().match(/^[0-9]+$/)) {
+				check=false;
+				assignError($('#project_id'),'من فضلك أختار المشروع');
+			}
+		}
+		if (!$('#name').val().trim()) {
+			check=false;
+			assignError($('#name'),'من فضلك أدخل أسم الأستقطاع');
+		}
+		if (!$('#value').val().trim() || !$('#value').val().trim().match(/^[0-9]+(\.[0-9]+)?$/)) {
+			check=false;
+			assignError($('#value').parent(),'من فضلك أدخل قيمة الأستقطاع , يجب أنت تتكون من أرقام فقط');
+		}
+		if (!$('#type').val().trim() || !$('#type').val().trim().match(/^(1|2)$/)) {
+			check=false;
+			assignError($('#type').parent(),'من فضلك أختار نوع الأستقطاع , سواء بالجنيه أو بالنسبة');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
 
 
 

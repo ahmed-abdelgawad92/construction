@@ -1,11 +1,13 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 use App\Project;
+use App\Payment;
 use App\Tax;
+use App\Log;
 
 use Validator;
 use Auth;
@@ -111,12 +113,14 @@ class TaxController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$project=Project::findOrFail($id);
 			$taxes=$project->taxes;
-			$total_tax=$project->taxes()->sum('percent');
+			$total_tax=$taxes->where('type',1)->where('deleted',0)->sum('value');
+			$tax_type_value=$taxes->where('type',2)->where('deleted',0)->sum('value');
 			$total_term_value=$project
 					->transactions()
-					->where('transactions.type','in')
+					->where('transactions.deleted',0)
 					->sum('transactions.transaction');
-			$total_tax_value=$total_term_value*($total_tax/100);
+			$total_tax_value=($total_term_value*($total_tax/100))+$tax_type_value;
+			$total_tax += ($tax_type_value/$total_term_value)*100;
 			$array=[
 				'active'=>'tax',
 				'project'=>$project,
@@ -189,12 +193,14 @@ class TaxController extends Controller {
 			if($tax->type != $req->input("type")){
 				$check = true;
 				$tax->type = $req->input("type");
-				$description .= "قام بتغيير نوع الاستقطاع من '".$oldgetType."' الي '".$tax->getType()."' . ";
+				$description .= "قام بتغيير نوع الاستقطاع من '".$oldType."' الي '".$tax->getType()."' . ";
 			}
-			if($tax->value != $req->input("value")){
-				$check = true;
-				$description .= "قام بتغيير قيمة الاستقطاع من ".$tax->value." ".$oldType." الي ".$req->input("value")." ".$tax->getType()." . ";
-				$tax->value = $req->input("value");
+			if ($tax->paid==0) {
+				if($tax->value != $req->input("value")){
+					$check = true;
+					$description .= "قام بتغيير قيمة الاستقطاع من ".$tax->value." ".$oldType." الي ".$req->input("value")." ".$tax->getType()." . ";
+					$tax->value = $req->input("value");
+				}
 			}
 			if($check){
 				$saved=$tax->save();
@@ -214,7 +220,52 @@ class TaxController extends Controller {
 		else
 			abort('404');
 	}
-
+	/**
+	 * Pay Tax.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	 public function payTax(Request $req, $id)
+	 {
+		 $tax = Tax::where('id',$id)->where('deleted',0)->firstOrFail();
+		 if ($tax->paid==1) {
+			 return redirect()->back()->with("info","هذا الأستقطاع مدفوع مسبقاً");
+		 }
+		 $project = $tax->project;
+		 $payment_amount = 0;
+		 switch ($tax->type) {
+		 	case '1':
+				$terms_value = $project;
+				break;
+		 	case '2':
+				$payment_amount = $tax->value;
+				break;
+		 }
+		 // ADD Payment to Payment Table
+		 $payment = new Payment;
+		 $payment->payment_amount = $payment_amount;
+		 $payment->table_name = "taxes";
+		 $payment->table_id = $id;
+		 $payment->project_id = $project->id;
+		 if ($req->input("loan") !== null) {
+			 $payment->type = 1;
+		 }else{
+			 $payment->type = 0;
+		 }
+		 try {
+			DB::beginTransaction();
+		 	$tax->paid=1;
+			$tax->save();
+			$payment->save();
+			DB::commit();
+		 }
+		 catch(Exception $e) {
+			DB::rollBack();
+		 	return redirect()->back()->with("insert_error","حدث عطل خلال دفع قيمة الأستقطاع, من فضلك حاول مرة أخرى");
+		 }
+		 return redirect()->back()->with("success","تم دفع قيمة الأستقطاع بنجاح");
+	 }
 	/**
 	 * Remove the specified resource from storage.
 	 *
@@ -226,8 +277,9 @@ class TaxController extends Controller {
 		if(Auth::user()->type=='admin'){
 			$tax=Tax::findOrFail($id);
 			$deleted=$tax->delete();
-			if(!$deleted)
+			if(!$deleted){
 				return redirect()->back()->with('delete_error','حدث عطل خلال حذف هذه الضريبة, يرجى المحاولة فى وقت لاحق');
+			}
 			return redirect()->route('showtax',$tax->project_id)->with('success','تم حذف الضريبة بنجاح');
 		}
 		else
