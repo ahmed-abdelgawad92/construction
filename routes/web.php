@@ -229,18 +229,6 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'as'=>'alluser'
 	    ]);
 
-	    //Show All Users
-	    Route::get('all/contractors',[
-	    	'uses'=>'UserController@contractor',
-	    	'as'=>'allcontractor'
-	    ]);
-
-	    //Show All Admin Users
-	    Route::get('all/admins',[
-	    	'uses'=>'UserController@admin',
-	    	'as'=>'alladmin'
-	    ]);
-
 	    //find User by id
 	    Route::get('/{id}',[
 	    	'uses'=>'UserController@show',

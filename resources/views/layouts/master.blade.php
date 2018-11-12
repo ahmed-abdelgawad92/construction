@@ -292,18 +292,6 @@
 					جميع الحسابات
 				</a>
 				</li>
-				<li>
-				<a href="{{ route('allcontractor') }}">
-					<span class="glyphicon glyphicon-eye-close" aria-hidden="true"> </span>
-					جميع حسابات المقاوليين
-				</a>
-				</li>
-				<li>
-				<a href="{{ route('alladmin') }}">
-					<span class="glyphicon glyphicon-eye-open" aria-hidden="true"> </span>
-					جميع حسابات المشرفيين
-				</a>
-				</li>
 			</ul>
 		</li>
 	</ul>

@@ -31,6 +31,17 @@
 				</div>
 			@endif
 			<form method="post" action="{{ route('adduser') }}" class="form-horizontal">
+				<div class="form-group row @if($errors->has('name')) has-error @endif">
+					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">الاسم بالكامل</label>
+					<div class="col-sm-8 col-md-8 col-lg-8">
+						<input type="text" name="name" id="name" value="{{old('name')}}" class="form-control" placeholder="أدخل الاسم بالكامل">
+						@if($errors->has('name'))
+							@foreach($errors->get('name') as $error)
+								<span class="help-block">{{ $error }}</span>
+							@endforeach
+						@endif
+					</div>
+				</div>
 				<div class="form-group row @if($errors->has('username')) has-error @endif">
 					<label for="username" class="control-label col-sm-2 col-md-2 col-lg-2">أسم المستخدم</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
@@ -64,46 +75,22 @@
 						@endif
 					</div>
 				</div>
-				<div class="form-group row @if($errors->has('type')) has-error @endif">
-					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">نوع الحساب</label>
+				<div class="form-group row @if($errors->has('privilege')) has-error @endif">
+					<label class="control-label col-sm-2 col-md-2 col-lg-2">نوع الحساب</label>
 					<div class="col-sm-8 col-md-8 col-lg-8">
 						<label>
-						<input type="radio" name="type" @if(!old('type') && !isset($cont)) checked @endif @if(old('type')=='admin') checked @endif id="type-admin" value="admin"> مشرف
+						<input type="radio" name="privilege" @if(old('privilege')== 1) checked @endif id="type-user" value="1"> user
 						</label>
 						<label>
-						<input type="radio" name="type" @if(old('type')=='contractor') checked @endif id="type-con" value="contractor" @if(isset($cont)) checked @endif> مقاول
+						<input type="radio" name="privilege" @if(!old('privilege') || old('privilege')== 2) checked @endif id="type-org" value="2"> organizer
 						</label>
-						@if($errors->has('type'))
-							@foreach($errors->get('type') as $error)
+						<label>
+						<input type="radio" name="privilege" @if(old('privilege')== 3) checked @endif id="type-admin" value="3"> admin
+						</label>
+						@if($errors->has('privilege'))
+							@foreach($errors->get('privilege') as $error)
 								<span class="help-block">{{ $error }}</span>
 							@endforeach
-						@endif
-					</div>
-				</div>
-				<div class="form-group row @if(isset($cont)) display @endif @if(old('contractor_id')) display @endif
-					@if($errors->has('contractor_id')) has-error display @endif" @if(!isset($cont) && !$errors->has('contractor_id') && !old('contractor_id')) style="display: none" @endif id="contractor-select">
-					<label for="name" class="control-label col-sm-2 col-md-2 col-lg-2">أختار المقاول</label>
-					<div class="col-sm-8 col-md-8 col-lg-8">
-						@if(count($contractors)>0)
-						<select name="contractor_id" id="contractor_id" class="form-control">
-								<option value="0">أختار مقاول</option>
-								@foreach($contractors as $contractor)
-								@if(old('contractor_id')==$contractor->id)
-								<option value="{{$contractor->id}}" selected>{{$contractor->name}}</option>
-								@else
-								<option value="{{$contractor->id}}">{{$contractor->name}}</option>
-								@endif
-								@endforeach
-						</select>
-						@if($errors->has('contractor_id'))
-							@foreach($errors->get('contractor_id') as $error)
-								<span class="help-block">{{ $error }}</span>
-							@endforeach
-						@endif
-						@else
-						<div class="alert alert-warning">
-							لا يوجد مقاوليين
-						</div>
 						@endif
 					</div>
 				</div>

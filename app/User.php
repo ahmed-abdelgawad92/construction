@@ -27,4 +27,10 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    // set username in lowercase
+    public function setUsernameAttribute($value)
+    {
+      $this->username = mb_strtolower($value);
+    }
 }
