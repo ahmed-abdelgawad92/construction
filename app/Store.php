@@ -21,4 +21,10 @@ class Store extends Model {
 		$payments = Payment::where("table_name","stores")->where("table_id",$this->id)->where("deleted",0)->paginate(30);
 		return $payments;
 	}
+	//extract log link
+	public function extractLogLink()
+	{
+		$link = '<a href="'.route('showstore',['id'=>$this->project_id, 'type'=>$this->type]).'" class="btn btn-primary">جميع كميات '.$this->type.' بمشروع '.$this->project->name.'</a>';
+		return $link;
+	}
 }

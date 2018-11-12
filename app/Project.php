@@ -141,4 +141,16 @@ class Project extends Model {
 	{
 		return $this->hasManyThrough('App\Transaction','App\Term');
 	}
+
+	//extract log link
+	public function extractLogLink()
+	{
+		if($this->deleted == 0){
+			$link = '<a href="'.route('showproject',['id'=>$this->id]).'" class="btn btn-primary">'.$this->name.'</a>';
+		}
+		else{
+			$link = '<p class="alert alert-info">اسم المشروع : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+		}
+		return $link;
+	}
 }

@@ -47,4 +47,16 @@ class User extends Authenticatable
         return "Admin";
       }
     }
+
+    //extract log link
+    public function extractLogLink()
+    {
+      if($this->deleted == 0){
+        $link = '<a href="'.route('showuser',['id'=>$this->id]).'" class="btn btn-primary">'.$this->name.'</a>';
+      }
+      else{
+        $link = '<p class="alert alert-info">اسم المستخدم : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+      }
+      return $link;
+    }
 }

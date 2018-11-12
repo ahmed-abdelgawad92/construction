@@ -122,9 +122,7 @@
 						<div class="bordered-right border-primary p-3">
 							<p>نوع العملية: {{$log->getAction()}}</p>
 							<p>وصف العملية: {{$log->description}}</p>
-							@if($log->table!=null)
-							<p>{{dd($log->getAffectedRow())}}</p>
-							@endif
+							<p>{!!$log->getAffectedRow()->extractLogLink()!!}</p>
 						</div>
 					@endforeach
 				@else

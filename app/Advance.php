@@ -15,5 +15,15 @@ class Advance extends Model {
 	{
 		return $this->belongsTo('App\CompanyEmployee');
 	}
-
+	//extract log link
+	public function extractLogLink()
+	{
+		// if($this->deleted == 0){
+		// 	$link = '<a href="'.route('showtermconsumption',['id'=>$this->term_id]).'" class="btn btn-primary">استهلاك البند '.$this->term->code.'</a>';
+		// }
+		// else{
+		// 	$link = '<p>اسم الموظف : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+		// }
+		return null;
+	}
 }

@@ -16,4 +16,17 @@ class Consumption extends Model {
 		$storeType = StoreType::where('name',$this->type)->where('deleted',0)->first();
 		return $storeType->unit;
 	}
+
+	//extract log link
+	public function extractLogLink()
+	{
+		if($this->deleted == 0){
+			$link = '<a href="'.route('showtermconsumption',['id'=>$this->term_id]).'" class="btn btn-primary">استهلاك البند '.$this->term->code.'</a>';
+			$link .= '<a href="'.route('showterm',['id'=>$this->term_id]).'" class="btn btn-primary">افتح البند '.$this->term->code.'</a>';
+		}
+		else{
+			$link = '<p class="alert alert-info">اسم الموظف : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+		}
+		return $link;
+	}
 }

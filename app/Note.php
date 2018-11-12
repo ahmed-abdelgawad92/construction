@@ -9,4 +9,16 @@ class Note extends Model {
   {
       return $this->belongsTo("App\Term");
   }
+
+  //extract log link
+  public function extractLogLink()
+  {
+    if($this->deleted == 0){
+      $link = '<a href="'.route('updatenote',['id'=>$this->id]).'" class="btn btn-primary">ملحوظة : '.$this->title.'</a>';
+    }
+    else{
+      $link = '<p class="alert alert-info">ملحوظة : '.$this->title.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+    }
+    return $link;
+  }
 }

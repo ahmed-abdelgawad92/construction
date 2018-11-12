@@ -33,4 +33,16 @@ class Contract extends Model
     $payments = Payment::where('project_id',$this->term->project_id)->where('table_name','transactions')->where('table_id',$this->id)->where('deleted',0)->orderBy('created_at','desc')->get();
     return $payments;
   }
+
+  //extract log link
+  public function extractLogLink()
+  {
+    if($this->deleted == 0){
+      $link = '<a href="'.route('updatecontract',['id'=>$this->id]).'" class="btn btn-primary">افتح العقد</a>';
+    }
+    else{
+      $link = '<p class="alert alert-info">(لا يمكن فتح العقد٫ لانه تم حذفه)</p>';
+    }
+    return $link;
+  }
 }

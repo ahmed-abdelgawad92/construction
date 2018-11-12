@@ -28,6 +28,9 @@ class Log extends Model {
 			case 'update':
 				return 'تعديل';
 				break;
+			case 'restore':
+				return 'استرجاع';
+				break;
 
 			default:
 				// code...
@@ -37,6 +40,7 @@ class Log extends Model {
 	//get affected row
 	public function getAffectedRow()
 	{
-		return DB::table($this->table_name)->where('id',$this->record_id)->first();
+		$class = ($this->table_name == 'taxes') ? 'App\Tax' : "App\\".ucfirst(substr($this->table_name,0,-1)) ;
+		return $class::where('id',$this->record_id)->first();
 	}
 }

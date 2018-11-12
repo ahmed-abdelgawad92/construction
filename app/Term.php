@@ -77,4 +77,16 @@ class Term extends Model {
 		return $price->unit_price;
 		dd($price);
 	}
+
+	//extract log link
+	public function extractLogLink()
+	{
+		if($this->deleted == 0){
+			$link = '<a href="'.route('showterm',['id'=>$this->id]).'" class="btn btn-primary">'.$this->code.'</a>';
+		}
+		else{
+			$link = '<p class="alert alert-info">كود البند : '.$this->code.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+		}
+		return $link;
+	}
 }

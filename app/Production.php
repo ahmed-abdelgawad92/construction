@@ -18,4 +18,10 @@ class Production extends Model {
 	{
 		return $this->contract->contractor;
 	}
+	//extract log link
+	public function extractLogLink()
+	{
+		$link = '<a href="'.route('showtermproduction',['id'=>$this->term->id]).'" class="btn btn-primary">جميع انتاج البند'.$this->term->code.'</a>';
+		return $link;
+	}
 }

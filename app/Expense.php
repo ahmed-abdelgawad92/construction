@@ -15,4 +15,15 @@ class Expense extends Model {
 		return Payment::where('project_id',$this->project_id)->where('table_name','expenses')->where('table_id',$this->id)->first();
 	}
 
+	//extract log link
+	public function extractLogLink()
+	{
+		if($this->project->deleted == 0){
+			$link = '<a href="'.route('showexpense',['id'=>$this->project_id]).'" class="btn btn-primary">اكراميات المشروع</a>';
+		}
+		else{
+			$link = '<p class="alert alert-info">اكرامية : '.$this->whom.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+		}
+		return $link;
+	}
 }

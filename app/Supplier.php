@@ -25,4 +25,16 @@ class Supplier extends Model {
 	{
 		return $this->stores()->where("stores.deleted",0)->pluck("stores.id")->toArray();
 	}
+
+	//extract log link
+	public function extractLogLink()
+	{
+		if($this->deleted == 0){
+			$link = '<a href="'.route('showsupplier',['id'=>$this->id]).'" class="btn btn-primary">'.$this->name.'</a>';
+		}
+		else{
+			$link = '<p class="alert alert-info">اسم المورد : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+		}
+		return $link;
+	}
 }

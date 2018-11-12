@@ -23,4 +23,10 @@ class Payment extends Model
   {
     return $this->belongsTo('App\Project');
   }
+
+  //extract log link
+  public function extractLogLink()
+  {
+    return null;
+  }
 }

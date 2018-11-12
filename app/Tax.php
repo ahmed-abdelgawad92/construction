@@ -18,4 +18,15 @@ class Tax extends Model {
 		return $this->belongsTo('App\Project');
 	}
 
+	//extract log link
+	public function extractLogLink()
+	{
+		if($this->project->deleted == 0){
+			$link = '<a href="'.route('showtax',['id'=>$this->project_id]).'" class="btn btn-primary">'.$this->project->name.'</a>';
+		}
+		else{
+			$link = '<p class="alert alert-info">اسم الضريبة : '.$this->project->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+		}
+		return $link;
+	}
 }
