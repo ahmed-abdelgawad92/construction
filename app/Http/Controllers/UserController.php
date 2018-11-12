@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 use App\User;
@@ -18,33 +19,9 @@ class UserController extends Controller {
 	 */
 	public function index()
 	{
-		//
-		if(Auth::user()->type=='admin'){
-			$users=User::all();
-			$array=['active'=>'user','users'=>$users];
-			return view('user.all',$array);
-		}
-		else
-			abort('404');
-	}
-
-
-	/**
-	 * Display a listing of Admin Users.
-	 *
-	 * @return Response
-	 */
-	public function admin()
-	{
-		//
-		if(Auth::user()->type=='admin')
-		{
-			$users=User::where('type','admin')->get();
-			$array=['active'=>'user','users'=>$users];
-			return view('user.all',$array);
-		}
-		else
-			abort('404');
+		$users=User::where('deleted',0)->orderBy('name')->get();
+		$array=['active'=>'user','users'=>$users];
+		return view('user.all',$array);
 	}
 
 	/**
@@ -85,7 +62,7 @@ class UserController extends Controller {
 			];
 			//Validation Error Messages
 			$error_messages=[
-				'name.required'=>'يجب ادخال الاسم الكامل',
+				'name.required'=>'يجب ادخال الاسم بالكامل',
 				'username.required'=>'يجب أدخال أسم المستخدم',
 				'username.alpha_dash'=>'أسم المستخدم يجب أن يحتوى على أرقام و حروف و _ و - فقط',
 				'username.min'=>'أسم المستخدم يجب أن يتكون علي الاقل من ٣ حروف',
@@ -111,6 +88,13 @@ class UserController extends Controller {
 			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا الحساب يرجى المحاولة فى وقت لاحق')->withInput();
 			}
+			$log=new Log;
+			$log->table="users";
+			$log->action="create";
+			$log->record_id=$user->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة حساب لمستخدم جديد ".$user->name.' من نوع '.$user->getType();
+			$log->save();
 			return redirect()->route('alluser')->with('success','تم أضافة الحساب بنجاح');
 		}
 		else{
@@ -130,14 +114,60 @@ class UserController extends Controller {
 		if(Auth::user()->privilege >= 2 || Auth::user()->id == $id)
 		{
 			$user=User::findOrFail($id);
-			$array=['active'=>'user','user'=>$user];
+			$logs = $user->logs()->orderBy('created_at','desc')->take(5)->get();
+			$array=['active'=>'user','user'=>$user, 'logs'=>$logs];
 			return view('user.show',$array);
 		}
 		else
 		{
-			return view('errors.privilege',['msg'=>'ليس من صلاحياتك ان تضيف مستخدم جديد']);
+			return view('errors.privilege',['msg'=>'ليس من صلاحياتك ان تطلع على بيانات المستخدم']);
 		}
 	}
+
+	/**
+	* Update the specified user in storage.
+	*
+	* @param  int  $id
+	* @return Response
+	*/
+	public function update(Request $req,$id)
+	{
+		//
+		if(Auth::user()->id==$id){
+			$rules=[
+				'name'=>'required'
+			];
+			$error_messages=[
+				'name.required'=>'يجب أدخال الأسم بالكامل'
+			];
+			$validator=Validator::make($req->all(),$rules,$error_messages);
+			if($validator->fails()){
+				return redirect()->back()->withErrors($validator);
+			}
+			$user=User::findOrFail($id);
+			if ($req->input("name")== $user->name) {
+				return redirect()->back()->with("info","لا يوجد تغيير حتى يتم تعديله");
+			}
+			$description = "قام بتغيير الأسم بالكامل لنفسه من ".$user->name." الى ".$req->input("name");
+			$user->name = $req->input("name");
+			$saved=$user->save();
+			if(!$saved){
+				return redirect()->back()->with('insert_error','حدث عطل خلال تغيير الأسم, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="users";
+			$log->action="update";
+			$log->record_id=$user->id;
+			$log->user_id=Auth::user()->id;
+			$log->description=$description;
+			$log->save();
+			return redirect()->route('showuser',$user->id)->with('success','تم تغيير الأسم بالكامل بنجاح');
+		}
+		else{
+			abort('404');
+		}
+	}
+
 
 	/**
 	 * Show the form for editing the specified user.
@@ -145,9 +175,8 @@ class UserController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function editPassword($id)
 	{
-		//
 		if(Auth::user()->id==$id){
 			$user=User::findOrFail($id);
 			$array=['active'=>'user','user'=>$user];
@@ -163,7 +192,7 @@ class UserController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update(Request $req,$id)
+	public function updatePassword(Request $req,$id)
 	{
 		//
 		if(Auth::user()->id==$id){
@@ -192,6 +221,13 @@ class UserController extends Controller {
 				if(!$saved){
 					return redirect()->back()->with('insert_error','حدث عطل خلال تغيير كلمة المرور يرجى المحاولة فى وقت لاحق');
 				}
+				$log=new Log;
+				$log->table="users";
+				$log->action="update";
+				$log->record_id=Auth::user()->id;
+				$log->user_id=Auth::user()->id;
+				$log->description="";
+				$log->save();
 				return redirect()->route('showuser',$user->id)->with('success','تم تغيير كلمة المرور بنجاح');
 			}
 			return redirect()->back()->with('insert_error','كلمة المرور القديمة خاطئة');
@@ -199,6 +235,70 @@ class UserController extends Controller {
 		else
 			abort('404');
 	}
+
+
+	/**
+	 * Enable the specified user in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	 public function enable($id)
+	 {
+		 if (Auth::user()->privilege > 2 && Auth::user()->id != $id) {
+			 $user = User::findOrFail($id);
+			 if($user->enable == 1){
+				 $user->enable = 0;
+				 $saved = $user->save();
+				 //check if saved correctly
+				 if (!$saved) {
+				 	return redirect()->back()->with("insert_error","حدث عطل خلال تفعيل هذا المستخدم, من فضلك حاول مرة أخرى");
+				 }
+				 $log=new Log;
+				 $log->table="users";
+				 $log->action="update";
+				 $log->record_id=$id;
+				 $log->user_id=Auth::user()->id;
+				 $log->description="قام بتفعيل المستخدم ".$user->username;
+				 $log->save();
+				 return redirect()->back()->with("success","تم تفعيل المستخدم ".$user->username." بنجاح");
+			 }
+			 return redirect()->back()->with("info","هذا المستخدم مُفعل بالفعل");
+		 }else{
+			 return view('errors.privilege',['msg'=>'ليس من صلاحياتك تفعيل المستخدم']);
+		 }
+	 }
+	 /**
+ 	 * Disable the specified user in storage.
+ 	 *
+ 	 * @param  int  $id
+ 	 * @return Response
+ 	 */
+	 public function disable($id)
+	 {
+		 if (Auth::user()->privilege > 2 && Auth::user()->id != $id) {
+			 $user = User::findOrFail($id);
+			 if($user->enable == 0){
+				 $user->enable = 1;
+				 $saved = $user->save();
+				 //check if saved correctly
+				 if (!$saved) {
+				 	return redirect()->back()->with("insert_error","حدث عطل خلال تعطيل هذا المستخدم , من فضلك حاول مرة أخرى");
+				 }
+				 $log=new Log;
+				 $log->table="users";
+				 $log->action="update";
+				 $log->record_id=$id;
+				 $log->user_id=Auth::user()->id;
+				 $log->description="قام بتعطيل المستخدم ".$user->username;
+				 $log->save();
+				 return redirect()->back()->with("success","تم تعطيل المستخدم ".$user->username." بنجاح");
+			 }
+			 return redirect()->back()->with("info","هذا المستخدم مُعطل بالفعل");
+		 }else{
+			 return view('errors.privilege',['msg'=>'ليس من صلاحياتك تعطيل المستخدم']);
+		 }
+	 }
 
 	/**
 	 * Remove the specified user from storage.
@@ -208,13 +308,26 @@ class UserController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		if(Auth::user()->type=='admin'){
+		if(Auth::user()->privilege == 3 && Auth::user()->id != $id){
 			$user=User::findOrFail($id);
-			$deleted=$user->delete();
-			if(!$deleted){
+			$logs = $user->logs;
+			try{
+				DB::beginTransaction();
+				foreach ($logs as $log) {
+					$log->deleted = 1;
+					$log->save();
+				}
+				$user->deleted = 1;
+				$user->save();
+				DB::commit();
+			}
+			catch(Exception $e){
+				DB::rollBack();
 				return redirect()->back()->with('delete_error','حدث عطل خلال حذف هذا الحساب يرجى المحاولة فى وقت لاحق');
 			}
 			return redirect()->back()->with('success','تم حذف الحساب بنجاح');
+		}else{
+			return view('errors.privilege',['msg'=>'ليس من صلاحياتك حذف هذا المستخدم']);
 		}
 	}
 

@@ -27,10 +27,24 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
+    //relationship between users and logs
+    public function logs()
+    {
+      return $this->hasMany('App\Log');
+    }
     // set username in lowercase
     public function setUsernameAttribute($value)
     {
       $this->username = mb_strtolower($value);
+    }
+    // get  type
+    public function getType(){
+      if($this->type == 1){
+        return "User";
+      }else if($this->type == 2){
+        return "Organizer";
+      }else{
+        return "Admin";
+      }
     }
 }

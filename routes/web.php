@@ -207,15 +207,31 @@ Route::group(['middleware' => 'auth'], function() {
 	    ]);
 
 	    //Update User in the db
+      Route::get('update/password/{id}',[
+        'uses'=>'UserController@editPassword',
+        'as'=>'updateuser'
+        ])->where('id', '[0-9]+');
+
+	    Route::put('update/password/{id}',[
+	    	'uses'=>'UserController@updatePassword',
+	    	'as'=>'updateuser'
+	    ])->where('id', '[0-9]+');
+      //update name
 	    Route::put('update/{id}',[
 	    	'uses'=>'UserController@update',
-	    	'as'=>'updateuser'
+	    	'as'=>'updateuserFullName'
+	    ])->where('id', '[0-9]+');
+      //enable user
+	    Route::put('enable/{id}',[
+	    	'uses'=>'UserController@enable',
+	    	'as'=>'enableuser'
+	    ])->where('id', '[0-9]+');
+      //disable user
+	    Route::put('disable/{id}',[
+	    	'uses'=>'UserController@disable',
+	    	'as'=>'disableuser'
 	    ])->where('id', '[0-9]+');
 
-	    Route::get('update/{id}',[
-	    	'uses'=>'UserController@edit',
-	    	'as'=>'updateuser'
-	    ])->where('id', '[0-9]+');
 
 	    //Delete User from the db
 	    Route::delete('delete/{id}',[

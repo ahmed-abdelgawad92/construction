@@ -31,6 +31,7 @@
 				<thead>
 					<tr>
 					<th>#</th>
+					<th>الأسم بالكامل</th>
 					<th>أسم المستخدم</th>
 					<th>نوع الحساب</th>
 					</tr>
@@ -40,8 +41,9 @@
 				@foreach($users as $user)
 					<tr>
 						<th>{{$count++}}</th>
+						<th><a href="{{ route('showuser',$user->id) }}">{{$user->name}}</a></th>
 						<th><a href="{{ route('showuser',$user->id) }}">{{$user->username}}</a></th>
-						<th>@if($user->type=='admin') مشرف @else مقاول @endif</th>
+						<th>{{$user->getType()}}</th>
 					</tr>
 				@endforeach
 				</tbody>
