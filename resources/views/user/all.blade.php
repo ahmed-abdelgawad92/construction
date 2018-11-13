@@ -34,6 +34,9 @@
 					<th>الأسم بالكامل</th>
 					<th>أسم المستخدم</th>
 					<th>نوع الحساب</th>
+					@if (Auth::user()->privilege > 1)
+					<th>سجل التعاملات</th>
+					@endif
 					</tr>
 				</thead>
 				<tbody>
@@ -44,6 +47,9 @@
 						<th><a href="{{ route('showuser',$user->id) }}">{{$user->name}}</a></th>
 						<th><a href="{{ route('showuser',$user->id) }}">{{$user->username}}</a></th>
 						<th>{{$user->getType()}}</th>
+						@if (Auth::user()->privilege > 1)
+						<th><a href="{{route('showuserlogs',['id'=>$user->id])}}" class="btn btn-primary">جميع التعاملات</a></th>
+						@endif
 					</tr>
 				@endforeach
 				</tbody>

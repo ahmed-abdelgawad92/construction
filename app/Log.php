@@ -40,7 +40,7 @@ class Log extends Model {
 	//get affected row
 	public function getAffectedRow()
 	{
-		$class = ($this->table_name == 'taxes') ? 'App\Tax' : "App\\".ucfirst(substr($this->table_name,0,-1)) ;
+		$class = ($this->table_name == 'taxes') ? 'App\Tax' : "App\\".ucfirst(str_replace('_','',substr($this->table_name,0,-1))) ;
 		return $class::where('id',$this->record_id)->first();
 	}
 }

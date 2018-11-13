@@ -4,7 +4,7 @@
 <div class="content">
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3>جميع تعاملات @if(isset($user)) الحساب {{$user->name}} @else النظام @endif </h3>
+			<h3>جميع تعاملات @if(isset($user)) الحساب <a href="{{route('showuser',['id'=>$user->id])}}">{{$user->name}}</a> @else النظام @endif </h3>
 		</div>
 		<div class="panel-body">
 			@if(count($logs)>0)
@@ -13,73 +13,77 @@
 					<thead>
 					<tr>
 						<th>#</th>
+						@if(!isset($user))
+							<th>أسم المستخدم</th>
+						@endif
 						<th>الحدث</th>
 						<th>الجدول</th>
-						<th>وقت الحدث</th>
-						@if(!isset($user))
-						<th>أسم المستخدم</th>
-						@endif
+						<th>الفعل</th>
+						<th style="white-space: nowrap;">وقت الحدث</th>
 					</tr>
 					</thead>
 					<tbody>
-					<?php $count=1; ?>
+					<?php $count= (($_GET['page']??1)-1) * 30 + 1; ?>
 						@foreach($logs as $log)
 						<tr>
 							<td>{{$count++}}</td>
+							@if(!isset($user))
+								<td><a href="{{ route('showuser',$log->user_id) }}">{{$log->user->username}}</a></td>
+							@endif
 							<td>
-								<a href="">
-								{{$log->action}}
-								</a>
+								{{$log->getAction()}}
 							</td>
 							<td>
-								@if($log->table=="project")
+								@if($log->table_name == "projects")
 									المشروعات
-								@elseif($log->table=="term")
+								@elseif($log->table_name == "terms")
 									البنود
-								@elseif($log->table=="transaction")
+								@elseif($log->table_name == "transactions")
 									المستخصات
-								@elseif($log->table=="store")
+								@elseif($log->table_name == "stores")
 									المخازن
-								@elseif($log->table=="production")
+								@elseif($log->table_name == "productions")
 									الأنتاج
-								@elseif($log->table=="consumption")
+								@elseif($log->table_name == "consumptions")
 									الأستهلاك
-								@elseif($log->table=="note")
+								@elseif($log->table_name == "notes")
 									الملاحيظ
-								@elseif($log->table=="supplier")
+								@elseif($log->table_name == "contracts")
+									العقود
+								@elseif($log->table_name == "suppliers")
 									الموردون
-								@elseif($log->table=="contractor")
+								@elseif($log->table_name == "contractors")
 									المقاولون
-								@elseif($log->table=="expense")
+								@elseif($log->table_name == "expenses")
 									الأكراميات
-								@elseif($log->table=="graph")
+								@elseif($log->table_name == "graphs")
 									الرسومات
-								@elseif($log->table=="organization")
+								@elseif($log->table_name == "organizations")
 									العملاء
-								@elseif($log->table=="store_type")
+								@elseif($log->table_name == "store_types")
 									أنواع الخامات
-								@elseif($log->table=="term_type")
+								@elseif($log->table_name == "term_types")
 									أنواع البنود
-								@elseif($log->table=="user")
+								@elseif($log->table_name == "users")
 									حسابات المستخدميين
-								@elseif($log->table=="tax")
+								@elseif($log->table_name == "taxes")
 									الضرائب
-								@elseif($log->table=="employee")
+								@elseif($log->table_name == "employees")
 									الموظفيين
-								@elseif($log->table=="advance")
+								@elseif($log->table_name == "advances")
 									السلفات
+								@elseif($log->table_name == "payments")
+									المصروفات
 								@endif
 							</td>
-							<td>{{$log->created_at->format('Y-m-d')}}</td>
-							@if(!isset($user))
-							<td><a href="{{ route('showuser',$log->user->id) }}"></a></td>
-							@endif
+							<td>{{$log->description}}<br>{!!$log->getAffectedRow() ? $log->getAffectedRow()->extractLogLink() : null !!}</td>
+							<td>{{$log->created_at->format('يوم d/m/Y الساعة H:i')}}</td>
 						</tr>
 						@endforeach
 					</tbody>
 				</table>
 			</div>
-			{!!$logs->links()!!}
+			<div class="center">{!!$logs->links()!!}</div>
 			@else
 			<div class="alert alert-warning">
 				لا يوجد تعاملات من هذا الحساب

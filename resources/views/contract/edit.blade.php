@@ -6,7 +6,7 @@
      <div class="col-10 offset-1">
        <div class="panel panel-default">
          <div class="panel-heading">
-           <h3>تعديل عقد للبند <a href="{{route("showterm",['id'=>$contract->term_id])}}">{{$contract->term->code}}</a> بمشروع <a href="{{route("showproject",['id'=>$contract->term->project_id])}}">{{$contract->term->project->name}}</a></h3>
+           <h3>تعديل عقد للبند <a href="{{route("showterm",['id'=>$contract->term_id])}}">{{$contract->term->code}}</a> بمشروع <a href="{{route("showproject",['id'=>$contract->term->project_id])}}">{{$contract->term->project->name}}</a> مع المقاول <a href="{{route('showcontractor',$contract->contractor_id)}}">{{$contract->contractor->name}}</a></h3>
          </div>
          <div class="panel-body">
          @if(session("success"))

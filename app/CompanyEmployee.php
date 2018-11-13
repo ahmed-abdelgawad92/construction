@@ -14,7 +14,7 @@ class CompanyEmployee extends Model {
 	public function extractLogLink()
 	{
 		if($this->deleted == 0){
-			$link = '<a href="'.route('showcompanyemployee',['id'=>$this->id]).'" class="btn btn-primary">'.$this->name.'</a>';
+			$link = '<a href="'.route('showcompanyemployee',['id'=>$this->id]).'" class="btn btn-primary">بيانات الموظف '.$this->name.'</a>';
 		}
 		else{
 			$link = '<p class="alert alert-info">اسم الموظف : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';

@@ -19,7 +19,7 @@ class Expense extends Model {
 	public function extractLogLink()
 	{
 		if($this->project->deleted == 0){
-			$link = '<a href="'.route('showexpense',['id'=>$this->project_id]).'" class="btn btn-primary">اكراميات المشروع</a>';
+			$link = '<p>وصف الأكرامية : '.$this->whom.'</p><p>قيمة الأكرامية : '.$this->expense.' جنيه</p><a href="'.route('showexpense',['id'=>$this->project_id]).'" class="btn btn-primary ml-2">اكراميات المشروع</a><a href="'.route('showproject',['id'=>$this->project_id]).'" class="btn btn-primary">رابط المشروع</a>';
 		}
 		else{
 			$link = '<p class="alert alert-info">اكرامية : '.$this->whom.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';

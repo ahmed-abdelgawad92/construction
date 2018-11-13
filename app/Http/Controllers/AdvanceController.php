@@ -95,8 +95,16 @@ class AdvanceController extends Controller {
 			$advance->employee_id=$req->input('employee_id');
 			$advance->advance=$req->input('advance');
 			$saved=$advance->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه السلفة, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="advances";
+			$log->action="create";
+			$log->record_id=$advance->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة سلفة قيمتها ".$advance->advance." جنيه للموظف المنتدب ".$advance->employee->name;
+			$log->save();
 			return redirect()->route('showadvance',$req->input('employee_id'))->with('success','تم أضافة السلفة بنجاح');
 		}
 		else
@@ -162,8 +170,16 @@ class AdvanceController extends Controller {
 			$advance->company_employee_id=$req->input('employee_id');
 			$advance->advance=$req->input('advance');
 			$saved=$advance->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذه السلفة, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="advances";
+			$log->action="create";
+			$log->record_id=$advance->id;
+			$log->user_id=Auth::user()->id;
+			$log->description="قام بأضافة سلفة قيمتها ".$advance->advance." جنيه لموظف الشركة ".$advance->company_employee->name;
+			$log->save();
 			return redirect()->route('showcompanyadvance',$req->input('employee_id'))->with('success','تم أضافة السلفة بنجاح');
 		}
 		else
@@ -238,8 +254,17 @@ class AdvanceController extends Controller {
 			$advance->active=1;
 			$advance->payment_at=Carbon::now();
 			$saved=$advance->save();
-			if(!$saved)
+			if(!$saved){
 				return redirect()->back()->with('update_error','حدث عطل خلال رد قيمة السلفة, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="advances";
+			$log->action="update";
+			$log->record_id=$advance->id;
+			$log->user_id=Auth::user()->id;
+			$name = $advance->is_employee() ? $advance->employee->name : $advance->company_employee->name;
+			$log->description="قام بأسترجاع سلفة قيمتها ".$advance->advance." جنيه من الموظف ".$name;
+			$log->save();
 			return redirect()->back()->with('success','تم رد قيمة السلفة للشركة بنجاح');
 		}
 		else
@@ -289,11 +314,22 @@ class AdvanceController extends Controller {
 				return redirect()->back()->withErrors($validator)->withInput();
 			//save in db
 			$advance=Advance::findOrFail($id);
-			$advance->advance=$req->input('advance');
-			$saved=$advance->save();
-			if(!$saved)
-				return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذه السلفة, يرجى المحاولة فى وقت لاحق');
-			return redirect()->back()->with('success','تم تعديل السلفة بنجاح');
+			if($advance->advance != $req->input('advance')){
+				$log=new Log;
+				$log->table="advances";
+				$log->action="update";
+				$log->record_id=$advance->id;
+				$log->user_id=Auth::user()->id;
+				$name = $advance->is_employee() ? $advance->employee->name : $advance->company_employee->name;
+				$log->description="قام بتعديل السلفة من ".$advance->advance." جنيه إلى ".$req->input("advance")." جنيه للموظف ".$name;
+				$advance->advance=$req->input('advance');
+				$saved=$advance->save();
+				if(!$saved){
+					return redirect()->back()->with('update_error','حدث عطل خلال تعديل هذه السلفة, يرجى المحاولة فى وقت لاحق');
+				}
+				$log->save();
+				return redirect()->back()->with('success','تم تعديل السلفة بنجاح');
+			}
 		}
 		else
 			abort('404');
@@ -311,8 +347,16 @@ class AdvanceController extends Controller {
 		{
 			$advance=Advance::findOrFail($id);
 			$deleted=$advance->delete();
-			if(!$deleted)
+			if(!$deleted){
 				return redirect()->back()->with('delete_error','حدث عطل خلال حذف هذه السلفة, يرجى المحاولة فى وقت لاحق');
+			}
+			$log=new Log;
+			$log->table="advances";
+			$log->action="delete";
+			$log->record_id=$advance->id;
+			$log->user_id=Auth::user()->id;
+			$name = $advance->is_employee() ? $advance->employee->name : $advance->company_employee->name;
+			$log->description="قام بحذف سلفة قيمتها ".$advance->advance." جنيه من الموظف ".$name;
 			return redirect()->back()->with('success','تم حذف السلفة بنجاح');
 		}
 		else

@@ -22,10 +22,10 @@ class Tax extends Model {
 	public function extractLogLink()
 	{
 		if($this->project->deleted == 0){
-			$link = '<a href="'.route('showtax',['id'=>$this->project_id]).'" class="btn btn-primary">'.$this->project->name.'</a>';
+			$link = '<p>أسم الأستقطاع : '.$this->name.'</p><p>قيمة الأستقطاع : '.$this->value." ".$this->getType().'</p><p>بمشروع : <a href="'.route('showproject',['id'=>$this->project_id]).'">'.$this->project->name.'</a></p><a href="'.route('showtax',['id'=>$this->project_id]).'" class="btn btn-primary">أستقطاعات المشروع</a>';
 		}
 		else{
-			$link = '<p class="alert alert-info">اسم الضريبة : '.$this->project->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+			$link = '<p class="alert alert-info">اسم الضريبة : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
 		}
 		return $link;
 	}

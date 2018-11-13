@@ -17,6 +17,24 @@ class UserController extends Controller {
 	 *
 	 * @return Response
 	 */
+	public function showLogs($id)
+	{
+		$user=User::findOrFail($id);
+		if (Auth::user()->privilege > 1) {
+			$logs = $user->logs()->paginate(30);
+			$array=['active'=>'user','user'=>$user,'logs'=>$logs];
+			return view('log.all',$array);
+		}else {
+			return view('errors.privilege');
+		}
+	}
+
+
+	/**
+	 * Display a listing of All Users.
+	 *
+	 * @return Response
+	 */
 	public function index()
 	{
 		$users=User::where('deleted',0)->orderBy('name')->get();

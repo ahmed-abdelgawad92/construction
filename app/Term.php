@@ -82,7 +82,7 @@ class Term extends Model {
 	public function extractLogLink()
 	{
 		if($this->deleted == 0){
-			$link = '<a href="'.route('showterm',['id'=>$this->id]).'" class="btn btn-primary">'.$this->code.'</a>';
+			$link = '<a href="'.route('showterm',['id'=>$this->id]).'" class="btn btn-primary">رابط البند : '.$this->code.'</a>';
 		}
 		else{
 			$link = '<p class="alert alert-info">كود البند : '.$this->code.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';

@@ -39,9 +39,9 @@ class User extends Authenticatable
     }
     // get  type
     public function getType(){
-      if($this->type == 1){
+      if($this->privilege == 1){
         return "User";
-      }else if($this->type == 2){
+      }else if($this->privilege == 2){
         return "Organizer";
       }else{
         return "Admin";

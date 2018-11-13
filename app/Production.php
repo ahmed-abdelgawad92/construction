@@ -21,7 +21,9 @@ class Production extends Model {
 	//extract log link
 	public function extractLogLink()
 	{
-		$link = '<a href="'.route('showtermproduction',['id'=>$this->term->id]).'" class="btn btn-primary">جميع انتاج البند'.$this->term->code.'</a>';
+		$link = '<p>المقاول القائم : <a href="'.route('showcontractor',['id'=>$this->contractor()->id]).'">'.$this->contractor()->name ?? 'الشركة ذاتها';
+		$link .= '</a></p><p>كمية الأنتاج : '.$this->amount.' &nbsp;&nbsp;&nbsp; تقييم : '.$this->rate.'</p>';
+		$link .= '<p><a href="'.route('showterm',['id'=>$this->term()->id]).'" class="btn btn-primary ml-2">رابط البند '.$this->term()->code.'</a><a href="'.route('showtermproduction',['id'=>$this->term()->id]).'" class="btn btn-primary">جميع انتاج البند '.$this->term()->code.'</a></p>';
 		return $link;
 	}
 }

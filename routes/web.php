@@ -250,7 +250,26 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'uses'=>'UserController@show',
 	    	'as'=>'showuser'
 	    ])->where('id', '[0-9]+');
+
+	    //get users's logs
+	    Route::get('logs/{id}',[
+	    	'uses'=>'UserController@showLogs',
+	    	'as'=>'showuserlogs'
+	    ])->where('id','[0-9]+');
 	});
+  //Term Manipulations
+  Route::group(['prefix' => 'logs'], function() {
+    //get users's logs
+    Route::get('all',[
+      'uses'=>'LogController@index',
+      'as'=>'alllogs'
+    ]);
+    //get users's logs
+    Route::get('{table}',[
+      'uses'=>'LogController@indexOfTable',
+      'as'=>'alllogstable'
+    ])->where('table','[a-zA-Z_]+');
+  });
 
 	//Term Manipulations
 	Route::group(['prefix' => 'term'], function() {

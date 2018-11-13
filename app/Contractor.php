@@ -61,7 +61,7 @@ class Contractor extends Model {
 	public function extractLogLink()
 	{
 		if($this->deleted == 0){
-			$link = '<a href="'.route('showcontractor',['id'=>$this->id]).'" class="btn btn-primary">'.$this->name.'</a>';
+			$link = '<a href="'.route('showcontractor',['id'=>$this->id]).'" class="btn btn-primary">المقاول '.$this->name.'</a>';
 		}
 		else{
 			$link = '<p class="alert alert-info">اسم المقاول : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';

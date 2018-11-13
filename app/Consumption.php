@@ -22,7 +22,7 @@ class Consumption extends Model {
 	{
 		if($this->deleted == 0){
 			$link = '<a href="'.route('showtermconsumption',['id'=>$this->term_id]).'" class="btn btn-primary">استهلاك البند '.$this->term->code.'</a>';
-			$link .= '<a href="'.route('showterm',['id'=>$this->term_id]).'" class="btn btn-primary">افتح البند '.$this->term->code.'</a>';
+			$link .= '<a href="'.route('showterm',['id'=>$this->term_id]).'" class="btn btn-primary mr-2">افتح البند '.$this->term->code.'</a>';
 		}
 		else{
 			$link = '<p class="alert alert-info">اسم الموظف : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
