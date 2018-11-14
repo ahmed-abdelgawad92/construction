@@ -1,13 +1,18 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Str;
 class TermType extends Model {
 
+  //replace arabic letter
+  public function setNameAttribute($value)
+  {
+    $this->name = Str::arabic_replace($value);
+  }
   //extract log link
   public function extractLogLink()
   {
-    return '<p>نوع البند : '.$this->name.'</p>'; 
+    return '<p>نوع البند : '.$this->name.'</p>';
   }
 
 }

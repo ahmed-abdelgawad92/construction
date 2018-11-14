@@ -29,22 +29,24 @@ Route::post('/',[
 
 //Authenticated Routes
 Route::group(['middleware' => 'auth'], function() {
-    //
+    //Home Routes
     Route::get('/home',function(){
-			return view('home',['active'=>'home']);
-		}
-	 );
+  			return view('home',['active'=>'home']);
+    });
     Route::get('dashboard',[
-		'as'=>'dashboard',
-		function(){
-			return view('home',['active'=>'home']);
-		}
-	]);
-  Route::get("/logout",[
-    'uses'=>'Auth\LoginController@logout',
-    'as'=>'logout'
-  ]);
-
+  		'as'=>'dashboard',
+  		function(){
+  			return view('home',['active'=>'home']);
+  	}]);
+    Route::get("/logout",[
+      'uses'=>'Auth\LoginController@logout',
+      'as'=>'logout'
+    ]);
+    //search routes
+    Route::get('/search',[
+      'uses' => 'SearchController@search',
+      'as' => 'search'
+    ]);
 	//organization manipulations
 	Route::group(['prefix' => 'organization'], function() {
 

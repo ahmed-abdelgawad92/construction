@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use Str;
 class User extends Authenticatable
 {
     use Notifiable;
@@ -27,6 +27,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
     //relationship between users and logs
     public function logs()
     {
@@ -36,6 +37,11 @@ class User extends Authenticatable
     public function setUsernameAttribute($value)
     {
       $this->username = mb_strtolower($value);
+    }
+    //replace arabic letters during setting
+    public function setNameAttribute($value)
+    {
+      $this->name = Str::arabic_replace($value);
     }
     // get  type
     public function getType(){

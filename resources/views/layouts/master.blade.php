@@ -355,24 +355,34 @@
 	<!--______________________SEARCHBAR___________________________-->
 	<div class="row">
 		<div class="col-lg-8 offset-lg-2 col-md-8 offset-sm-2 col-sm-8 offset-md-2">
-		<form method="get" action="">
-			<div class="search">
-				<input type="text" name="search" placeholder="بحث" class="form-control search">
-				<button class="search">
-					<span class="glyphicon glyphicon-search search" aria-hidden="true"></span>
-				</button>
+		<form method="get" action="{{route('search')}}">
+			<div @if($errors->has('search')||$errors->has('table')) class="has-error" @endif>
+				<div class="search">
+					<input type="text" name="search" placeholder="بحث" class="form-control search">
+					<button class="search">
+						<span class="glyphicon glyphicon-search search" aria-hidden="true"></span>
+					</button>
+				</div>
+				<div class="search">
+					<select class="search form-control" name="table">
+						<option value="0">بالهيئة</option>
+						<option value="1">بالمشروع</option>
+						<option value="2">بكود البند</option>
+						<option value="3">بالمقاول</option>
+						<option value="4">بالمورد</option>
+						<option value="5">بالموظف</option>
+						<option value="6">بالمستخدم</option>
+					</select>
+				</div>
 			</div>
-			<div class="search">
-				<select class="search form-control">
-					<option value="">بالهيئة</option>
-					<option value="">بالمشروع</option>
-					<option value="">بكود البند</option>
-					<option value="">بالمقاول</option>
-					<option value="">بالمورد</option>
-					<option value="">بالموظف</option>
-					<option value="">بالمستخدم</option>
-				</select>
-			</div>
+			@if($errors->has('search')||$errors->has('table'))
+				@foreach($errors->get('search') as $error)
+					<span class="help-block" style="color: #a94442;">{{ $error }}</span>
+				@endforeach
+				@foreach($errors->get('table') as $error)
+					<span class="help-block" style="color: #a94442;">{{ $error }}</span>
+				@endforeach
+			@endif
 			<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		</form>
 		</div>

@@ -8,7 +8,11 @@ use App\Contract;
 
 class Term extends Model {
 	public $dates = ['created_at','updated_at','started_at'];
-
+	//replace arabic letter
+  public function setTypeAttribute($value)
+  {
+    $this->type = Str::arabic_replace($value);
+  }
 	//Define the one to many relationship with project
 	public function project()
 	{

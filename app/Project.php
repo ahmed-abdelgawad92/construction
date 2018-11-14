@@ -7,6 +7,16 @@ use App\Production;
 
 class Project extends Model {
 	// protected $dates = ['created_at','updated_at','started_at'];
+	//replace arabic letter
+  public function setNameAttribute($value)
+  {
+    $this->name = Str::arabic_replace($value);
+  }
+	//replace arabic letter
+  public function setCityAttribute($value)
+  {
+    $this->city = Str::arabic_replace($value);
+  }
 	//Define the one to many relationship with Organizations
 	public function organization()
 	{
