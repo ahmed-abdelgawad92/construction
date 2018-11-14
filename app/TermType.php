@@ -9,6 +9,11 @@ class TermType extends Model {
   {
     $this->name = Str::arabic_replace($value);
   }
+  //escape html entities while getting name
+  public function getNameAttribute($value)
+  {
+    return htmlspecialchars($value);
+  }
   //extract log link
   public function extractLogLink()
   {

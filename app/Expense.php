@@ -14,7 +14,11 @@ class Expense extends Model {
 	{
 		return Payment::where('project_id',$this->project_id)->where('table_name','expenses')->where('table_id',$this->id)->first();
 	}
-
+	//escape html entities while getting name
+	public function getWhomAttribute($value)
+	{
+		return htmlspecialchars($value);
+	}
 	//extract log link
 	public function extractLogLink()
 	{

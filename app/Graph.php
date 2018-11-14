@@ -15,6 +15,11 @@ class Graph extends Model {
 	{
 		return ($this->type==1)? 'رسم معمارى' : 'رسم أنشائى';
 	}
+	//escape html entities while getting name
+	public function getNameAttribute($value)
+	{
+		return htmlspecialchars($value);
+	}
 	//extract log link
 	public function extractLogLink()
 	{

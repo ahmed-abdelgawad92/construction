@@ -370,8 +370,9 @@
 						<option value="2">بكود البند</option>
 						<option value="3">بالمقاول</option>
 						<option value="4">بالمورد</option>
-						<option value="5">بالموظف</option>
-						<option value="6">بالمستخدم</option>
+						<option value="5">بالموظفين المنتدبين</option>
+						<option value="6">بموظفين الشركة</option>
+						<option value="7">بالمستخدم</option>
 					</select>
 				</div>
 			</div>
@@ -383,7 +384,6 @@
 					<span class="help-block" style="color: #a94442;">{{ $error }}</span>
 				@endforeach
 			@endif
-			<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		</form>
 		</div>
 	</div>

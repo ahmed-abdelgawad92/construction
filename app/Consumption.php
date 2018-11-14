@@ -25,7 +25,7 @@ class Consumption extends Model {
 			$link .= '<a href="'.route('showterm',['id'=>$this->term_id]).'" class="btn btn-primary mr-2">افتح البند '.$this->term->code.'</a>';
 		}
 		else{
-			$link = '<p class="alert alert-info">اسم الموظف : '.$this->name.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
+			$link = '<p class="alert alert-info">كود البند : '.$this->term->code.' (لا يمكن فتحه٫ لانه تم حذفه)</p>';
 		}
 		return $link;
 	}

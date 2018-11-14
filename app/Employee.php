@@ -8,6 +8,11 @@ class Employee extends Model {
   {
     $this->name = Str::arabic_replace($value);
   }
+  //escape html entities while getting name
+  public function getNameAttribute($value)
+  {
+    return htmlspecialchars($value);
+  }
 	//replace arabic letter
   public function setJobAttribute($value)
   {

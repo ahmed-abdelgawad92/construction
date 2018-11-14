@@ -12,6 +12,11 @@ class Tax extends Model {
 			return "جنيه";
 		}
 	}
+	//escape html entities while getting name
+	public function getNameAttribute($value)
+	{
+		return htmlspecialchars($value);
+	}
 	//Define the one to many relationship with project
 	public function project()
 	{

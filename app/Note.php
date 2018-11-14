@@ -9,7 +9,11 @@ class Note extends Model {
   {
       return $this->belongsTo("App\Term");
   }
-
+  //escape html entities while getting title
+  public function getTitleAttribute($value)
+  {
+    return htmlspecialchars($value);
+  }
   //extract log link
   public function extractLogLink()
   {

@@ -43,6 +43,11 @@ class User extends Authenticatable
     {
       $this->name = Str::arabic_replace($value);
     }
+    //escape html entities while getting name
+    public function getNameAttribute($value)
+    {
+      return htmlspecialchars($value);
+    }
     // get  type
     public function getType(){
       if($this->privilege == 1){

@@ -4,7 +4,16 @@ use Illuminate\Database\Eloquent\Model;
 use App\Payment;
 
 class Store extends Model {
-
+	//replace arabic letter
+  public function setTypeAttribute($value)
+  {
+    $this->type = Str::arabic_replace($value);
+  }
+	//escape html entities while getting type
+	public function getTypeAttribute($value)
+	{
+		return htmlspecialchars($value);
+	}
 	//Define the one to many relationship with project
 	public function project()
 	{

@@ -21,7 +21,7 @@ class UserController extends Controller {
 	{
 		$user=User::findOrFail($id);
 		if (Auth::user()->privilege > 1) {
-			$logs = $user->logs()->paginate(30);
+			$logs = $user->logs()->orderBy('created_at','desc')->paginate(30);
 			$array=['active'=>'user','user'=>$user,'logs'=>$logs];
 			return view('log.all',$array);
 		}else {

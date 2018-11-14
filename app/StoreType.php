@@ -8,6 +8,11 @@ class StoreType extends Model {
   {
     $this->type = Str::arabic_replace($value);
   }
+  //escape html entities while getting type
+  public function getTypeAttribute($value)
+  {
+    return htmlspecialchars($value);
+  }
   //extract log link
   public function extractLogLink()
   {

@@ -12,6 +12,11 @@ class Project extends Model {
   {
     $this->name = Str::arabic_replace($value);
   }
+  //replace arabic letter
+  public function setTypeAttribute($value)
+  {
+    $this->type = Str::arabic_replace($value);
+  }
 	//replace arabic letter
   public function setCityAttribute($value)
   {

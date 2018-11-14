@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Paper extends Model
 {
+    //escape html entities while getting name
+    public function getNameAttribute($value)
+    {
+      return htmlspecialchars($value);
+    }
     //1 to m with project
     public function project()
     {
