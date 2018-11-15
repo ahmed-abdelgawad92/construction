@@ -355,24 +355,24 @@
 	<!--______________________SEARCHBAR___________________________-->
 	<div class="row">
 		<div class="col-lg-8 offset-lg-2 col-md-8 offset-sm-2 col-sm-8 offset-md-2">
-		<form method="get" action="{{route('search')}}">
-			<div @if($errors->has('search')||$errors->has('table')) class="has-error" @endif>
+		<form method="get" action="{{route('search')}}" id="search_form">
+			<div @if($errors->has('search')||$errors->has('table')) class="has-error" @endif id="search_frame">
 				<div class="search">
-					<input type="text" name="search" placeholder="بحث" class="form-control search">
+					<input type="text" name="search" id="search" placeholder="بحث" class="form-control search" value="@if(isset($_GET['search'])){{trim($_GET['search'])}}@endif">
 					<button class="search">
 						<span class="glyphicon glyphicon-search search" aria-hidden="true"></span>
 					</button>
 				</div>
 				<div class="search">
 					<select class="search form-control" name="table">
-						<option value="0">بالهيئة</option>
-						<option value="1">بالمشروع</option>
-						<option value="2">بكود البند</option>
-						<option value="3">بالمقاول</option>
-						<option value="4">بالمورد</option>
-						<option value="5">بالموظفين المنتدبين</option>
-						<option value="6">بموظفين الشركة</option>
-						<option value="7">بالمستخدم</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 0) selected @endif value="0">بالهيئة</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 1) selected @endif value="1">بالمشروع</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 2) selected @endif value="2">بكود البند</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 3) selected @endif value="3">بالمقاول</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 4) selected @endif value="4">بالمورد</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 5) selected @endif value="5">بالموظفين المنتدبين</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 6) selected @endif value="6">بموظفين الشركة</option>
+						<option @if(isset($_GET['table']) && $_GET['table'] == 7) selected @endif value="7">بالمستخدم</option>
 					</select>
 				</div>
 			</div>

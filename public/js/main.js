@@ -1561,7 +1561,24 @@ $(document).ready(function() {
 	/******************************************Users********************************************/
 
 
-	/******************************************Productions********************************************/
+	/******************************************Search********************************************/
+	$('#search_form').submit(function(e){
+		e.preventDefault();
+		$(".is-invalid").removeClass('is-invalid');
+		$(".has-error").removeClass('has-error');
+		$('.invalid-feedback').remove();
+		var check = true;
+		if (!$('#search').val().trim()) {
+			check=false;
+			$('#search_frame').addClass('has-error');
+			$('#search_frame').after('<span style="display:block" class="invalid-feedback">من فضلك أدخل الكلمات أو الأكواد المراد البحث عنها</span>');
+		}
+		if(check){
+			this.submit();
+		}
+		$("#save_btn").removeClass('disabled');
+		return false;
+	});
 	/******************************************Productions********************************************/
 	/******************************************Productions********************************************/
 });

@@ -109,7 +109,7 @@ Route::group(['middleware' => 'auth'], function() {
 	    Route::get('add/{id?}',[
 	    	'uses'=>'ProjectController@create',
 	    	'as'=>'addproject'
-	    ]);
+	    ])->where('id','[0-9]+');
 	    Route::post('add',[
 	    	'uses'=>'ProjectController@store',
 	    	'as'=>'addproject'

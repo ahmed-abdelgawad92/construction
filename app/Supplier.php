@@ -44,7 +44,11 @@ class Supplier extends Model {
 	{
 		return $this->stores()->where("stores.deleted",0)->pluck("stores.id")->toArray();
 	}
-
+  // get last store imported
+  public function lastStore()
+  {
+    return Store::where('supplier_id',$this->id)->where('deleted',0)->orderBy('created_at','desc')->first();
+  }
 	//extract log link
 	public function extractLogLink()
 	{
@@ -56,4 +60,47 @@ class Supplier extends Model {
 		}
 		return $link;
 	}
+  //extract a template html for every
+  public function getHtmlTemplate()
+  {
+    $template = '<div class="col-md-12 col-lg-6">
+      <div class="card mt-4">
+        <div class="row">
+          <div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
+            <a href="'.route('showsupplier',['id'=>$this->id]).'"><img src="'.asset('images/supplier.png').'" class="w-100" alt=""></a>
+          </div>
+          <div class="col-xs-8 col-sm-8 col-md-9 col-lg-8">
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">أسم المورد</span>
+                <a href="'.route('showsupplier',['id'=>$this->id]).'">'.$this->name.'</a>
+              </h3>
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">التليفون</span>
+                '.htmlspecialchars(str_replace(',',' , ',$this->phone)).'
+              </h3>
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">المدينة</span>
+                '.htmlspecialchars($this->city).'
+              </h3>
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">نوع المورد</span>
+                '.htmlspecialchars(str_replace(',',' , ',$this->type)).'
+              </h3>
+              <h3 class="mb-2">
+              <span class="label label-default min-w-150">أخر كمية وردها</span>
+              ';
+    $store = $this->lastStore();
+    if (!empty($store)) {
+      $template .= htmlspecialchars($store->amount)." ".htmlspecialchars($store->unit)." من ".htmlspecialchars($store->type);
+    }else{
+      $template .= 'لم يورد أى كمية حتى الان';
+    }
+    $template .= '</h3>
+          </div>
+        </div>
+      </div>
+    </div>';
+
+    return $template;
+  }
 }

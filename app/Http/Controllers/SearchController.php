@@ -26,6 +26,16 @@ class SearchController extends Controller
     "searchCompanyEmployee",
     "searchUser"
   ];
+  private const ARABIC_LIST = [
+    "العملاء",
+    "المشاريع",
+    "البنود",
+    "المقاولين",
+    "الموردين",
+    "الموظفين المنتدبين",
+    "موظفين الشركة",
+    "المستخدمين"
+  ];
   /*
   * @param $req ['Table', 'search']
   * return Collections
@@ -51,8 +61,7 @@ class SearchController extends Controller
     $records = $this->$searchFunction($search);
     $data = [
       'records' => $records,
-      'search' => $search,
-      'table' => $searchFunction
+      'table' => $this::ARABIC_LIST[$req->input('table')]
     ];
     return view('search',$data);
   }

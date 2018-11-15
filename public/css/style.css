@@ -201,6 +201,12 @@ select.search{
 	top: 1px;
 	box-sizing: border-box;
 }
+.min-w-150{
+	display: inline-block;
+	height: 30px;
+	width: 150px;
+	margin-left: 5px;
+}
 /*-------------------------------PAGE CONTENT-------------------------------------*/
 .inline{
 	display: inline;

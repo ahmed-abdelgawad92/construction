@@ -75,6 +75,13 @@ class Contractor extends Model {
 	{
 		return $this->hasManyThrough('App\Production','App\Contract');
 	}
+  //get last contracted term
+  public function lastTerm()
+  {
+    $contract = Contract::where('contractor_id',$this->id)->where('deleted',0)->orderBy('created_at','desc')->first();
+    $term = (!empty($contract)) ? Term::find($contract->term_id) : null;
+    return $term;
+  }
 
 	//extract log link
 	public function extractLogLink()
@@ -87,4 +94,47 @@ class Contractor extends Model {
 		}
 		return $link;
 	}
+  //extract a template html for every
+  public function getHtmlTemplate()
+  {
+    $template = '<div class="col-md-12 col-lg-6">
+      <div class="card mt-4">
+        <div class="row">
+          <div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
+            <a href="'.route('showcontractor',['id'=>$this->id]).'"><img src="'.asset('images/contractor.png').'" class="w-100" alt=""></a>
+          </div>
+          <div class="col-xs-8 col-sm-8 col-md-9 col-lg-8">
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">أسم المقاول</span>
+                <a href="'.route('showcontractor',['id'=>$this->id]).'">'.$this->name.'</a>
+              </h3>
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">التليفون</span>
+                '.htmlspecialchars(str_replace(',',' , ',$this->phone)).'
+              </h3>
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">المدينة</span>
+                '.htmlspecialchars($this->city).'
+              </h3>
+              <h3 class="mb-2">
+                <span class="label label-default min-w-150">نوع المقاول</span>
+                '.htmlspecialchars(str_replace(',',' , ',$this->type)).'
+              </h3><h3 class="mb-2">
+              <span class="label label-default min-w-150">أخر بند تعاقد عليه</span>
+              ';
+    $term = $this->lastTerm();
+    if (!empty($term)) {
+      $template .= '<a href="'.route('showterm',['id'=>$term->id]).'">'.$term->code.'</a>';
+    }else{
+      $template .= 'لم يتعاقد على أى بند حتى الان';
+    }
+    $template .= '</h3>
+          </div>
+        </div>
+      </div>
+    </div>';
+
+    return $template;
+  }
+
 }

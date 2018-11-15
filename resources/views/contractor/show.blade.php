@@ -84,7 +84,7 @@
 					</div>
 				</div>
 			</div>
-			<a href="" class="m-top btn btn-primary float">عقد بند</a>
+			{{-- <a href="" class="m-top btn btn-primary float">عقد بند</a> --}}
 			<a href="{{ route('updatecontractor',$contractor->id) }}" class="m-top btn btn-default float">تعديل</a>
 			<form class="float" method="post" action="{{ route('deletecontractor',$contractor->id) }}">
 				<button type="button" data-toggle="modal" data-target="#delete" class="btn m-top btn-danger">حذف</button>
