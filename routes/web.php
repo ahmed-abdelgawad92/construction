@@ -191,7 +191,46 @@ Route::group(['middleware' => 'auth'], function() {
 	    	'uses'=>'ProjectController@addNonOrgCost',
 	    	'as'=>'addnonorg'
     	])->where('id','[0-9]+');
-
+      /**
+      **
+      ** Inventory Manipulations
+      **
+      */
+    	Route::group(['prefix' => 'inventory'], function() {
+        // ADD Inventory
+        Route::get('add/{id}',[
+          'uses'=>'InventoryController@create',
+          'as'=>'addinventory'
+        ])->where('id','[0-9]+');
+        Route::post('add/{id}',[
+          'uses'=>'InventoryController@store',
+          'as'=>'addinventory'
+        ])->where('id','[0-9]+');
+        //Update Inventory
+        Route::get('update/{id}',[
+          'uses'=>'InventoryController@edit',
+          'as'=>'updateinventory'
+        ])->where('id','[0-9]+');
+        Route::put('update/{id}',[
+          'uses'=>'InventoryController@update',
+          'as'=>'updateinventory'
+        ])->where('id','[0-9]+');
+        //Get All Inventories of a specific Project
+        Route::get('all/{id}',[
+          'uses'=>'InventoryController@index',
+          'as'=>'allinventory'
+        ])->where('id','[0-9]+');
+        //show Inventory
+        Route::get('show/{id}',[
+          'uses'=>'InventoryController@show',
+          'as'=>'showinventory'
+        ])->where('id','[0-9]+');
+        //delete Inventory
+        Route::delete('delete/{id}',[
+          'uses'=>'InventoryController@destroy',
+          'as'=>'deleteinventory'
+        ])->where('id','[0-9]+');
+      });
 	});
 
 	//User Manipulations

@@ -387,6 +387,9 @@
 			{{-- <a href="{{ route('showprojectproduction',$project->id) }}" class="float btn btn-primary mb-3">
 				أجمالى أنتاج المشروع
 			</a> --}}
+			<a href="{{ route('addinventory',$project->id) }}" class="float btn btn-primary width-100 mb-3">
+				أضافة حصر
+			</a>
 			<form method="post" action="{{route('endproject',['id'=>$project->id])}}" class="float">
 				<button type="button" data-toggle="modal" data-target="#finish_project" class="btn width-100 btn-success mb-3">إنهاء المشروع</button>
 				<div class="modal fade" id="finish_project" tabindex="-1" role="dialog">

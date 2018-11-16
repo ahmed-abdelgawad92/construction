@@ -27,6 +27,11 @@ class Project extends Model {
 	{
 		return $this->hasMany('App\Term');
 	}
+	//Define the one to many relationship with inventories
+	public function inventories()
+	{
+		return $this->hasMany('App\Inventory');
+	}
 	//Define the one to many relationship with expenses ekramyat
 	public function expenses()
 	{
