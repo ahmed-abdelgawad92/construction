@@ -1240,6 +1240,7 @@ $(document).ready(function() {
 			parent.nextAll('.deduction_value').text(parseFloat(deduction_value).toLocaleString('en',strOptions)+" جنيه");
 		}
 		parent.nextAll('.deduction_value').attr('data-value',parseFloat(deduction_value).toFixed(2)*1);
+		parent.nextAll('.deduction_value').attr('data-old-value',parseFloat(deduction_value).toFixed(2)*1);
 		parent.nextAll('.price_after_deduction').text(parseFloat(price_after_deduction).toLocaleString('en',strOptions)+" جنيه");
 	});
 
@@ -1363,6 +1364,7 @@ $(document).ready(function() {
 		let old_value = $(this).parent().parent().attr('data-old-value');
 		let postfix = $(this).attr('data-post');
 		$('#'+input_id).val(old_value);
+		// $('#current_amount_'+input_id.slice(-1)).trigger('change');
 		$('#'+input_id).trigger('change');
 		$('#'+input_id).parent().parent().text(old_value+" "+postfix);
 	});
@@ -1580,7 +1582,7 @@ $(document).ready(function() {
 		return false;
 	});
 	/******************************************Inventories********************************************/
-	
+
 
 
 
