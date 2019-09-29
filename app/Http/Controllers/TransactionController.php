@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Transaction;
+use App\TransactionTerm;
 use App\Contract;
 use App\Payment;
 use App\Project;
@@ -27,7 +28,7 @@ class TransactionController extends Controller {
 	{
 		if(Auth::user()->type=='admin'){
 			$project=Project::findOrFail($id);
-			$total_in=$project->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
+			$total_in=$project->getTotalTransaction();
 			$total_out=$project->payments()->where('payments.deleted',0)->where('payments.table_name','transactions')->sum('payments.payment_amount');
 			$terms=$project
 					->terms()
@@ -114,6 +115,10 @@ class TransactionController extends Controller {
 			if(count($checked)==0){
 				return redirect()->back()->with('empty_error','يجب أختيار صف واحد على الأقل')->withInput();
 			}
+			$trans = new Transaction();
+			$trans->project_id = $id;
+			$trans->save();
+
 			foreach($checked as $i) {
 				$term=Term::findOrFail($terms[$i]['id']);
 				if(!is_numeric($terms[$i]['current_amount'])){
@@ -122,8 +127,9 @@ class TransactionController extends Controller {
 				}else{
 					if($terms[$i]['current_amount']>0){
 						$production=$terms[$i]['current_amount'];
-						$transaction=new Transaction;
-						$transaction->transaction=$terms[$i]['current_amount']*$term->value;
+						$transaction=new TransactionTerm;
+						$transaction->payment=$terms[$i]['current_amount']*$term->value;
+						$transaction->transaction_id = $trans->id;
 						$transaction->term_id=$term->id;
 						$transactions[]=$transaction;
 					}
@@ -177,7 +183,7 @@ class TransactionController extends Controller {
 					$log->action="create";
 					$log->record_id=$transaction->id;
 					$log->user_id=Auth::user()->id;
-					$log->description='قام باضافة مستخلص قيمته '.$transaction->transaction.' جنيه الى البند '.$transaction->term->code.' بمشروع '.$transaction->term->project->name;
+					$log->description='قام باضافة مستخلص قيمته '.$transaction->payment.' جنيه الى البند '.$transaction->term->code.' بمشروع '.$transaction->term->project->name;
 					$log->save();
 					$count++;
 				}
@@ -215,7 +221,7 @@ class TransactionController extends Controller {
 	 public function createForTerm($id)
 	 {
 		 $term = Term::findOrFail($id);
-		 $prev_production= $term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction') / $term->value;
+		 $prev_production= $term->getTotalTransaction() / $term->value;
 		 $total_production= $term->productions()->where('productions.deleted',0)->sum('productions.amount');
 		 $current_production= $total_production - $prev_production;
 		 $deduction_value= ($prev_production>$total_production) ? ($prev_production*$term->value)*($term->deduction_percent/100) : ($total_production*$term->value)*($term->deduction_percent/100);
@@ -259,8 +265,12 @@ class TransactionController extends Controller {
 		  	return redirect()->back()->withErrors($validator)->withInput();
 		 }
 		 if($req->input("current_production")>0){
-			 $transaction = new Transaction;
-			 $transaction->transaction = $req->input("current_production")*$term->value;
+			 $trans = new Transaction;
+			 $trans->project_id = $term->project_id;
+			 $trans->save();
+			 $transaction = new TransactionTerm;
+			 $transaction->payment = $req->input("current_production")*$term->value;
+			 $transaction->transaction_id=$trans->id;
 			 $transaction->term_id=$term->id;
 			 $saved = $transaction->save();
 			 //check if saved correctly
@@ -272,7 +282,7 @@ class TransactionController extends Controller {
 			 $log->action="create";
 			 $log->record_id=$transaction->id;
 			 $log->user_id=Auth::user()->id;
-			 $log->description='قام باضافة مستخلص قيمته '.$transaction->transaction.' جنيه الى البند '.$term->code.' بمشروع '.$term->project->name;
+			 $log->description='قام باضافة مستخلص قيمته '.$transaction->payment.' جنيه الى البند '.$term->code.' بمشروع '.$term->project->name;
 			 $log->save();
 			 $count++;
 		 }

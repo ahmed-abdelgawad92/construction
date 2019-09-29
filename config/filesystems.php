@@ -51,6 +51,10 @@ return [
     			'driver'=>'local',
     			'root'=> storage_path().'/graph'
     		],
+        'bug' => [
+    			'driver'=>'local',
+    			'root'=> storage_path().'/bug'
+    		],
         'inventory' => [
     			'driver'=>'local',
     			'root'=> storage_path().'/inventory'

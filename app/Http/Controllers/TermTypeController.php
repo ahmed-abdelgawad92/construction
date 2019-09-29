@@ -70,7 +70,7 @@ class TermTypeController extends Controller {
 			if($validator->fails())
 				return redirect()->back()->withInput()->withErrors($validator);
 			$term_type= new TermType;
-			$term_type->name=$req->input('type');
+			$term_type->name = $req->input('type');
 			$saved=$term_type->save();
 			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أدخال نوع بند جديد');

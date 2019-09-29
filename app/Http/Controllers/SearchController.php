@@ -56,7 +56,7 @@ class SearchController extends Controller
      if ($validator->fails()) {
      	return redirect()->back()->withErrors($validator)->withInput();
     }
-    $search = Str::arabic_replace($req->input("search"));
+    $search = \Str::arabic_replace($req->input("search"));
     $searchFunction = $this::FUNCTION_LIST[$req->input("table")];
     $records = $this->$searchFunction($search);
     $data = [

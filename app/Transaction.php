@@ -9,6 +9,11 @@ class Transaction extends Model {
 	{
 		return $this->belongsTo('App\Term');
 	}
+
+	public function transaction_term()
+	{
+		return $this->hasMany('App\TransactionTerm');
+	}
 	//extract log link
 	public function extractLogLink()
 	{

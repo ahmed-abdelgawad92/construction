@@ -11,7 +11,7 @@ class Term extends Model {
 	//replace arabic letter
   public function setTypeAttribute($value)
   {
-    $this->type = Str::arabic_replace($value);
+    $this->type = \Str::arabic_replace($value);
   }
 	//Define the one to many relationship with project
 	public function project()
@@ -52,7 +52,7 @@ class Term extends Model {
 	//1 to many with Transactions
 	public function transactions()
 	{
-		return $this->hasMany('App\Transaction');
+		return $this->hasMany('App\TransactionTerm');
 	}
 	//get all Payments
 	public function getPayments()
@@ -80,6 +80,16 @@ class Term extends Model {
 		$price = $this->contracts()->where('contractor_id',$id)->where("deleted",0)->first();
 		return $price->unit_price;
 		dd($price);
+	}
+
+	//get summary production per term
+	public function getTotalTransaction()
+	{
+		$total = DB::select("
+		select sum(transaction_term.payment) as total from transaction_term 
+		where term_id = ? AND deleted = 0", [$this->id]);
+
+		return $total[0]->total;
 	}
 
 	//extract log link

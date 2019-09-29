@@ -96,9 +96,12 @@ class ContractorController extends Controller {
 			$contractor->city=$req->input('city');
 			$contractor->phone=implode(",",$req->input('phone'));
 			$contractor->type=implode(",",array_merge($req->input("type")??[],$req->input('contractor_type')??[]));
+			//dd(var_dump(implode(",",array_merge($req->input("type")??[],$req->input('contractor_type')??[]))));
 			foreach ($req->input('contractor_type')??[] as $type) {
 				$term_type = new TermType;
-				$term_type->name=$type;
+				//dd($type);
+				$term_type->name = $type;
+				//dd($term_type->name);
 				$term_type->save();
 				$log=new Log;
 				$log->table="term_types";

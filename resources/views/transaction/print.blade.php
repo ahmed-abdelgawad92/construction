@@ -45,7 +45,7 @@
 			@foreach($terms as $term)
 			<?php
 				$total_production=$term->productions()->sum('productions.amount');
-				$prev_production=$term->transactions()->sum('transaction')/$term->value;
+				$prev_production=$term->transactions()->sum('payment')/$term->value;
 				$current_production=$total_production-$prev_production;
 			?>
 			<tr>

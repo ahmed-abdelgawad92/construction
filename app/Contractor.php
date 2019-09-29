@@ -2,12 +2,12 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-
+use Str;
 class Contractor extends Model {
 	//replace arabic letter
   public function setNameAttribute($value)
   {
-    $this->name = Str::arabic_replace($value);
+    $this->name = \Str::arabic_replace($value);
   }
   //escape html entities while getting name
   public function getNameAttribute($value)
@@ -17,12 +17,12 @@ class Contractor extends Model {
 	//replace arabic letter
   public function setTypeAttribute($value)
   {
-    $this->type = Str::arabic_replace($value);
+    $this->type = \Str::arabic_replace($value);
   }
 	//replace arabic letter
   public function setCityAttribute($value)
   {
-    $this->city = Str::arabic_replace($value);
+    $this->city = \Str::arabic_replace($value);
   }
 	//1 to 1 with user
 	public function user()

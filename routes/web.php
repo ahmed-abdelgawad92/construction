@@ -26,7 +26,7 @@ Route::post('/',[
   'as'=>'postLogin'
 ]);
 
-
+Route::get('/send/email', 'MailController@mail');
 //Authenticated Routes
 Route::group(['middleware' => 'auth'], function() {
     //Home Routes
@@ -1297,5 +1297,45 @@ Route::group(['middleware' => 'auth'], function() {
       'as'=>'deletepaper'
     ])->where('id','[0-9]+');
   });
+	//Routes to manipulate bugs
+	Route::group(['prefix'=>'tickets'],function(){
+		//add Papers
+		Route::get('add',[
+			'uses'=>'BugController@create',
+			'as'=>'addbug'
+		]);
+		Route::post('add',[
+			'uses'=>'BugController@store',
+			'as'=>'addbug'
+		]);
+		Route::get('show/{bug}',[
+			'uses'=>'BugController@show',
+			'as'=>'showbug'
+		]);
+		Route::put('start/{bug}',[
+			'uses'=>'BugController@start',
+			'as'=>'startbug'
+		]);
+		Route::put('test/{bug}',[
+			'uses'=>'BugController@test',
+			'as'=>'testbug'
+		]);
+		Route::put('issue_on_test/{bug}',[
+			'uses'=>'BugController@issueOnTest',
+			'as'=>'issuebug'
+		]);
+		Route::put('redevelop/{bug}',[
+			'uses'=>'BugController@reDevelop',
+			'as'=>'redevelopbug'
+		]);
+		Route::put('finish/{bug}',[
+			'uses'=>'BugController@finish',
+			'as'=>'finishbug'
+		]);
+		Route::get('all/{filter?}',[
+			'uses'=>'BugController@index',
+			'as'=>'allbug'
+		]);
+	});
 
 });

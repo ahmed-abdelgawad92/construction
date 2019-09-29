@@ -6,7 +6,7 @@ class Employee extends Model {
 	//replace arabic letter
   public function setNameAttribute($value)
   {
-    $this->name = Str::arabic_replace($value);
+    $this->name = \Str::arabic_replace($value);
   }
   //escape html entities while getting name
   public function getNameAttribute($value)
@@ -16,12 +16,12 @@ class Employee extends Model {
 	//replace arabic letter
   public function setJobAttribute($value)
   {
-    $this->job = Str::arabic_replace($value);
+    $this->job = \Str::arabic_replace($value);
   }
 	//replace arabic letter
   public function setCityAttribute($value)
   {
-    $this->city = Str::arabic_replace($value);
+    $this->city = \Str::arabic_replace($value);
   }
 	//Define the one to many relationship with projects
 	public function projects()

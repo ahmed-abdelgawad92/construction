@@ -10,12 +10,12 @@ class Project extends Model {
 	//replace arabic letter
   public function setNameAttribute($value)
   {
-    $this->name = Str::arabic_replace($value);
+    $this->name = \Str::arabic_replace($value);
   }
 	//replace arabic letter
   public function setCityAttribute($value)
   {
-    $this->city = Str::arabic_replace($value);
+    $this->city = \Str::arabic_replace($value);
   }
 	//Define the one to many relationship with Organizations
 	public function organization()
@@ -139,6 +139,17 @@ class Project extends Model {
 
 		return $productions;
 	}
+	//get summary production per project
+	public function getTotalTransaction()
+	{
+		$total = DB::select("
+		select sum(transaction_term.payment) as total from transaction_term 
+		where transaction_id in (SELECT id FROM transactions WHERE project_id = ? AND deleted = 0)
+		AND deleted = 0
+		",[$this->id]);
+
+		return $total[0]->total;
+	}
 	//has many papers
 	public function papers()
 	{
@@ -154,7 +165,7 @@ class Project extends Model {
 	//has many transactions through terms
 	public function transactions()
 	{
-		return $this->hasManyThrough('App\Transaction','App\Term');
+		return $this->hasMany('App\Transaction');
 	}
 
 	//extract log link

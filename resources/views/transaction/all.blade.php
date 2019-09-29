@@ -77,12 +77,12 @@
 							<th>قيمة المستخلصات السابقة</th>
 							<th>أجمالى المدفوع للمقاول</th>
 						</tr>
-					</thead>
+					</thead> 
 					<tbody>
 						<?php $count=1; ?>
 						@foreach($terms as $term)
 						<?php
-						$total_transaction=$term->transactions()->where('transactions.deleted',0)->sum('transactions.transaction');
+						$total_transaction=$term->transactions()->where('transaction_term.deleted',0)->sum('transaction_term.payment');
 						$total_contractor=$term->payments();
 						?>
 						<tr>

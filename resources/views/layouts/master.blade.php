@@ -294,6 +294,25 @@
 				</li>
 			</ul>
 		</li>
+		{{-- <li @if($active=="user")class="active"@endif>
+			<a href="#" class="side-link">
+			<span class="glyphicon glyphicon-user" aria-hidden="true"> </span> Technical Support
+			</a>
+			<ul class="nav child-options">
+				<li>
+				<a href="{{ route('addbug') }}">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"> </span>
+					Create a Ticket
+				</a>
+				</li>
+				<li>
+				<a href="{{ route('allbug') }}">
+					<span class="glyphicon glyphicon-th" aria-hidden="true"> </span>
+					All Tickets
+				</a>
+				</li>
+			</ul>
+		</li> --}}
 	</ul>
 	@else
 	<!--___________________SIDE BAR FOR CONTRACTOR__________________-->

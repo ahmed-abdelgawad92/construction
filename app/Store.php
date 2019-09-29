@@ -7,7 +7,7 @@ class Store extends Model {
 	//replace arabic letter
   public function setTypeAttribute($value)
   {
-    $this->type = Str::arabic_replace($value);
+    $this->type = \Str::arabic_replace($value);
   }
 	//escape html entities while getting type
 	public function getTypeAttribute($value)

@@ -42,7 +42,7 @@ class User extends Authenticatable
     //replace arabic letters during setting
     public function setNameAttribute($value)
     {
-      $this->name = Str::arabic_replace(mb_strtolower($value));
+      $this->name = \Str::arabic_replace(mb_strtolower($value));
     }
     //escape html entities while getting name
     public function getNameAttribute($value)
