@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'username', 'type', 'privilege'
     ];
 
     /**
@@ -35,20 +35,20 @@ class User extends Authenticatable
       return $this->hasMany('App\Log');
     }
     // set username in lowercase
-    public function setUsernameAttribute($value)
-    {
-      $this->username = mb_strtolower($value);
-    }
+    // public function setUsernameAttribute($value)
+    // {
+    //   $this->username = mb_strtolower($value);
+    // }
     //replace arabic letters during setting
-    public function setNameAttribute($value)
-    {
-      $this->name = \Str::arabic_replace(mb_strtolower($value));
-    }
-    //escape html entities while getting name
-    public function getNameAttribute($value)
-    {
-      return htmlspecialchars($value);
-    }
+    // public function setNameAttribute($value)
+    // {
+    //   $this->name = \Str::arabic_replace(mb_strtolower($value));
+    // }
+    // //escape html entities while getting name
+    // public function getNameAttribute($value)
+    // {
+    //   return htmlspecialchars($value);
+    // }
     // get  enabled or not
     public function is_enabled()
     {

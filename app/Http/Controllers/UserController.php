@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\User;
 use App\Contractor;
+use App\Log;
 use Validator;
 use Auth;
 use Hash;
@@ -100,13 +101,19 @@ class UserController extends Controller {
 			$user->name=$req->input('name');
 			$user->username=$req->input('username');
 			$user->password=bcrypt($req->input('password'));
-			$user->type="admin";
 			$user->privilege=$req->input("privilege");
-			$saved=$user->save();
+			$saved = $user->save();
+			
+			// $saved= User::create([
+			// 	'name' => $req->name,	
+			// 	'username' => $req->username,	
+			// 	'password' => bcrypt($req->password),	
+			// 	'privilege' => $req->privilege,	
+			// ]);
 			if(!$saved){
 				return redirect()->back()->with('insert_error','حدث عطل خلال أضافة هذا الحساب يرجى المحاولة فى وقت لاحق')->withInput();
 			}
-			$log=new Log;
+			$log=new Log();
 			$log->table="users";
 			$log->action="create";
 			$log->record_id=$user->id;
