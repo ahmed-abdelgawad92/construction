@@ -11,7 +11,7 @@ class Term extends Model {
 	//replace arabic letter
   public function setTypeAttribute($value)
   {
-    $this->type = \Str::arabic_replace($value);
+    $this->attributes['type'] = \Str::arabic_replace($value);
   }
 	//Define the one to many relationship with project
 	public function project()

@@ -7,7 +7,7 @@ class Supplier extends Model {
 	//replace arabic letter
   public function setNameAttribute($value)
   {
-    $this->name = \Str::arabic_replace($value);
+    $this->attributes['name'] = \Str::arabic_replace($value);
   }
   //escape html entities while getting name
   public function getNameAttribute($value)
@@ -17,12 +17,12 @@ class Supplier extends Model {
 	//replace arabic letter
   public function setTypeAttribute($value)
   {
-    $this->type = \Str::arabic_replace($value);
+    $this->attributes['type'] = \Str::arabic_replace($value);
   }
 	//replace arabic letter
   public function setCityAttribute($value)
   {
-    $this->city = \Str::arabic_replace($value);
+    $this->attributes['city'] = \Str::arabic_replace($value);
   }
 	//1 to many with the Store
 	public function stores()

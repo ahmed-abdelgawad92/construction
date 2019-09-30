@@ -7,7 +7,7 @@ class TermType extends Model {
   //replace arabic letter
   public function setNameAttribute($value)
   {
-    $this->name = \Str::arabic_replace($value);
+    $this->attributes['name'] = \Str::arabic_replace($value);
   }
   //escape html entities while getting name
   public function getNameAttribute($value)
